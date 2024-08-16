@@ -47,8 +47,8 @@ export function LoginForm() {
         variant: "default",
         duration: 3000,
       });
-      if (loginProcess.data)
-        localStorage.setItem("userdata", JSON.stringify(loginProcess.data));
+      // if (loginProcess.data)
+      //   localStorage.setItem("userdata", JSON.stringify(loginProcess.data));
 
       router.replace("/secure");
     } else {

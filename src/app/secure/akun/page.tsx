@@ -1,14 +1,12 @@
-"use client";
+import AkunLogout from "@/components/AkunLogout";
 import BottomNavbar from "@/components/BottomNavbar";
 import TopNavbar from "@/components/TopNavbar";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { logoutAction } from "@/lib/actions/login";
+import UserInfo from "@/components/UserInfo";
 import { LoginDataResponse } from "@/types";
-import { ChevronRight, KeyRoundIcon, LucidePencil } from "lucide-react";
+import { ChevronRight, KeyRoundIcon } from "lucide-react";
+import { cookies } from "next/headers";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 
 const links = [
   {
@@ -19,9 +17,8 @@ const links = [
 ];
 
 const Akun = () => {
-  const router = useRouter();
   const userdata = (): LoginDataResponse | null => {
-    const data = localStorage.getItem("userdata")!;
+    const data = cookies().get("userdata")?.value;
     return data ? JSON.parse(data) : null;
   };
 
@@ -30,21 +27,7 @@ const Akun = () => {
       <TopNavbar title="Akun" />
       <BottomNavbar />
       <div className="flex flex-col">
-        <div className="px-4 flex gap-x-4 min-h-24">
-          <Avatar>
-            <AvatarFallback className="text-white bg-primary">
-              {userdata()?.name.slice(0, 1)}
-            </AvatarFallback>
-          </Avatar>
-          <div className="flex-1">
-            <h2 className="font-bold text-xl">{userdata()?.name}</h2>
-            <p className="text-slate-500 text-md">@{userdata()?.username}</p>
-            <p className="text-green-600 text-md">
-              {userdata()?.role === "PW" ? "PIC Wilayah" : "PIC Kotak"}
-            </p>
-          </div>
-          <LucidePencil className="mr-4" />
-        </div>
+        <UserInfo userdata={userdata()} />
         {links.map((link) => (
           <Link
             key={link.title}
@@ -56,17 +39,7 @@ const Akun = () => {
             <ChevronRight className="self-end" />
           </Link>
         ))}
-        <Button
-          variant="outline"
-          onClick={(e) => {
-            localStorage.removeItem("userdata");
-            logoutAction();
-            router.replace("/");
-          }}
-          className="mx-4 mt-4 uppercase bg-green-500 hover:bg-green-600 text-white border-0"
-        >
-          Logout
-        </Button>
+        <AkunLogout />
       </div>
     </>
   );

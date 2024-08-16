@@ -3,9 +3,12 @@ import { z } from "zod";
 import { cookies } from "next/headers";
 import { LoginDataResponse, LoginFormInput } from "@/types";
 import { getLocalData } from "../jsonProvider";
+import { redirect } from "next/navigation";
 
 export const logoutAction = () => {
   cookies().delete("token");
+  cookies().delete("userdata");
+  redirect("/");
 };
 export const loginAction = async (
   values: LoginFormInput
@@ -42,16 +45,22 @@ export const loginAction = async (
         return { success: false, message: "Username atau Password Salah 3" };
       }
 
+      const dataSave = {
+        role: filterByUsername[0].role,
+        username: filterByUsername[0].username,
+        name: filterByUsername[0].name,
+        id: filterByUsername[0].id,
+      };
+
       cookies().set("token", values.username, { path: "/", httpOnly: true });
+      cookies().set("userdata", JSON.stringify(dataSave), {
+        path: "/",
+        httpOnly: true,
+      });
       return {
         success: true,
         message: "Berhasil",
-        data: {
-          role: filterByUsername[0].role,
-          username: filterByUsername[0].username,
-          name: filterByUsername[0].name,
-          id: filterByUsername[0].id,
-        },
+        data: dataSave,
       };
     })
     .catch((error) => {
