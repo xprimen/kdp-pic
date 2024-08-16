@@ -6,7 +6,7 @@ const Page = () => {
   return (
     <div className="flex flex-col items-center justify-center space-y-4">
       <Image
-        src="/assets/logo kdp.png"
+        src="/assets/logo-kdp.png"
         alt="logo"
         width={200}
         height={200}
