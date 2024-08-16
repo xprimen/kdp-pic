@@ -10,7 +10,7 @@ const Page = () => {
         alt="logo"
         width={200}
         height={200}
-        priority
+        // priority
         className="rounded-full w-32 h-32 bg-white drop-shadow-xl"
       />
       <LoginForm />

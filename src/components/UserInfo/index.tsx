@@ -10,7 +10,7 @@ const UserInfo = ({ userdata }: Props) => {
   return (
     <div className="px-4 flex gap-x-4 min-h-24">
       <Avatar>
-        <AvatarImage src="/assets/logo kdp.png" />
+        <AvatarImage src="/assets/logo-kdp.png" />
         <AvatarFallback className="text-white bg-primary">
           {userdata?.name.slice(0, 1)}
         </AvatarFallback>
