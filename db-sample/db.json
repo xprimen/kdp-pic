@@ -1,0 +1,95 @@
+{
+  "mawil": [
+    {
+      "id": 1,
+      "name": "Wilayah 1",
+      "parent": 0
+    },
+    {
+      "id": 2,
+      "name": "Wilayah 2",
+      "parent": 0
+    },
+    {
+      "id": 3,
+      "name": "Wilayah 3",
+      "parent": 0
+    },
+    {
+      "id": 4,
+      "name": "Wilayah 4",
+      "parent": 0
+    },
+    {
+      "id": 5,
+      "name": "Wilayah 5",
+      "parent": 0
+    }
+  ],
+  "users": [
+    {
+      "id": 1,
+      "username": "admin",
+      "password": "admin",
+      "name": "Administrator",
+      "role": "admin",
+      "nik": ""
+    },
+    {
+      "id": 2,
+      "username": "sanfk1",
+      "password": "sanfk1",
+      "name": "San FK 1",
+      "role": "PW",
+      "nik": ""
+    },
+    {
+      "id": 3,
+      "username": "sanfk2",
+      "password": "sanfk2",
+      "name": "San FK 2",
+      "role": "PW",
+      "nik": ""
+    }
+  ],
+  "kotak": [
+    {
+      "id": "PKDP0001",
+      "qrcode": "link:PKDP0001",
+      "user_id": null
+    },
+    {
+      "id": "PKDP0002",
+      "qrcode": "link:PKDP0002",
+      "user_id": null
+    },
+    {
+      "id": "PKDP0003",
+      "qrcode": "link:PKDP0003",
+      "user_id": null
+    },
+    {
+      "id": "PKDP0004",
+      "qrcode": "link:PKDP0004",
+      "user_id": null
+    },
+    {
+      "id": "PKDP0005",
+      "qrcode": "link:PKDP0005",
+      "user_id": null
+    }
+  ],
+  "pic_wilayah": [
+    {
+      "id": 1,
+      "user_id": 2,
+      "id_kotak": "PKDP0001",
+      "id_mawil": 1,
+      "status_kotak": "siap",
+      "tgl_dikirim": null,
+      "tgl_diterima": null
+    }
+  ],
+  "history_kotak": [],
+  "history_setor": []
+}
