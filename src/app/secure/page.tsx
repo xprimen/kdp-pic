@@ -16,7 +16,7 @@ function Dashboard() {
   const [dataKotak, setDataKotak] = React.useState<any[] | undefined>();
 
   const userdata = (): LoginDataResponse | null => {
-    const data = localStorage.getItem("userdata")!;
+    const data = window.localStorage.getItem("userdata")!;
     return data ? JSON.parse(data) : null;
   };
   const getKotak = React.useCallback(async () => {
