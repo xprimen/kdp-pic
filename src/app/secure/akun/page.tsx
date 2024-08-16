@@ -21,7 +21,7 @@ const links = [
 const Akun = () => {
   const router = useRouter();
   const userdata = (): LoginDataResponse | null => {
-    const data = localStorage.getItem("userdata")!;
+    const data = window.localStorage.getItem("userdata")!;
     return data ? JSON.parse(data) : null;
   };
 
