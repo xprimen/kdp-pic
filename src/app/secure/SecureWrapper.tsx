@@ -22,7 +22,7 @@ function SecureWrapper({ children }: Props) {
   return (
     <QueryClientProvider client={queryClient}>
       {children}
-      <ReactQueryDevtools initialIsOpen={false} buttonPosition="relative" />
+      {/* <ReactQueryDevtools initialIsOpen={false} buttonPosition="relative" /> */}
     </QueryClientProvider>
   );
 }
