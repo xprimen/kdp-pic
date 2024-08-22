@@ -1,79 +1,83 @@
 "use client";
-import { EllipsisVertical, ListFilter, Plus } from "lucide-react";
-import { Button } from "../ui/button";
-import {
-  Table,
-  TableCaption,
-  TableHeader,
-  TableRow,
-  TableHead,
-  TableBody,
-  TableCell,
-  TableFooter,
-} from "../ui/table";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { User } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
+import TableToolbars from "../utilities/TableToolbars";
+import { useQuery } from "@tanstack/react-query";
+import { getUsers } from "@/lib/actions/users";
+import { Skeleton } from "../ui/skeleton";
 
 type TUser = {
-  id: number;
+  id: string;
   username: string;
-  name: string;
+  nama: string;
   nik: string;
   role: string;
+  alamat: string;
+  tlp: string;
+  mawil: string;
+  submawil: string;
+  kel: number;
+  kec: number;
+  kota: number;
+  propinsi: number;
 };
 type Props = {
-  data: TUser[];
+  // data: TUser[];
+  token: string;
 };
 
-const UserView = ({ data }: Props) => {
-  const router = useRouter();
+const UserView = ({ token }: Props) => {
+  const { data: users, isFetching } = useQuery({
+    queryKey: ["users"],
+    queryFn: async () => getUsers(token),
+    refetchOnWindowFocus: false,
+  });
+
+  console.log("loading : ", isFetching);
+  console.log("users :", users);
+
   return (
-    <div>
-      <div className="flex px-4 justify-between my-2">
-        <div id="tools-left">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => router.push("/secure/users/add")}
-          >
-            <Plus />
-          </Button>
-        </div>
-        <div id="tools-right">
-          <Button variant="outline" size="sm">
-            <ListFilter />
-          </Button>
-        </div>
-      </div>
-      {/* table content */}
-      <div className="flex w-full bg-white my-4">
-        <Table className="table-auto ">
-          {/* <TableCaption>Caption</TableCaption> */}
-          <TableHeader>
-            <TableRow>
-              <TableHead className="font-bold">Username</TableHead>
-              <TableHead className="font-bold">Nama</TableHead>
-              <TableHead className="font-bold">NIK</TableHead>
-              <TableHead className="font-bold">Mawil/Sub</TableHead>
-              <TableHead className="font-bold"></TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {data.map((dt) => (
-              <TableRow key={dt.id}>
-                <TableCell className="font-medium">{dt.username}</TableCell>
-                <TableCell>{dt.name}</TableCell>
-                <TableCell>{dt.nik}</TableCell>
-                <TableCell className="text-right"></TableCell>
-                <TableCell className="text-center">
-                  <Button variant="outline" size="sm">
-                    <EllipsisVertical />
-                  </Button>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+    <div className="mb-20">
+      <TableToolbars add={{ link: "/secure/users/add" }} />
+      <div className="flex flex-col gap-2 my-4">
+        {isFetching &&
+          [...Array(10)].map((_, i) => (
+            <div key={i} className="bg-white px-4 py-2">
+              <Card>
+                <CardHeader className="py-2">
+                  <CardTitle className="text-lg flex items-center gap-x-2">
+                    <Skeleton className="h-4 w-4" />
+                    <Skeleton className="h-4 w-full" />
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-slate-500 text-sm flex justify-between">
+                    <Skeleton className="h-4 w-1/2" />
+                    <Skeleton className="h-4 w-1/2" />
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          ))}
+        {users?.data?.map((dt: any) => (
+          <div key={dt.id} className="bg-white px-4 py-2">
+            <Card>
+              <CardHeader className="py-2">
+                <CardTitle className="text-lg flex items-center gap-x-2">
+                  <User size="20" /> {dt.nama}
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-slate-500 text-sm flex justify-between">
+                  <span>@{dt.username}</span>
+                  <span className="text-slate-700 font-semibold">
+                    {dt.submawil}
+                  </span>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        ))}
       </div>
     </div>
   );

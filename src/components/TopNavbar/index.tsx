@@ -22,7 +22,7 @@ const TopNavbar = ({
               variant="default"
               size="icon"
               onClick={() => window.history.back()}
-              className="rounded-full shadow-lg bg-slate-100 hover:bg-slate-200 text-slate-600"
+              className="rounded-full shadow-lg bg-white hover:bg-slate-200 text-slate-600"
             >
               <ArrowLeft />
             </Button>
@@ -31,10 +31,7 @@ const TopNavbar = ({
         <div className="flex-1 px-2 font-semibold text-lg text-center">
           {title}
         </div>
-        {rightButtons ||
-          (backButton && (
-            <div className="min-w-14 gap-x-1 flex justify-center" />
-          ))}
+        {rightButtons || (backButton && <div className="min-w-14" />)}
       </div>
     </div>
   );

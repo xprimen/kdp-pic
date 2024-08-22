@@ -1,18 +1,12 @@
-import TopNavbar from "@/components/TopNavbar";
-import React from "react";
-import { z } from "zod";
-
-const addUserSchema = z.object({
-  username: z.string().min(2).max(50),
-  name: z.string().min(2).max(50),
-});
+import UserAdd from "@/components/UserAdd";
+import { cookies } from "next/headers";
 
 const Page = () => {
-  return (
-    <div>
-      <TopNavbar title="Tambah PIC" backButton />
-    </div>
-  );
+  const token = () => {
+    return String(cookies().get("token")?.value);
+  };
+
+  return <UserAdd token={token()} />;
 };
 
 export default Page;

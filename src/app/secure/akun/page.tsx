@@ -17,7 +17,7 @@ const links = [
 ];
 
 const Akun = () => {
-  const userdata = (): LoginDataResponse | null => {
+  const userdata = (): LoginDataResponse => {
     const data = cookies().get("userdata")?.value;
     return data ? JSON.parse(data) : null;
   };
@@ -25,7 +25,7 @@ const Akun = () => {
   return (
     <>
       <TopNavbar title="Akun" />
-      <BottomNavbar />
+      <BottomNavbar role={userdata()?.role} />
       <div className="flex flex-col">
         <UserInfo userdata={userdata()} />
         {links.map((link) => (

@@ -1,8 +1,7 @@
 "use server";
-import { z } from "zod";
-import { cookies } from "next/headers";
 import { LoginDataResponse, LoginFormInput } from "@/types";
-import { getLocalData } from "../jsonProvider";
+import axios from "axios";
+import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
 export const logoutAction = () => {
@@ -17,7 +16,101 @@ export const loginAction = async (
   message: string;
   data?: LoginDataResponse;
 }> => {
-  return fetch(`https://json-server-tester.vercel.app/users`, {
+  return await axios
+    .post("https://apifk.rurosi.my.id/login", values, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+    .then((res) => {
+      let base64Url = res.data.accessToken.split(".")[1]; // token you get
+      let base64 = base64Url.replace("-", "+").replace("_", "/");
+      let decodedData = JSON.parse(
+        Buffer.from(base64, "base64").toString("binary")
+      );
+
+      if (decodedData.role === 1) {
+        return {
+          success: false,
+          message: "Login Gagal, User Tidak Memiliki Akses",
+        };
+      }
+
+      const dataSave: LoginDataResponse = {
+        role: decodedData.role,
+        // username: decodedData.username,
+        nama: decodedData.nama,
+        id: decodedData.userid,
+      };
+
+      cookies().set("token", res.data.accessToken, {
+        path: "/",
+        httpOnly: true,
+      });
+      cookies().set("userdata", JSON.stringify(dataSave), {
+        path: "/",
+        httpOnly: true,
+      });
+      return {
+        success: true,
+        message: "Berhasil",
+        data: dataSave,
+      };
+    });
+  /* return fetch("https://apifk.rurosi.my.id/login", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(values),
+  })
+    .then((res) => {
+      // console.log("RES :", res.json());
+      if (!res.ok) {
+        return { success: false, message: "Username atau Password Salah" };
+      }
+      return res.json();
+    })
+    .then((data) => {
+      let base64Url = data.accessToken.split(".")[1]; // token you get
+      let base64 = base64Url.replace("-", "+").replace("_", "/");
+      let decodedData = JSON.parse(
+        Buffer.from(base64, "base64").toString("binary")
+      );
+
+      if (decodedData.role === 1) {
+        return {
+          success: false,
+          message: "Login Gagal, User Tidak Memiliki Akses",
+        };
+      }
+
+      const dataSave: LoginDataResponse = {
+        role: decodedData.role,
+        // username: decodedData.username,
+        nama: decodedData.nama,
+        id: decodedData.userid,
+      };
+
+      cookies().set("token", data.accessToken, { path: "/", httpOnly: true });
+      cookies().set("userdata", JSON.stringify(dataSave), {
+        path: "/",
+        httpOnly: true,
+      });
+      return {
+        success: true,
+        message: "Berhasil",
+        data: dataSave,
+      };
+    })
+    .catch((err) => {
+      console.error(err);
+      return {
+        success: false,
+        message: "Login Gagal",
+      };
+    }); */
+  /* return fetch(`https://json-server-tester.vercel.app/users`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -31,8 +124,8 @@ export const loginAction = async (
     })
     .then((data) => {
       // console.log("DATA JSON :", data);
-      const dataFilter = data.filter(
-        (d: { role: string }) => d.role === "PW" || d.role === "PK"
+      const dataFilter = data.filter((d: { role: number }) =>
+        [2, 3].includes(d.role)
       );
       const filterByUsername = dataFilter.filter(
         (d: { username: string }) => d.username === values.username
@@ -45,10 +138,10 @@ export const loginAction = async (
         return { success: false, message: "Username atau Password Salah 3" };
       }
 
-      const dataSave = {
+      const dataSave: LoginDataResponse = {
         role: filterByUsername[0].role,
         username: filterByUsername[0].username,
-        name: filterByUsername[0].name,
+        nama: filterByUsername[0].nama,
         id: filterByUsername[0].id,
       };
 
@@ -65,5 +158,41 @@ export const loginAction = async (
     })
     .catch((error) => {
       return { success: false, message: "Error" };
+    }); */
+};
+
+export const createUserAction = async (
+  values: any
+): Promise<{
+  success: boolean;
+  message: string;
+  data?: any;
+}> => {
+  return fetch(`https://apifk.rurosi.my.id/users`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(values),
+  })
+    .then((res) => {
+      if (!res.ok) {
+        return { success: false, message: "User Gagal Dibuat" };
+      }
+      return res.json();
+    })
+    .then((data) => {
+      return {
+        success: true,
+        message: "Berhasil",
+        // data: data,
+      };
+    })
+    .catch((err) => {
+      console.error(err);
+      return {
+        success: false,
+        message: "Login Gagal",
+      };
     });
 };

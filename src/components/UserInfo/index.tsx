@@ -12,14 +12,14 @@ const UserInfo = ({ userdata }: Props) => {
       <Avatar>
         <AvatarImage src="/assets/logo-kdp.png" />
         <AvatarFallback className="text-white bg-primary">
-          {userdata?.name.slice(0, 1)}
+          {userdata?.nama.slice(0, 1)}
         </AvatarFallback>
       </Avatar>
       <div className="flex-1">
-        <h2 className="font-bold text-xl">{userdata?.name}</h2>
+        <h2 className="font-bold text-xl">{userdata?.nama}</h2>
         <p className="text-slate-500 text-md">@{userdata?.username}</p>
         <p className="text-green-600 text-md">
-          {userdata?.role === "PW" ? "PIC Wilayah" : "PIC Kotak"}
+          {userdata?.role === 2 ? "PIC Wilayah" : "PIC Kotak"}
         </p>
       </div>
       <LucidePencil className="mr-4" />

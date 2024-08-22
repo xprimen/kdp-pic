@@ -66,7 +66,7 @@ function Dashboard() {
 
   return (
     <>
-      <BottomNavbar />
+      <BottomNavbar role={userdata()?.role} />
       <UserGreeting userdata={userdata()} />
       <Summary />
       <div className="flex flex-col space-y-2">

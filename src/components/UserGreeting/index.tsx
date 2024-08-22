@@ -7,7 +7,7 @@ type Props = {
 const UserGreeting = ({ userdata }: Props) => {
   return (
     <div className="flex items-center justify-center h-full px-4 py-4">
-      <div className="flex-1 font-semibold">Hi, {userdata.name}</div>
+      <div className="flex-1 font-semibold">Hi, {userdata.nama}</div>
     </div>
   );
 };

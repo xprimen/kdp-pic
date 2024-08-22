@@ -2,6 +2,7 @@ import { Toaster } from "@/components/ui/toaster";
 import type { Metadata } from "next";
 import { Lato } from "next/font/google";
 import "./globals.css";
+import { cookies } from "next/headers";
 
 const lato = Lato({
   weight: ["100", "300", "400", "700", "900"],
@@ -18,9 +19,10 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // console.log(cookies().get("userdata")?.value);
   return (
     <html lang="en">
-      <body className={`${lato.className} bg-white text-slate-500`}>
+      <body className={`${lato.className} bg-white `}>
         {children}
         <Toaster />
       </body>
