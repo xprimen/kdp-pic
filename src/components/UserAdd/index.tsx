@@ -26,12 +26,14 @@ import {
 import { Input } from "../ui/input";
 import { Textarea } from "../ui/textarea";
 import { toast } from "../ui/use-toast";
+import { useRouter } from "next/navigation";
 
 type Props = {
   token: string;
 };
 
 const UserAdd = ({ token }: Props) => {
+  const router = useRouter();
   const [loadingForm, setLoadingForm] = React.useState(false);
   const [imageFile, setImageFile] = React.useState<FileList>();
   const [imagePreview, setImagePreview] = React.useState("");
@@ -40,18 +42,18 @@ const UserAdd = ({ token }: Props) => {
     defaultValues: {
       username: "",
       password: "",
-      roleId: 3,
+      role: "3",
       confPassword: "",
       mawil: "sumsel",
       submawil: "oku",
       nik: "",
       tlp: "",
       alamat: "",
-      propinsi: 16,
-      kota: 1,
-      kec: 14,
-      kel: 1005,
-      filename_ktp: "",
+      propinsi: "16",
+      kota: "1601",
+      kec: "160114",
+      kel: "1601141005",
+      image: "",
     },
   });
 
@@ -89,9 +91,10 @@ const UserAdd = ({ token }: Props) => {
             description: "Berhasil Menambahkan User PIC Kotak Baru",
           });
           queryClient.invalidateQueries({ queryKey: ["users"] });
+          router.replace("/secure/users");
         },
         onError: (error, variables, context) => {
-          console.log("ERROR : ", error);
+          console.log("ERROR : ", error.message);
           console.log("ERROR : ", variables);
           console.log("ERROR : ", context);
           toast({
@@ -133,12 +136,12 @@ const UserAdd = ({ token }: Props) => {
     const file = files.item(0);
     if (file) {
       if (file.size > MAX_FILE_SIZE) {
-        return form.setError("filename_ktp", {
+        return form.setError("image", {
           message: "Ukuran File Terlalu Besar",
         });
       }
       if (!ACCEPTED_IMAGE_TYPES.includes(files?.[0]?.type)) {
-        return form.setError("filename_ktp", {
+        return form.setError("image", {
           message: "Tipe File Tidak Didukung",
         });
       }
@@ -149,7 +152,7 @@ const UserAdd = ({ token }: Props) => {
 
       const fileWithBase64 = await toBase64(file);
       // setImageBase64(fileWithBase64);
-      form.setValue("filename_ktp", file.name, { shouldValidate: true });
+      form.setValue("image", file.name, { shouldValidate: true });
       //   form.setValue("foto_ktp", fileWithBase64, { shouldValidate: true });
       setImageFile(files);
     }
@@ -233,7 +236,7 @@ const UserAdd = ({ token }: Props) => {
             />
             <FormField
               control={form.control}
-              name="filename_ktp"
+              name="image"
               render={({ field }) => (
                 <FormItem className="space-y-1 py-4 px-4 bg-white">
                   <FormLabel className="font-semibold">Upload KTP</FormLabel>
@@ -267,7 +270,7 @@ const UserAdd = ({ token }: Props) => {
                           setImagePreview("");
                           setImageFile(undefined);
                           // form.setValue("ktp", new File([], ""), {});
-                          form.resetField("filename_ktp");
+                          form.resetField("image");
                           //   form.resetField("foto_ktp");
                         }}
                       >

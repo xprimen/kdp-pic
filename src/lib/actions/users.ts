@@ -2,18 +2,7 @@ import { AddUser } from "@/types";
 import axios from "axios";
 
 export const getUsers = async (token: string) => {
-  /* return await fetch("https://apifk.rurosi.my.id/users", {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-  })
-    .then((res) => res.json())
-    .then((data) => {
-      return data;
-    }); */
-  return await axios.get("https://apifk.rurosi.my.id/users", {
+  return await axios.get("https://apifk.rurosi.my.id/userspw", {
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
@@ -55,4 +44,5 @@ export const saveUser = async ({
       Authorization: `Bearer ${token}`,
     },
   });
+  // return true;
 };

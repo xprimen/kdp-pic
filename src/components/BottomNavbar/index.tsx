@@ -53,12 +53,12 @@ const linksPK: TLinks[] = [
 ];
 
 type Props = {
-  role: number;
+  role: string;
 };
 
 const BottomNavbar = ({ role }: Props) => {
   const currentPath = usePathname();
-  const links = role === 2 ? linksPW : linksPK;
+  const links = role === "2" ? linksPW : linksPK;
 
   return (
     <div className="fixed w-full mx-auto z-10 bottom-0 max-w-screen-sm bg-slate-100 text-slate-600">

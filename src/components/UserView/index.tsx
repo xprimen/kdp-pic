@@ -33,8 +33,8 @@ const UserView = ({ token }: Props) => {
     refetchOnWindowFocus: false,
   });
 
-  console.log("loading : ", isFetching);
-  console.log("users :", users);
+  // console.log("loading : ", isFetching);
+  // console.log("users :", users);
 
   return (
     <div className="mb-20">

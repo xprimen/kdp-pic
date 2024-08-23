@@ -37,8 +37,8 @@ export const loginAction = async (
       }
 
       const dataSave: LoginDataResponse = {
-        role: decodedData.role,
-        // username: decodedData.username,
+        role: String(decodedData.role),
+        username: values.username,
         nama: decodedData.nama,
         id: decodedData.userid,
       };
@@ -57,71 +57,12 @@ export const loginAction = async (
         data: dataSave,
       };
     });
-  /* return fetch("https://apifk.rurosi.my.id/login", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(values),
-  })
-    .then((res) => {
-      // console.log("RES :", res.json());
-      if (!res.ok) {
-        return { success: false, message: "Username atau Password Salah" };
-      }
-      return res.json();
-    })
-    .then((data) => {
-      let base64Url = data.accessToken.split(".")[1]; // token you get
-      let base64 = base64Url.replace("-", "+").replace("_", "/");
-      let decodedData = JSON.parse(
-        Buffer.from(base64, "base64").toString("binary")
-      );
 
-      if (decodedData.role === 1) {
-        return {
-          success: false,
-          message: "Login Gagal, User Tidak Memiliki Akses",
-        };
-      }
-
-      const dataSave: LoginDataResponse = {
-        role: decodedData.role,
-        // username: decodedData.username,
-        nama: decodedData.nama,
-        id: decodedData.userid,
-      };
-
-      cookies().set("token", data.accessToken, { path: "/", httpOnly: true });
-      cookies().set("userdata", JSON.stringify(dataSave), {
-        path: "/",
-        httpOnly: true,
-      });
-      return {
-        success: true,
-        message: "Berhasil",
-        data: dataSave,
-      };
-    })
-    .catch((err) => {
-      console.error(err);
-      return {
-        success: false,
-        message: "Login Gagal",
-      };
-    }); */
-  /* return fetch(`https://json-server-tester.vercel.app/users`, {
-    method: "GET",
+  /* return await axios.get(`https://json-server-tester.vercel.app/users`, {
     headers: {
       "Content-Type": "application/json",
     },
   })
-    .then((res) => {
-      if (!res.ok) {
-        return { success: false, message: "Username atau Password Salah 1" };
-      }
-      return res.json();
-    })
     .then((data) => {
       // console.log("DATA JSON :", data);
       const dataFilter = data.filter((d: { role: number }) =>
@@ -140,16 +81,19 @@ export const loginAction = async (
 
       const dataSave: LoginDataResponse = {
         role: filterByUsername[0].role,
-        username: filterByUsername[0].username,
+        // username: filterByUsername[0].username,
         nama: filterByUsername[0].nama,
         id: filterByUsername[0].id,
       };
 
-      cookies().set("token", values.username, { path: "/", httpOnly: true });
-      cookies().set("userdata", JSON.stringify(dataSave), {
+      cookies().set("token", filterByUsername[0].id, {
         path: "/",
         httpOnly: true,
       });
+      // cookies().set("userdata", JSON.stringify(dataSave), {
+      //   path: "/",
+      //   httpOnly: true,
+      // });
       return {
         success: true,
         message: "Berhasil",

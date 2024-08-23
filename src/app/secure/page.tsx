@@ -69,10 +69,6 @@ function Dashboard() {
       <BottomNavbar role={userdata()?.role} />
       <UserGreeting userdata={userdata()} />
       <Summary />
-      <div className="flex flex-col space-y-2">
-        <h2 className="font-semibold px-4">Kotak</h2>
-        <div className="flex flex-col space-y-4 px-4">asd</div>
-      </div>
     </>
   );
 }
