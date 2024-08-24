@@ -50,7 +50,7 @@ const Summary = () => {
   return (
     <>
       <div className="flex items-center justify-end gap-x-4 px-4 pb-4">
-        <h2 className="font-semibold">Periode</h2>
+        <h2 className="font-semibold">Periode :</h2>
         <MonthListSelect setValue={setMonthSelected} months={months}>
           <Button variant="outline" className="gap-x-2 font-semibold">
             <CalendarIcon size={16} /> {months[monthSelected]}{" "}

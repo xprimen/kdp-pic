@@ -1,7 +1,5 @@
 import { LoginDataResponse } from "@/types";
-import { LucidePencil } from "lucide-react";
-import React from "react";
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { Avatar, AvatarFallback } from "../ui/avatar";
 
 type Props = {
   userdata: LoginDataResponse | null;
@@ -9,9 +7,8 @@ type Props = {
 const UserInfo = ({ userdata }: Props) => {
   return (
     <div className="px-4 flex gap-x-4 min-h-24">
-      <Avatar>
-        <AvatarImage src="/assets/logo-kdp.png" />
-        <AvatarFallback className="text-white bg-primary">
+      <Avatar className="w-16 h-16">
+        <AvatarFallback className="text-white bg-primary text-xl">
           {userdata?.nama.slice(0, 1)}
         </AvatarFallback>
       </Avatar>

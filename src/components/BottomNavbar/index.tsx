@@ -1,10 +1,9 @@
 "use client";
 import { BoxIcon, LayoutDashboard, User, Users } from "lucide-react";
 import Link from "next/link";
-import { Label } from "../ui/label";
 import { usePathname } from "next/navigation";
-import { userdata } from "../utilities/Userdata";
 import React from "react";
+import { Label } from "../ui/label";
 
 type TLinks = {
   title: string;

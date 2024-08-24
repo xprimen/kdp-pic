@@ -2,7 +2,6 @@ import BottomNavbar from "@/components/BottomNavbar";
 import Summary from "@/components/Summary";
 import UserGreeting from "@/components/UserGreeting";
 import { LoginDataResponse } from "@/types";
-import _ from "lodash";
 import { cookies } from "next/headers";
 
 function Dashboard() {
@@ -47,11 +46,11 @@ function Dashboard() {
       })
       .then((data) => data);
 
-    const kotak_wilayah = _.map(pic_wilayah, (o) => ({
+    const kotak_wilayah = pic_wilayah.map((o: any) => ({
       status_kotak: o.status_kotak,
       tgl_dikirim: o.tgl_dikirim,
       tgl_diterima: o.tgl_diterima,
-      kotak: _.find(getKotak, (k) => k.id == o.id_kotak),
+      kotak: getKotak.find((k: { id: string }) => k.id == o.id_kotak),
     }));
     // console.log("kotak_wilayah :", kotak_wilayah);
 

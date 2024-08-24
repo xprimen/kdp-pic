@@ -12,7 +12,7 @@ const AkunLogout = () => {
         logoutAction();
         // router.push("/");
       }}
-      className="mx-4 mt-4 uppercase bg-green-500 hover:bg-green-600 text-white border-0"
+      className="mx-4 mt-4 uppercase bg-green-500 hover:bg-green-600 text-white hover:text-white border-0"
     >
       Logout
     </Button>

@@ -9,11 +9,11 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { LoginFormInput, LoginFormInputSchema } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { LoaderIcon, LogIn } from "lucide-react";
 import { useRouter } from "next/navigation";
-import React from "react";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
 import { loginAction } from "../../lib/actions/login";
 import {
   Form,
@@ -24,7 +24,6 @@ import {
   FormMessage,
 } from "../ui/form";
 import { useToast } from "../ui/use-toast";
-import { LoginFormInput, LoginFormInputSchema } from "@/types";
 
 export function LoginForm() {
   const router = useRouter();
@@ -110,8 +109,22 @@ export function LoginForm() {
             </div>
           </CardContent>
           <CardFooter>
-            <Button type="submit" className="w-full">
-              Sign in
+            <Button
+              type="submit"
+              className="w-full"
+              disabled={form.formState.isSubmitting}
+            >
+              {form.formState.isSubmitting ? (
+                <span className="flex items-center">
+                  <LoaderIcon className="mr-2 h-4 w-4 animate-spin" />
+                  Loading
+                </span>
+              ) : (
+                <span className="flex items-center">
+                  <LogIn className="mr-2 h-4 w-4" />
+                  Login
+                </span>
+              )}
             </Button>
           </CardFooter>
         </Card>

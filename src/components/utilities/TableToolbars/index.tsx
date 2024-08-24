@@ -1,7 +1,6 @@
 "use client";
 import { Button, ButtonProps } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { size } from "lodash";
 import { ListFilter, LucideProps, Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React from "react";
