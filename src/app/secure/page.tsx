@@ -65,11 +65,11 @@ function Dashboard() {
   // console.log("kotak :", dataKotak);
 
   return (
-    <>
+    <div className="pb-20">
       <BottomNavbar role={userdata()?.role} />
       <UserGreeting userdata={userdata()} />
       <Summary />
-    </>
+    </div>
   );
 }
 
