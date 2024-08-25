@@ -24,10 +24,12 @@ import {
   FormMessage,
 } from "../ui/form";
 import { useToast } from "../ui/use-toast";
+import React from "react";
 
 export function LoginForm() {
   const router = useRouter();
   const { toast } = useToast();
+  const [loading, setLoading] = React.useState(false);
   const form = useForm<LoginFormInput>({
     resolver: zodResolver(LoginFormInputSchema),
     defaultValues: {
@@ -37,22 +39,35 @@ export function LoginForm() {
   });
 
   async function onSubmit(values: LoginFormInput) {
-    const loginProcess = await loginAction(values);
-    if (loginProcess.success) {
-      // alert(loginProcess.message);
-      toast({
-        description: loginProcess.message,
-        title: "Login Success",
-        variant: "default",
-        duration: 3000,
-      });
-      // if (loginProcess.data)
-      //   localStorage.setItem("userdata", JSON.stringify(loginProcess.data));
+    setLoading(true);
+    try {
+      const loginProcess = await loginAction(values);
+      if (loginProcess.success) {
+        // alert(loginProcess.message);
+        toast({
+          description: loginProcess.message,
+          title: "Login Success",
+          variant: "default",
+          duration: 3000,
+        });
+        // if (loginProcess.data)
+        //   localStorage.setItem("userdata", JSON.stringify(loginProcess.data));
 
-      router.replace("/secure");
-    } else {
+        setLoading(false);
+        router.replace("/secure");
+      } else {
+        setLoading(false);
+        toast({
+          description: loginProcess.message,
+          title: "Login Gagal",
+          variant: "destructive",
+          duration: 3000,
+        });
+      }
+    } catch (err: any) {
+      setLoading(false);
       toast({
-        description: loginProcess.message,
+        description: err.message,
         title: "Login Gagal",
         variant: "destructive",
         duration: 3000,
@@ -109,12 +124,8 @@ export function LoginForm() {
             </div>
           </CardContent>
           <CardFooter>
-            <Button
-              type="submit"
-              className="w-full"
-              disabled={form.formState.isSubmitting}
-            >
-              {form.formState.isSubmitting ? (
+            <Button type="submit" className="w-full" disabled={loading}>
+              {loading ? (
                 <span className="flex items-center">
                   <LoaderIcon className="mr-2 h-4 w-4 animate-spin" />
                   Loading

@@ -39,8 +39,8 @@ const Users = async () => {
         title="User PIC"
         // rightButtons={<RightButtonsTable add={{ link: "/secure/users/add" }} />}
       />
-      <BottomNavbar role={userdata()?.role} />
       <UserView token={token()} />
+      <BottomNavbar role={userdata()?.role} />
     </>
   );
 };

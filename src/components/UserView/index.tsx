@@ -30,7 +30,7 @@ const UserView = ({ token }: Props) => {
   const { data: users, isFetching } = useQuery({
     queryKey: ["users"],
     queryFn: async () => getUsers(token),
-    refetchOnWindowFocus: false,
+    // refetchOnWindowFocus: true,
   });
 
   // console.log("loading : ", isFetching);
