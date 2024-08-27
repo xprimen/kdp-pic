@@ -1,12 +1,17 @@
 import React, { HTMLAttributes } from "react";
 
-const AnimateSlideInRight = (
-  props: React.PropsWithChildren<HTMLAttributes<HTMLDivElement>>
+const AnimateSlideIn = (
+  props: React.PropsWithChildren<
+    HTMLAttributes<HTMLDivElement> & { direction: "left" | "right" }
+  >
 ) => {
-  const { children, className, ...restProps } = props;
+  const { children, className, direction, ...restProps } = props;
+  const directionAnimate =
+    direction === "left" ? "animate-slide-in-left" : "animate-slide-in-right";
   return (
     <div
-      className={`animate-main-page-transition border border-slate-300 ${className}`}
+      // className={`animate-slide-in-${direction} ${className || ""}`}
+      className={`${directionAnimate} ${className || ""}`}
       {...restProps}
     >
       {children}
@@ -14,4 +19,4 @@ const AnimateSlideInRight = (
   );
 };
 
-export default AnimateSlideInRight;
+export default AnimateSlideIn;

@@ -29,7 +29,7 @@ export const loginAction = async (
         Buffer.from(base64, "base64").toString("binary")
       );
 
-      if (decodedData.role === 1) {
+      if (decodedData.role === "1") {
         return {
           success: false,
           message: "Login Gagal, User Tidak Memiliki Akses",

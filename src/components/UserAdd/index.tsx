@@ -105,7 +105,7 @@ const UserAdd = ({ token }: Props) => {
         },
       }
     );
-    console.log("data input :", data);
+    // console.log("data input :", data);
     // toast({
     //   title: "You submitted the following values:",
     //   description: (
@@ -164,17 +164,8 @@ const UserAdd = ({ token }: Props) => {
     if (file?.size) fileToBase64(e);
   };
 
-  /* React.useEffect(() => {
-    if (mutation.isSuccess) {
-      toast({
-        title: "Proses Tambah User",
-        description: "Berhasil",
-      });
-    }
-  }, [mutation.isSuccess]); */
-
   return (
-    <div>
+    <>
       <TopNavbar title="Tambah User PIC" backButton />
       <Form {...form}>
         <form
@@ -409,7 +400,7 @@ const UserAdd = ({ token }: Props) => {
           </Button>
         </form>
       </Form>
-    </div>
+    </>
   );
 };
 

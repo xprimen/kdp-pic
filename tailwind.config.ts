@@ -76,11 +76,21 @@ const config = {
             transform: "translateZ(0)",
           },
         },
+        "slide-to-right": {
+          "0%": {
+            transform: "translate3d(-100%, 0, 0)",
+            visibility: "visible",
+          },
+          to: {
+            transform: "translateZ(0)",
+          },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
-        "main-page-transition": "slide-to-left 0.4s ease-out",
+        "slide-in-left": "slide-to-left 0.4s ease-in-out",
+        "slide-in-right": "slide-to-right 0.4s ease-in-out",
       },
     },
   },

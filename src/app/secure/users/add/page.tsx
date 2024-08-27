@@ -1,5 +1,5 @@
 import UserAdd from "@/components/UserAdd";
-import AnimateSlideInRight from "@/components/utilities/AnimateSlideInRight";
+import AnimateSlideIn from "@/components/utilities/AnimateSlideInRight";
 import { cookies } from "next/headers";
 
 const Page = () => {
@@ -8,9 +8,9 @@ const Page = () => {
   };
 
   return (
-    <AnimateSlideInRight className="pb-4">
+    <AnimateSlideIn direction="left" className="pb-4">
       <UserAdd token={token()} />
-    </AnimateSlideInRight>
+    </AnimateSlideIn>
   );
 };
 
