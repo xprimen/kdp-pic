@@ -1,5 +1,7 @@
+import TopNavbar from "@/components/TopNavbar";
 import UserAdd from "@/components/UserAdd";
 import AnimateSlideIn from "@/components/utilities/AnimateSlideInRight";
+import { LoginDataResponse } from "@/types";
 import { cookies } from "next/headers";
 
 const Page = () => {
@@ -7,9 +9,15 @@ const Page = () => {
     return String(cookies().get("token")?.value);
   };
 
+  const userdata = (): LoginDataResponse => {
+    const data = cookies().get("userdata")?.value;
+    return data ? JSON.parse(data) : null;
+  };
+
   return (
     <AnimateSlideIn direction="left" className="pb-4">
-      <UserAdd token={token()} />
+      <TopNavbar title="Tambah User PIC" backButton />
+      <UserAdd token={token()} userdata={userdata()} />
     </AnimateSlideIn>
   );
 };

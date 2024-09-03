@@ -16,6 +16,9 @@
 # production
 /build
 
+# db-sample
+/db-sample
+
 # misc
 .DS_Store
 *.pem

@@ -22,7 +22,7 @@ export default function RootLayout({
   // console.log(cookies().get("userdata")?.value);
   return (
     <html lang="en">
-      <body className={`${lato.className} bg-white `}>
+      <body className={`${lato.className} bg-white overflow-x-hidden `}>
         {children}
         <Toaster />
       </body>

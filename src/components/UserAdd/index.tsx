@@ -1,11 +1,14 @@
 "use client";
-import { saveUser } from "@/lib/actions/users";
+import { getMawil, getSubmawil, saveUser } from "@/lib/actions/users";
 import { queryClient } from "@/lib/utils";
 import {
   ACCEPTED_IMAGE_TYPES,
   AddUser,
   AddUserSchema,
+  LoginDataResponse,
   MAX_FILE_SIZE,
+  TMawil,
+  TSubmawil,
 } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
@@ -27,16 +30,42 @@ import { Input } from "../ui/input";
 import { Textarea } from "../ui/textarea";
 import { toast } from "../ui/use-toast";
 import { useRouter } from "next/navigation";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
 
 type Props = {
   token: string;
+  userdata: LoginDataResponse;
 };
 
-const UserAdd = ({ token }: Props) => {
+const UserAdd = ({ token, userdata }: Props) => {
   const router = useRouter();
   const [loadingForm, setLoadingForm] = React.useState(false);
   const [imageFile, setImageFile] = React.useState<FileList>();
   const [imagePreview, setImagePreview] = React.useState("");
+  const [mawils, setMawils] = React.useState<TMawil[]>([]);
+  const [subMawils, setSubMawils] = React.useState<TSubmawil[]>([]);
+
+  const tryGetMawil = React.useCallback(async () => {
+    const newMawil = await getMawil(token);
+    setMawils(newMawil);
+  }, [token]);
+
+  const tryGetSubMawil = React.useCallback(async () => {
+    const newSubMawil = await getSubmawil(token, Number(userdata.mawil));
+    setSubMawils(newSubMawil);
+  }, [token, userdata.mawil]);
+
+  React.useEffect(() => {
+    tryGetMawil();
+    tryGetSubMawil();
+  }, [tryGetMawil, tryGetSubMawil]);
+
   const form = useForm<AddUser>({
     resolver: zodResolver(AddUserSchema),
     defaultValues: {
@@ -44,8 +73,8 @@ const UserAdd = ({ token }: Props) => {
       password: "",
       role: "3",
       confPassword: "",
-      mawil: "sumsel",
-      submawil: "oku",
+      mawil: Number(userdata.mawil),
+      submawil: null,
       nik: "",
       tlp: "",
       alamat: "",
@@ -78,13 +107,21 @@ const UserAdd = ({ token }: Props) => {
 
   function onSubmit(data: AddUser) {
     // setLoadingForm(true);
-    mutation.mutate(
+    toast({
+      title: "Berhasil",
+      description: (
+        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
+          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
+        </pre>
+      ),
+    });
+    /* mutation.mutate(
       { data, token },
       {
         onSuccess: (data, variables, context) => {
-          console.log("SUCCESS : ", data);
-          console.log("SUCCESS : ", variables);
-          console.log("SUCCESS : ", context);
+          // console.log("SUCCESS : ", data);
+          // console.log("SUCCESS : ", variables);
+          // console.log("SUCCESS : ", context);
           // form.reset();
           toast({
             title: "Berhasil",
@@ -94,9 +131,9 @@ const UserAdd = ({ token }: Props) => {
           router.replace("/secure/users");
         },
         onError: (error, variables, context) => {
-          console.log("ERROR : ", error.message);
-          console.log("ERROR : ", variables);
-          console.log("ERROR : ", context);
+          // console.log("ERROR : ", error.message);
+          // console.log("ERROR : ", variables);
+          // console.log("ERROR : ", context);
           toast({
             title: "Error",
             description: "Gagal Menambahkan User",
@@ -104,7 +141,7 @@ const UserAdd = ({ token }: Props) => {
           });
         },
       }
-    );
+    ); */
     // console.log("data input :", data);
     // toast({
     //   title: "You submitted the following values:",
@@ -166,7 +203,6 @@ const UserAdd = ({ token }: Props) => {
 
   return (
     <>
-      <TopNavbar title="Tambah User PIC" backButton />
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
@@ -344,7 +380,27 @@ const UserAdd = ({ token }: Props) => {
                 <FormItem className="space-y-1 py-4 px-4 bg-white w-full">
                   <FormLabel className="font-semibold">Mawil</FormLabel>
                   <FormControl>
-                    <Input {...field} />
+                    {/* <Input {...field} /> */}
+                    <Select
+                      disabled
+                      value={String(form.getValues("mawil"))}
+                      onValueChange={(value) =>
+                        form.setValue("mawil", Number(value), {
+                          shouldValidate: true,
+                        })
+                      }
+                    >
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Pilih Mawil" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {mawils.map((mawil) => (
+                          <SelectItem key={mawil.id} value={String(mawil.id)}>
+                            {mawil.nama_mawil}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </FormControl>
                   {/* <FormDescription>
                   This is your public display name.
@@ -360,11 +416,29 @@ const UserAdd = ({ token }: Props) => {
                 <FormItem className="space-y-1 py-4 px-4 bg-white w-full">
                   <FormLabel className="font-semibold">Submawil</FormLabel>
                   <FormControl>
-                    <Input {...field} />
+                    <Select
+                      value={String(form.getValues("submawil"))}
+                      onValueChange={(value) =>
+                        form.setValue("submawil", Number(value), {
+                          shouldValidate: true,
+                        })
+                      }
+                    >
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Pilih submawil" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {subMawils.map((submawil) => (
+                          <SelectItem
+                            key={submawil.id}
+                            value={String(submawil.id)}
+                          >
+                            {submawil.nama_submawil}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </FormControl>
-                  {/* <FormDescription>
-                  This is your public display name.
-                </FormDescription> */}
                   <FormMessage />
                 </FormItem>
               )}

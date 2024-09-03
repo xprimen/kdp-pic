@@ -23,7 +23,12 @@ export const loginAction = async (
       },
     })
     .then((res) => {
-      let base64Url = res.data.accessToken.split(".")[1]; // token you get
+      // if (res.headers) {
+      //   console.log(res.headers.get("set-cookie")[0]);
+      // }
+      const accessToken = res.data.accessToken;
+      // const accessToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyaWQiOiI5ZjgyNGEyNC02ZWE5LTRjYzktYjg2OC04OTAwNjU0MjViM2YiLCJuYW1hIjoiRW5nZ2EgUFcyIiwicm9sZSI6MiwiaWF0IjoxNzI0MzQ0MjQ0LCJleHAiOjE3MjY5MzYyNDR9.HxGmmtFtw2pdZCC3N5EUeZ07-3_cN2TuNm4wJe1hiXI";
+      let base64Url = accessToken.split(".")[1]; // token you get
       let base64 = base64Url.replace("-", "+").replace("_", "/");
       let decodedData = JSON.parse(
         Buffer.from(base64, "base64").toString("binary")
@@ -41,15 +46,19 @@ export const loginAction = async (
         username: values.username,
         nama: decodedData.nama,
         id: decodedData.userid,
+        mawil: decodedData.mawil,
+        submawil: decodedData.submawil,
       };
 
-      cookies().set("token", res.data.accessToken, {
+      cookies().set("token", accessToken, {
         path: "/",
         httpOnly: true,
+        secure: true,
       });
       cookies().set("userdata", JSON.stringify(dataSave), {
         path: "/",
         httpOnly: true,
+        secure: true,
       });
       return {
         success: true,

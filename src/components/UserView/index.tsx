@@ -5,31 +5,33 @@ import TableToolbars from "../utilities/TableToolbars";
 import { useQuery } from "@tanstack/react-query";
 import { getUsers } from "@/lib/actions/users";
 import { Skeleton } from "../ui/skeleton";
+import { TUser } from "@/types";
 
-type TUser = {
-  id: string;
-  username: string;
-  nama: string;
-  nik: string;
-  role: string;
-  alamat: string;
-  tlp: string;
-  mawil: string;
-  submawil: string;
-  kel: number;
-  kec: number;
-  kota: number;
-  propinsi: number;
-};
+// type TUser = {
+//   // id: string;
+//   username: string;
+//   nama: string;
+//   nik: string;
+//   role: string;
+//   alamat: string;
+//   tlp: string;
+//   mawil: string;
+//   submawil: string;
+//   kel: number;
+//   kec: number;
+//   kota: number;
+//   propinsi: number;
+// };
 type Props = {
   // data: TUser[];
   token: string;
 };
 
 const UserView = ({ token }: Props) => {
+  // console.log("token : ", token);
   const { data: users, isFetching } = useQuery({
     queryKey: ["users"],
-    queryFn: async () => getUsers(token),
+    queryFn: () => getUsers(token),
     // refetchOnWindowFocus: true,
   });
 
@@ -59,25 +61,33 @@ const UserView = ({ token }: Props) => {
               </Card>
             </div>
           ))}
-        {users?.data?.map((dt: any) => (
-          <div key={dt.id} className="bg-white px-4 py-2">
-            <Card>
-              <CardHeader className="py-2">
-                <CardTitle className="text-lg flex items-center gap-x-2">
-                  <User size="20" /> {dt.nama}
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-slate-500 text-sm flex justify-between">
-                  <span>@{dt.username}</span>
-                  <span className="text-slate-700 font-semibold">
-                    {dt.submawil}
-                  </span>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        ))}
+        {users?.map((dt: TUser) => {
+          return (
+            <div key={dt.username} className="bg-white px-4 py-2">
+              <Card>
+                <CardHeader className="py-2">
+                  <CardTitle className="text-lg flex items-center gap-x-2">
+                    <User size="20" /> {dt.nama}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-slate-500 text-sm flex justify-between">
+                    <span>@{dt.username}</span>
+                    <div>
+                      <span className="text-slate-700 font-semibold">
+                        {dt.mawil.nama_mawil}
+                      </span>
+                      {" -> "}
+                      <span className="text-slate-700 font-semibold text-xs">
+                        {dt.sub_mawil.nama_submawil}
+                      </span>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          );
+        })}
       </div>
     </div>
   );

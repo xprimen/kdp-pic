@@ -4,7 +4,7 @@ import UserView from "@/components/UserView";
 import { LoginDataResponse } from "@/types";
 import { cookies } from "next/headers";
 
-const Users = async () => {
+const Users = () => {
   const userdata = (): LoginDataResponse => {
     const data = cookies().get("userdata")?.value;
     return data ? JSON.parse(data) : null;
