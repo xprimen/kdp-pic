@@ -1,40 +1,29 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import {
+  Form,
+  FormControl,
   FormField,
   FormItem,
   FormLabel,
-  FormControl,
   FormMessage,
-  Form,
-  FormDescription,
 } from "@/components/ui/form";
-import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { getEkspedisiKotak } from "@/lib/actions/kotak";
 import {
   ACCEPTED_IMAGE_TYPES,
-  UpdateEkspedisiKotakSchema,
   LoginDataResponse,
   TUpdateEkspedisiKotak,
+  UpdateEkspedisiKotakSchema,
 } from "@/types";
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { CalendarIcon, CircleX, Save } from "lucide-react";
-import { Input } from "@/components/ui/input";
-import React, { useState } from "react";
-import { useRouter } from "next/navigation";
-import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { cn, queryClient } from "@/lib/utils";
-import { toast } from "@/components/ui/use-toast";
+import { useQuery } from "@tanstack/react-query";
+import { CircleX, Save } from "lucide-react";
 import Image from "next/image";
-import { Label } from "@/components/ui/label";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
+import { useRouter } from "next/navigation";
+import React, { useState } from "react";
+import { useForm } from "react-hook-form";
 
 type Props = {
   id: number;
@@ -188,14 +177,14 @@ const EkspedisiUpdate = ({ id, userdata, token }: Props) => {
                     Tanggal Diterima
                   </FormLabel>
                   <FormControl>
-                    <DatePicker
+                    {/* <DatePicker
                       {...field}
                       selected={new Intl.DateTimeFormat("id-ID").format(date)}
                       // onChange={(date) => form.setValue("tgl_terima", Int date)} //onChange(date)}
                       onChange={(date) => {
                         console.log(date);
                       }} //onChange(date)}
-                    />
+                    /> */}
                   </FormControl>
                   <FormMessage />
                 </FormItem>
