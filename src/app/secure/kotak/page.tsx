@@ -1,4 +1,7 @@
 import BottomNavbar from "@/components/BottomNavbar";
+import BukaView from "@/components/Kotak/BukaView";
+import PasangView from "@/components/Kotak/PasangView";
+import EkspedisiView from "@/components/Kotak/EkspedisiView";
 import TopNavbar from "@/components/TopNavbar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { LoginDataResponse } from "@/types";
@@ -10,20 +13,42 @@ function Kotak() {
     return data ? JSON.parse(data) : null;
   };
 
+  const token = () => {
+    return String(cookies().get("token")?.value);
+  };
+
+  const gridCols = () => {
+    return userdata().role === "2" ? "grid-cols-3" : "grid-cols-2";
+  };
+
   return (
     <>
       <TopNavbar title="Kotak" />
       <BottomNavbar role={userdata()?.role} />
-      <Tabs defaultValue="account">
-        <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="account">Account</TabsTrigger>
-          <TabsTrigger value="password">Password</TabsTrigger>
+      <Tabs defaultValue="ekspedisi">
+        <TabsList className={`grid w-full ${gridCols()} bg-slate-100 h-14`}>
+          {userdata().role === "2" && (
+            <TabsTrigger value="ekspedisi" className="h-full text-md">
+              Terima/Kirim
+            </TabsTrigger>
+          )}
+          <TabsTrigger value="pasang" className="h-full text-md">
+            Pasang
+          </TabsTrigger>
+          <TabsTrigger value="buka" className="h-full text-md">
+            Buka
+          </TabsTrigger>
         </TabsList>
-        <TabsContent value="account" className="px-4">
-          Make changes to your account here.
+        {userdata().role === "2" && (
+          <TabsContent value="ekspedisi" asChild>
+            <EkspedisiView userdata={userdata()} token={token()} />
+          </TabsContent>
+        )}
+        <TabsContent value="pasang" asChild>
+          <PasangView userdata={userdata()} token={token()} />
         </TabsContent>
-        <TabsContent value="password" className="px-4">
-          Change your password here.
+        <TabsContent value="buka" asChild>
+          <BukaView userdata={userdata()} />
         </TabsContent>
       </Tabs>
     </>
