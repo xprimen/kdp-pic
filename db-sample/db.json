@@ -45,8 +45,8 @@
     },
     {
       "id": "2",
-      "username": "sanfkpw1",
-      "password": "sanfkpw1",
+      "username": "enggapw2",
+      "password": "enggapw2",
       "role": 2,
       "nik": "1607103313990001",
       "nama": "San FK PW1",
@@ -61,8 +61,8 @@
     },
     {
       "id": "3",
-      "username": "sanfkpk1",
-      "password": "sanfkpk1",
+      "username": "enggapk1",
+      "password": "enggapk1",
       "role": 3,
       "nik": "1607103313990001",
       "nama": "San FK PK1",
@@ -80,27 +80,92 @@
     {
       "id": "PKDP0001",
       "qrcode": "link:PKDP0001",
-      "user_id": null
+      "user_input": null,
+      "user_wilayah": null,
+      "user_kotak": null,
+      "status_kotak": "idle",
+      "status_pengiriman": "diterima"
     },
     {
       "id": "PKDP0002",
       "qrcode": "link:PKDP0002",
-      "user_id": null
+      "user_input": null,
+      "user_wilayah": null,
+      "user_kotak": null,
+      "status_kotak": "idle",
+      "status_pengiriman": "diterima"
     },
     {
       "id": "PKDP0003",
       "qrcode": "link:PKDP0003",
-      "user_id": null
+      "user_input": null,
+      "user_wilayah": null,
+      "user_kotak": null,
+      "status_kotak": "idle",
+      "status_pengiriman": "diterima"
     },
     {
       "id": "PKDP0004",
       "qrcode": "link:PKDP0004",
-      "user_id": null
+      "user_input": null,
+      "user_wilayah": null,
+      "user_kotak": null,
+      "status_kotak": "idle",
+      "status_pengiriman": "diterima"
     },
     {
       "id": "PKDP0005",
       "qrcode": "link:PKDP0005",
-      "user_id": null
+      "user_input": null,
+      "user_wilayah": null,
+      "user_kotak": null,
+      "status_kotak": "idle",
+      "status_pengiriman": "diterima"
+    },
+    {
+      "id": "PKDP0006",
+      "qrcode": "link:PKDP0006",
+      "user_input": null,
+      "user_wilayah": null,
+      "user_kotak": null,
+      "status_kotak": "idle",
+      "status_pengiriman": "dikirim"
+    },
+    {
+      "id": "PKDP0007",
+      "qrcode": "link:PKDP0007",
+      "user_input": null,
+      "user_wilayah": null,
+      "user_kotak": null,
+      "status_kotak": "idle",
+      "status_pengiriman": "dikirim"
+    },
+    {
+      "id": "PKDP0008",
+      "qrcode": "link:PKDP0008",
+      "user_input": null,
+      "user_wilayah": null,
+      "user_kotak": null,
+      "status_kotak": "idle",
+      "status_pengiriman": "dikirim"
+    },
+    {
+      "id": "PKDP0009",
+      "qrcode": "link:PKDP0009",
+      "user_input": null,
+      "user_wilayah": null,
+      "user_kotak": null,
+      "status_kotak": "idle",
+      "status_pengiriman": "dikirim"
+    },
+    {
+      "id": "PKDP0010",
+      "qrcode": "link:PKDP0010",
+      "user_input": null,
+      "user_wilayah": null,
+      "user_kotak": null,
+      "status_kotak": "idle",
+      "status_pengiriman": "dikirim"
     }
   ],
   "pic_wilayah": [
@@ -112,16 +177,16 @@
       "status_kotak": "ready"
     }
   ],
-  "pengiriman_kotak": [
+  "ekspedisi_kotak": [
     {
       "id": 1,
-      "id_kotak": "PKDP0001",
+      "id_kotak": "PKDP0006,PKDP0007,PKDP0008,PKDP0009,PKDP0010",
       "user_pengirim": "1",
-      "user_penerima": "2",
+      "user_penerima": "9f824a24-6ea9-4cc9-b868-890065425b3f",
       "alamat_penerima": "jalan",
-      "no_resi": "123456789",
+      "keterangan": "No. resi: 123456789",
       "tgl_kirim": "2022-08-01",
-      "tgl_terima": "2022-08-10"
+      "tgl_terima": null
     }
   ],
   "history_kotak": [],
