@@ -11,14 +11,10 @@ const Page = ({ params: { id } }: { params: { id: string } }) => {
     return data ? JSON.parse(data) : null;
   };
 
-  const token = () => {
-    return String(cookies().get("token")?.value);
-  };
-
   return (
     <AnimateSlideIn direction="left" className="pb-4">
       <TopNavbar title="Penerimaan Kotak" backButton />
-      <EkspedisiUpdate id={Number(id)} token={token()} userdata={userdata()} />
+      <EkspedisiUpdate id={Number(id)} userdata={userdata()} />
     </AnimateSlideIn>
   );
 };

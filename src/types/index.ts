@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const loginDataResponseSchema = z.object({
-  username: z.string(),
+  // username: z.string(),
   nama: z.string(),
   role: z.string(),
   id: z.string(),
@@ -29,7 +29,7 @@ export const ACCEPTED_IMAGE_TYPES = [
 export const UserSchema = z.object({
   username: z.string().min(2, { message: "Minimal 2 huruf" }).max(50),
   nama: z.string().min(2, { message: "Minimal 2 huruf" }),
-  role: z.string().min(1).default("3"),
+  role: z.string().min(1),
   nik: z.string().min(16, { message: "Minimal 16 angka" }).max(16),
   image: z.string().optional(),
   tlp: z.string().optional(),
@@ -42,10 +42,10 @@ export const UserSchema = z.object({
     id: z.number(),
     nama_submawil: z.string(),
   }),
-  propinsi: z.string().default("16"),
-  kota: z.string().default("1601"),
-  kec: z.string().default("160114"),
-  kel: z.string().default("1601141005"),
+  propinsi: z.string().min(1, { message: "Wajib dipilih" }),
+  kota: z.string().min(1, { message: "Wajib dipilih" }),
+  kec: z.string().min(1, { message: "Wajib dipilih" }),
+  kel: z.string().min(1, { message: "Wajib dipilih" }),
 });
 
 export type TUser = z.infer<typeof UserSchema>;
@@ -54,8 +54,8 @@ export const AddUserSchema = UserSchema.omit({ mawil: true, sub_mawil: true })
   .extend({
     password: z.string().min(2, { message: "Minimal 2 huruf" }).max(50),
     confPassword: z.string().min(2, { message: "Minimal 2 huruf" }).max(50),
-    mawil: z.number().min(1, { message: "Minimal 1 huruf" }).nullable(),
-    submawil: z.number().min(1, { message: "Minimal 1 huruf" }).nullable(),
+    id_mawil: z.string().min(1, { message: "Wajib Dipilih" }),
+    id_submawil: z.string().min(1, { message: "Wajib Dipilih" }),
     // ktp: z.string().min(1, { message: "KTP Wajib Diisi" }),
     /* ktp: z
       .any()
@@ -94,45 +94,61 @@ export const KotakSchema = z.object({
   user_input: z.number().nullable(),
   user_wilayah: z.number().nullable(),
   user_kotak: z.number().nullable(),
-  status_kotak: z
-    .enum([
-      "idle",
-      "terpasang",
-      "wajib-unboxing",
-      "belum-unboxing",
-      "sudah-unboxing",
-      "belum-setor",
-      "sudah-setor",
-    ])
-    .default("idle"),
-  status_pengiriman: z.enum(["dikirim", "diterima"]).optional(),
+  status_kotak: z.enum([
+    "0", // dikirim dan belum diterima
+    "1", // sudah diterima dan Idle
+    "2", // terpasang
+    "3", // Ubox belum setor
+    "4", // sudah setor
+  ]),
+  // status_pengiriman: z.enum(["dikirim", "diterima"]).optional(),
 });
 
 export type TKotak = z.infer<typeof KotakSchema>;
 
+export type kirimanKotakBE = {
+  id_kirim: number;
+  id_kotak: number;
+  status_terima: number;
+  kirim_kotak: {
+    tgl_kirim: Date;
+    id_penerima: number;
+    status_terima: number;
+  };
+};
+
+export const EkspedisiDetailSchema = z.object({
+  id: z.number(),
+  id_kirim: z.number(),
+  id_kotak: z.number(),
+  // kode_kotak: z.string(),
+});
+
+export type TEkspedisiDetail = z.infer<typeof EkspedisiDetailSchema>;
+
 export const EkspedisiKotakSchema = z.object({
   id: z.number(),
-  id_kotak: z.string(),
-  user_pengirim: z.string(),
-  user_penerima: z.string(),
-  alamat_penerima: z.string(),
-  keterangan: z.string().nullable(),
+  // nama_pengirim: z.string(),
+  id_penerima: z.number(),
+  status_terima: z.number(),
   tgl_kirim: z.date(),
-  tgl_terima: z.date().nullable(),
+  detail_kirim_kotaks: z.array(EkspedisiDetailSchema),
 });
 
 export type TEkspedisiKotak = z.infer<typeof EkspedisiKotakSchema>;
 
 export const UpdateEkspedisiKotakSchema = z.object({
-  id: z.number(),
-  id_kotak: z.array(z.string()).min(1, "Minimal 1 kotak dipilih"),
-  user_penerima: z.string(),
-  alamat_penerima: z.string(),
-  keterangan: z.string().nullable(),
-  tgl_kirim: z.date(),
-  tgl_terima: z.date({
-    required_error: "Tanggal Diterima Wajib Diisi",
-  }),
+  id_kirim: z.number(),
+  kotak: z.array(z.string()).min(1, "Minimal 1 kotak dipilih"),
+  id_penerima: z.number(),
+  status_terima: z.number().default(1),
+  // alamat_penerima: z.string(),
+  // keterangan: z.string().nullable(),
+  // tgl_kirim: z.date(),
+  // tgl_terima: z.string({
+  //   required_error: "Tanggal Diterima Wajib Diisi",
+  // }),
+  tgl_terima: z.string().min(1, "Tanggal Diterima Wajib Diisi"),
   bukti_terima: z.string().optional(),
 });
 
@@ -151,3 +167,15 @@ export const SubmawilSchema = z.object({
 });
 
 export type TSubmawil = z.infer<typeof SubmawilSchema>;
+
+export const PropinsiSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+});
+
+export type TPropinsi = z.infer<typeof PropinsiSchema>;
+
+export type TKota = z.infer<typeof PropinsiSchema>;
+
+export type TKecamatan = z.infer<typeof PropinsiSchema>;
+export type TKelurahan = z.infer<typeof PropinsiSchema>;

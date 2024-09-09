@@ -1,12 +1,15 @@
 "use server";
 import { LoginDataResponse, LoginFormInput } from "@/types";
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import { decodeToken } from "../utils";
+import { setCookie } from "cookies-next";
 
 export const logoutAction = () => {
   cookies().delete("token");
   cookies().delete("userdata");
+  cookies().delete("refreshToken");
   redirect("/");
 };
 export const loginAction = async (
@@ -22,19 +25,38 @@ export const loginAction = async (
         "Content-Type": "application/json",
       },
     })
-    .then((res) => {
-      // if (res.headers) {
-      //   console.log(res.headers.get("set-cookie")[0]);
-      // }
+    .then((res: AxiosResponse) => {
+      // console.log(res);
+      /* let refreshToken = "";
+      let expiresRefreshToken = "";
+      let maxAgeRefreshToken = 0;
+      if (res.headers) {
+        const headerCookies = res.headers["set-cookie"]
+          ? res.headers["set-cookie"][0]
+          : "";
+        const getRefreshToken = headerCookies.split("; ") || [];
+        refreshToken = getRefreshToken[0].split("=")[1];
+        maxAgeRefreshToken = Number(getRefreshToken[1].split("=")[1]);
+        expiresRefreshToken = getRefreshToken[3].split("=")[1];
+        // cookies().set("refreshToken", refreshToken);
+        // console.log(getRefreshToken);
+      } */
       const accessToken = res.data.accessToken;
+      const refreshToken = res.data.refreshToken;
+      // console.log("refreshToken :", refreshToken);
       // const accessToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyaWQiOiI5ZjgyNGEyNC02ZWE5LTRjYzktYjg2OC04OTAwNjU0MjViM2YiLCJuYW1hIjoiRW5nZ2EgUFcyIiwicm9sZSI6MiwiaWF0IjoxNzI0MzQ0MjQ0LCJleHAiOjE3MjY5MzYyNDR9.HxGmmtFtw2pdZCC3N5EUeZ07-3_cN2TuNm4wJe1hiXI";
-      let base64Url = accessToken.split(".")[1]; // token you get
-      let base64 = base64Url.replace("-", "+").replace("_", "/");
-      let decodedData = JSON.parse(
-        Buffer.from(base64, "base64").toString("binary")
-      );
+      const decodedData = decodeToken<
+        Omit<LoginDataResponse, "userid"> & { userid: string }
+      >(accessToken);
 
-      if (decodedData.role === "1") {
+      // refreshToken decode
+      // let base64UrlRT = refreshToken.split(".")[1];
+      // let base64RT = base64UrlRT.replace("-", "+").replace("_", "/");
+      // let decodedDataRT = JSON.parse(
+      //   Buffer.from(base64RT, "base64").toString("binary")
+      // );
+
+      if (decodedData.role === "1001") {
         return {
           success: false,
           message: "Login Gagal, User Tidak Memiliki Akses",
@@ -43,7 +65,7 @@ export const loginAction = async (
 
       const dataSave: LoginDataResponse = {
         role: String(decodedData.role),
-        username: values.username,
+        // username: values.username,
         nama: decodedData.nama,
         id: decodedData.userid,
         mawil: decodedData.mawil,
@@ -54,11 +76,21 @@ export const loginAction = async (
         path: "/",
         httpOnly: true,
         secure: true,
+        // expires: decodedData.exp * 1000,
+      });
+      cookies().set("refreshToken", refreshToken, {
+        path: "/",
+        httpOnly: true,
+        secure: true,
+        // maxAge: maxAgeRefreshToken,
+        // sameSite: "none",
+        // expires: decodedDataRT.exp * 1000,
       });
       cookies().set("userdata", JSON.stringify(dataSave), {
         path: "/",
         httpOnly: true,
         secure: true,
+        // expires: new Date(decodedData.exp * 1000),
       });
       return {
         success: true,
@@ -66,52 +98,6 @@ export const loginAction = async (
         data: dataSave,
       };
     });
-
-  /* return await axios.get(`https://json-server-tester.vercel.app/users`, {
-    headers: {
-      "Content-Type": "application/json",
-    },
-  })
-    .then((data) => {
-      // console.log("DATA JSON :", data);
-      const dataFilter = data.filter((d: { role: number }) =>
-        [2, 3].includes(d.role)
-      );
-      const filterByUsername = dataFilter.filter(
-        (d: { username: string }) => d.username === values.username
-      );
-      if (filterByUsername.length === 0) {
-        return { success: false, message: "Username atau Password Salah 2" };
-      }
-
-      if (values.password !== filterByUsername[0].password) {
-        return { success: false, message: "Username atau Password Salah 3" };
-      }
-
-      const dataSave: LoginDataResponse = {
-        role: filterByUsername[0].role,
-        // username: filterByUsername[0].username,
-        nama: filterByUsername[0].nama,
-        id: filterByUsername[0].id,
-      };
-
-      cookies().set("token", filterByUsername[0].id, {
-        path: "/",
-        httpOnly: true,
-      });
-      // cookies().set("userdata", JSON.stringify(dataSave), {
-      //   path: "/",
-      //   httpOnly: true,
-      // });
-      return {
-        success: true,
-        message: "Berhasil",
-        data: dataSave,
-      };
-    })
-    .catch((error) => {
-      return { success: false, message: "Error" };
-    }); */
 };
 
 export const createUserAction = async (
@@ -149,3 +135,67 @@ export const createUserAction = async (
       };
     });
 };
+
+export const saveCookie = (cookieName: string, cookieValue: string) => {
+  cookies().set(cookieName, cookieValue, {
+    path: "/",
+    httpOnly: true,
+    secure: true,
+    // expires: decodedData.exp * 1000,
+  });
+};
+
+// export const refreshingToken = async (refreshToken: string) => {
+//   await axios
+//     .get(`/token`, {
+//       headers: {
+//         "Content-Type": "application/json",
+//         Authorization: `Bearer ${refreshToken}`,
+//       },
+//     })
+//     .then(async ({ data }) => {
+//       // console.log("response :", data);
+//       const newAccessToken = data.accessToken;
+//       const newRefreshToken = data.refreshToken;
+
+//       const decodedData = decodeToken<
+//         Omit<LoginDataResponse, "userid"> & { userid: string }
+//       >(newAccessToken);
+
+//       // cookies().set("token", newAccessToken, {
+//       //   path: "/",
+//       //   httpOnly: true,
+//       //   secure: true,
+//       //   // expires: decodedData.exp * 1000,
+//       // });
+//       setCookie("refreshToken", newRefreshToken, {
+//         path: "/",
+//         httpOnly: true,
+//         secure: true,
+//         // maxAge: maxAgeRefreshToken,
+//         // sameSite: "none",
+//         // expires: decodedDataRT.exp * 1000,
+//       });
+
+//       const dataSave: LoginDataResponse = {
+//         role: String(decodedData.role),
+//         nama: decodedData.nama,
+//         id: decodedData.userid,
+//         mawil: decodedData.mawil,
+//         submawil: decodedData.submawil,
+//       };
+
+//       setCookie("userdata", JSON.stringify(dataSave), {
+//         path: "/",
+//         httpOnly: true,
+//         secure: true,
+//         // expires: new Date(decodedData.exp * 1000),
+//       });
+//     })
+//     .catch((error) => {
+//       console.log("ERROR", error);
+//       if (error.response?.status === 401) {
+//         // logoutAction();
+//       }
+//     });
+// };

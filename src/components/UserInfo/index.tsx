@@ -14,7 +14,7 @@ const UserInfo = ({ userdata }: Props) => {
       </Avatar>
       <div className="flex-1">
         <h2 className="font-bold text-xl">{userdata?.nama}</h2>
-        <p className="text-slate-500 text-md">@{userdata?.username}</p>
+        {/* <p className="text-slate-500 text-md">@{userdata?.username}</p> */}
         <p className="text-green-600 text-md">
           {userdata?.role === "2" ? "PIC Wilayah" : "PIC Kotak"}
         </p>

@@ -21,8 +21,10 @@ import {
 import { ScrollArea, ScrollBar } from "../ui/scroll-area";
 import { Separator } from "../ui/separator";
 import MonthListSelect from "../utilities/MonthListSelect";
+import { useRouter } from "next/navigation";
 
 const Summary = () => {
+  const router = useRouter();
   const [monthSelected, setMonthSelected] = React.useState(
     new Date().getMonth()
   );
@@ -49,8 +51,7 @@ const Summary = () => {
   const kotak_standby = [1, 3, 6, 8, 9];
   return (
     <>
-      <div className="flex items-center justify-end gap-x-4 px-4 pb-4">
-        <h2 className="font-semibold">Periode :</h2>
+      <div className="flex items-center justify-end px-4 pb-4">
         <MonthListSelect setValue={setMonthSelected} months={months}>
           <Button variant="outline" className="gap-x-2 font-semibold">
             <CalendarIcon size={16} /> {months[monthSelected]}{" "}
@@ -108,6 +109,24 @@ const Summary = () => {
               <span className="text-red-600">2 belum setor</span>
             </div>
           </CardContent>
+        </Card>
+        <Card
+          onClick={() => router.push("/secure/maps")}
+          className="bg-yellow-500 text-white relative py-6 cursor-pointer"
+        >
+          <MapPin className="absolute text-white/30 right-0 top-1/2 w-20 h-20 -translate-x-1/2 -translate-y-1/2" />
+          <CardHeader>
+            {/* <CardDescription className="text-white uppercase">
+              Peta
+            </CardDescription> */}
+            <CardTitle className="text-3xl">Peta Kotak</CardTitle>
+          </CardHeader>
+          {/* <CardContent>
+            <div className="text-xs text-white/70">
+              <span className="text-white font-semibold">Rp 2.650.000</span>{" "}
+              Setoran Terbaru
+            </div>
+          </CardContent> */}
         </Card>
       </div>
       <DashboardChart />

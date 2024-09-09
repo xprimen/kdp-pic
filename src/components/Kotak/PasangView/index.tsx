@@ -4,26 +4,28 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Skeleton } from "@/components/ui/skeleton";
 import TableToolbars from "@/components/utilities/TableToolbars";
-import { getKotak } from "@/lib/actions/kotak";
-import { TKotak, LoginDataResponse } from "@/types";
+import { getPenempatan } from "@/lib/actions/kotak";
+import { queryClient } from "@/lib/utils";
+import { LoginDataResponse, TEkspedisiKotak, TKotak } from "@/types";
 import { useQuery } from "@tanstack/react-query";
-import { Box, QrCode, User } from "lucide-react";
+import { Box, QrCode } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import React from "react";
 
 type Props = {
   userdata: LoginDataResponse;
-  token: string;
 };
-const PasangView = ({ token }: Props) => {
+const PasangView = ({ userdata }: Props) => {
   const { data, isFetching } = useQuery({
-    queryKey: ["kotak"],
-    queryFn: async () => getKotak(token, "idle"),
+    queryKey: ["penempatan"],
+    queryFn: async () => {
+      const { accessToken } = (await queryClient.getQueryData(["token"])) as {
+        accessToken: string;
+      };
+      return await getPenempatan(accessToken, userdata.id);
+    },
     // refetchOnWindowFocus: true,
   });
-
-  console.log(data);
 
   return (
     <div className="mb-20">
@@ -48,7 +50,7 @@ const PasangView = ({ token }: Props) => {
               </Card>
             </div>
           ))}
-        {data?.map((dt: TKotak) => (
+        {data?.map((dt: TEkspedisiKotak) => (
           <Link
             href={`/secure/kotak/pasang/${dt.id}`}
             key={dt.id}
@@ -59,7 +61,7 @@ const PasangView = ({ token }: Props) => {
                 <CardTitle className="text-lg flex items-center gap-x-2">
                   <Box size="20" /> {dt.id}{" "}
                   <span className="text-xs text-white capitalize bg-slate-400 rounded-lg px-2">
-                    {dt.status_kotak}
+                    {dt.status_terima}
                   </span>
                 </CardTitle>
               </CardHeader>
@@ -82,12 +84,12 @@ const PasangView = ({ token }: Props) => {
                           height={200}
                           alt="qr-code"
                         />
-                        {dt.status_kotak}
+                        {dt.status_terima}
                       </div>
                     </DialogContent>
                   </Dialog>
                   <span className="text-slate-700 font-semibold">
-                    {dt.status_kotak}
+                    {dt.status_terima}
                   </span>
                 </div>
               </CardContent>

@@ -8,12 +8,11 @@ type Props = {
 };
 
 function AdminLayout({ children }: Props) {
-  const token = () => {
-    return String(cookies().get("token")?.value);
+  const refreshToken = () => {
+    return cookies().get("refreshToken")?.value || "";
   };
-
   return (
-    <SecureWrapper token={token()}>
+    <SecureWrapper refreshToken={refreshToken()}>
       <AdminClientWrapper>{children}</AdminClientWrapper>
     </SecureWrapper>
   );

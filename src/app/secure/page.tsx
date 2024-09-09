@@ -9,6 +9,8 @@ function Dashboard() {
     const data = cookies().get("userdata")?.value;
     return data ? JSON.parse(data) : null;
   };
+
+  /* 
   const getKotak = async () => {
     const pic_wilayah = await fetch(
       "https://json-server-tester.vercel.app/pic_wilayah",
@@ -55,7 +57,7 @@ function Dashboard() {
     // console.log("kotak_wilayah :", kotak_wilayah);
 
     return kotak_wilayah;
-  };
+  }; */
 
   // React.useEffect(() => {
   //   getKotak();
@@ -65,7 +67,7 @@ function Dashboard() {
 
   return (
     <div className="pb-20">
-      <BottomNavbar role={userdata()?.role} />
+      <BottomNavbar role={userdata().role} />
       <UserGreeting userdata={userdata()} />
       <Summary />
     </div>

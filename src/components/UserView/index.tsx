@@ -6,32 +6,31 @@ import { useQuery } from "@tanstack/react-query";
 import { getUsers } from "@/lib/actions/users";
 import { Skeleton } from "../ui/skeleton";
 import { TUser } from "@/types";
+import axiosInstance from "@/lib/axiosInstance";
+import { queryClient } from "@/lib/utils";
 
-// type TUser = {
-//   // id: string;
-//   username: string;
-//   nama: string;
-//   nik: string;
-//   role: string;
-//   alamat: string;
-//   tlp: string;
-//   mawil: string;
-//   submawil: string;
-//   kel: number;
-//   kec: number;
-//   kota: number;
-//   propinsi: number;
-// };
 type Props = {
-  // data: TUser[];
   token: string;
+  refreshToken: string;
 };
 
-const UserView = ({ token }: Props) => {
+const UserView = ({ token, refreshToken }: Props) => {
   // console.log("token : ", token);
   const { data: users, isFetching } = useQuery({
-    queryKey: ["users"],
-    queryFn: () => getUsers(token),
+    queryKey: ["userspk"],
+    queryFn: async () => {
+      const { accessToken } = (await queryClient.getQueryData(["token"])) as {
+        accessToken: string;
+      };
+      // console.log("NEW TOKEN :", accessToken);
+      return getUsers(accessToken);
+      /* return axiosInstance(accessToken)
+        .get("/userspk")
+        .then((res) => {
+          console.log(res.data);
+          return res.data;
+        }); */
+    },
     // refetchOnWindowFocus: true,
   });
 

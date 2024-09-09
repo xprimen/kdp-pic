@@ -1,5 +1,13 @@
 "use client";
-import { getMawil, getSubmawil, saveUser } from "@/lib/actions/users";
+import {
+  getKecamatan,
+  getKelurahan,
+  getKota,
+  getMawil,
+  getPropinsi,
+  getSubmawil,
+  saveUser,
+} from "@/lib/actions/users";
 import { queryClient } from "@/lib/utils";
 import {
   ACCEPTED_IMAGE_TYPES,
@@ -7,12 +15,16 @@ import {
   AddUserSchema,
   LoginDataResponse,
   MAX_FILE_SIZE,
+  TKecamatan,
+  TKelurahan,
+  TKota,
   TMawil,
+  TPropinsi,
   TSubmawil,
 } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
-import { CircleX, Save } from "lucide-react";
+import { CircleX, LoaderIcon, Save } from "lucide-react";
 import Image from "next/image";
 import React from "react";
 import { useForm } from "react-hook-form";
@@ -50,21 +62,10 @@ const UserAdd = ({ token, userdata }: Props) => {
   const [imagePreview, setImagePreview] = React.useState("");
   const [mawils, setMawils] = React.useState<TMawil[]>([]);
   const [subMawils, setSubMawils] = React.useState<TSubmawil[]>([]);
-
-  const tryGetMawil = React.useCallback(async () => {
-    const newMawil = await getMawil(token);
-    setMawils(newMawil);
-  }, [token]);
-
-  const tryGetSubMawil = React.useCallback(async () => {
-    const newSubMawil = await getSubmawil(token, Number(userdata.mawil));
-    setSubMawils(newSubMawil);
-  }, [token, userdata.mawil]);
-
-  React.useEffect(() => {
-    tryGetMawil();
-    tryGetSubMawil();
-  }, [tryGetMawil, tryGetSubMawil]);
+  const [propinsis, setPropinsis] = React.useState<TPropinsi[]>([]);
+  const [kotas, setKotas] = React.useState<TKota[]>([]);
+  const [kecamatans, setKecamatans] = React.useState<TKecamatan[]>([]);
+  const [kelurahans, setKelurahans] = React.useState<TKelurahan[]>([]);
 
   const form = useForm<AddUser>({
     resolver: zodResolver(AddUserSchema),
@@ -73,18 +74,70 @@ const UserAdd = ({ token, userdata }: Props) => {
       password: "",
       role: "3",
       confPassword: "",
-      mawil: Number(userdata.mawil),
-      submawil: null,
+      id_mawil: String(userdata.mawil),
+      // submawil: ,
       nik: "",
       tlp: "",
       alamat: "",
-      propinsi: "16",
-      kota: "1601",
-      kec: "160114",
-      kel: "1601141005",
+      propinsi: "",
+      kota: "",
+      kec: "",
+      kel: "",
       image: "",
     },
   });
+
+  const tryGetMawil = React.useCallback(async () => {
+    const { accessToken } = (await queryClient.getQueryData(["token"])) as {
+      accessToken: string;
+    };
+    const newMawil = await getMawil(accessToken);
+    setMawils(newMawil);
+  }, []);
+
+  const tryGetSubMawil = React.useCallback(async () => {
+    const { accessToken } = (await queryClient.getQueryData(["token"])) as {
+      accessToken: string;
+    };
+    const newSubMawil = await getSubmawil(accessToken, Number(userdata.mawil));
+    setSubMawils(newSubMawil);
+  }, [userdata.mawil]);
+
+  const tryGetPropinsi = React.useCallback(async () => {
+    const { accessToken } = (await queryClient.getQueryData(["token"])) as {
+      accessToken: string;
+    };
+    const newPropinsi = await getPropinsi(accessToken);
+    setPropinsis(newPropinsi);
+  }, []);
+
+  const tryGetKota = async (id_propinsi: string) => {
+    const { accessToken } = (await queryClient.getQueryData(["token"])) as {
+      accessToken: string;
+    };
+    const newKota = await getKota(accessToken, id_propinsi);
+    setKotas(newKota);
+  };
+  const tryGetKecamatan = async (id_kota: string) => {
+    const { accessToken } = (await queryClient.getQueryData(["token"])) as {
+      accessToken: string;
+    };
+    const newKecamatan = await getKecamatan(accessToken, id_kota);
+    setKecamatans(newKecamatan);
+  };
+  const tryGetKelurahan = async (id_kecamatan: string) => {
+    const { accessToken } = (await queryClient.getQueryData(["token"])) as {
+      accessToken: string;
+    };
+    const newKelurahan = await getKelurahan(accessToken, id_kecamatan);
+    setKelurahans(newKelurahan);
+  };
+
+  React.useEffect(() => {
+    tryGetMawil();
+    tryGetSubMawil();
+    tryGetPropinsi();
+  }, [tryGetMawil, tryGetPropinsi, tryGetSubMawil]);
 
   const mutation = useMutation({
     mutationFn: saveUser,
@@ -105,18 +158,27 @@ const UserAdd = ({ token, userdata }: Props) => {
     }, */
   });
 
-  function onSubmit(data: AddUser) {
-    // setLoadingForm(true);
+  async function onSubmit(values: AddUser) {
+    setLoadingForm(true);
+
+    const { accessToken } = queryClient.getQueryData(["token"]) as {
+      accessToken: string;
+    };
+
+    // setTimeout(() => {
     toast({
-      title: "Berhasil",
+      title: "Mohon Tunggu",
       description: (
-        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-        </pre>
+        <span className="flex items-center">
+          <LoaderIcon className="mr-2 h-4 w-4 animate-spin" />
+          Loading
+        </span>
       ),
     });
-    /* mutation.mutate(
-      { data, token },
+    // setLoadingForm(false);
+    // }, 2000);
+    mutation.mutate(
+      { values, accessToken },
       {
         onSuccess: (data, variables, context) => {
           // console.log("SUCCESS : ", data);
@@ -125,7 +187,7 @@ const UserAdd = ({ token, userdata }: Props) => {
           // form.reset();
           toast({
             title: "Berhasil",
-            description: "Berhasil Menambahkan User PIC Kotak Baru",
+            description: `Berhasil Menambahkan User PIC ${variables.values.nama}`,
           });
           queryClient.invalidateQueries({ queryKey: ["users"] });
           router.replace("/secure/users");
@@ -141,17 +203,7 @@ const UserAdd = ({ token, userdata }: Props) => {
           });
         },
       }
-    ); */
-    // console.log("data input :", data);
-    // toast({
-    //   title: "You submitted the following values:",
-    //   description: (
-    //     <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-    //       <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-    //     </pre>
-    //   ),
-    // });
-    // setLoadingForm(false);
+    );
   }
 
   const toBase64 = (file: any): Promise<string> =>
@@ -372,10 +424,10 @@ const UserAdd = ({ token, userdata }: Props) => {
               </FormItem>
             )}
           />
-          <div className="flex w-">
+          <div className="flex">
             <FormField
               control={form.control}
-              name="mawil"
+              name="id_mawil"
               render={({ field }) => (
                 <FormItem className="space-y-1 py-4 px-4 bg-white w-full">
                   <FormLabel className="font-semibold">Mawil</FormLabel>
@@ -383,15 +435,15 @@ const UserAdd = ({ token, userdata }: Props) => {
                     {/* <Input {...field} /> */}
                     <Select
                       disabled
-                      value={String(form.getValues("mawil"))}
+                      value={String(form.getValues("id_mawil"))}
                       onValueChange={(value) =>
-                        form.setValue("mawil", Number(value), {
+                        form.setValue("id_mawil", value, {
                           shouldValidate: true,
                         })
                       }
                     >
                       <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Pilih Mawil" />
+                        <SelectValue placeholder="Pilih" />
                       </SelectTrigger>
                       <SelectContent>
                         {mawils.map((mawil) => (
@@ -411,21 +463,21 @@ const UserAdd = ({ token, userdata }: Props) => {
             />
             <FormField
               control={form.control}
-              name="submawil"
+              name="id_submawil"
               render={({ field }) => (
                 <FormItem className="space-y-1 py-4 px-4 bg-white w-full">
                   <FormLabel className="font-semibold">Submawil</FormLabel>
                   <FormControl>
                     <Select
-                      value={String(form.getValues("submawil"))}
+                      value={String(form.getValues("id_submawil"))}
                       onValueChange={(value) =>
-                        form.setValue("submawil", Number(value), {
+                        form.setValue("id_submawil", value, {
                           shouldValidate: true,
                         })
                       }
                     >
                       <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Pilih submawil" />
+                        <SelectValue placeholder="Pilih" />
                       </SelectTrigger>
                       <SelectContent>
                         {subMawils.map((submawil) => (
@@ -434,6 +486,146 @@ const UserAdd = ({ token, userdata }: Props) => {
                             value={String(submawil.id)}
                           >
                             {submawil.nama_submawil}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+          <div className="flex">
+            <FormField
+              control={form.control}
+              name="propinsi"
+              render={({ field }) => (
+                <FormItem className="space-y-1 py-4 px-4 bg-white w-full">
+                  <FormLabel className="font-semibold">Propinsi</FormLabel>
+                  <FormControl>
+                    <Select
+                      value={String(form.getValues("propinsi"))}
+                      onValueChange={(value) => {
+                        form.setValue("propinsi", value, {
+                          shouldValidate: true,
+                        });
+                        tryGetKota(value);
+                      }}
+                    >
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Pilih" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {propinsis.map((propinsi) => (
+                          <SelectItem
+                            key={propinsi.id}
+                            value={String(propinsi.id)}
+                          >
+                            {propinsi.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="kota"
+              render={({ field }) => (
+                <FormItem className="space-y-1 py-4 px-4 bg-white w-full">
+                  <FormLabel className="font-semibold">Kota</FormLabel>
+                  <FormControl>
+                    <Select
+                      value={String(form.getValues("kota"))}
+                      onValueChange={(value) => {
+                        form.setValue("kota", value, {
+                          shouldValidate: true,
+                        });
+                        tryGetKecamatan(value);
+                      }}
+                    >
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Pilih" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {kotas.map((kota) => (
+                          <SelectItem key={kota.id} value={String(kota.id)}>
+                            {kota.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+          <div className="flex">
+            <FormField
+              control={form.control}
+              name="kec"
+              render={({ field }) => (
+                <FormItem className="space-y-1 py-4 px-4 bg-white w-full">
+                  <FormLabel className="font-semibold">Kecamatan</FormLabel>
+                  <FormControl>
+                    <Select
+                      value={String(form.getValues("kec"))}
+                      onValueChange={(value) => {
+                        form.setValue("kec", value, {
+                          shouldValidate: true,
+                        });
+                        tryGetKelurahan(value);
+                      }}
+                    >
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Pilih" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {kecamatans.map((kecamatan) => (
+                          <SelectItem
+                            key={kecamatan.id}
+                            value={String(kecamatan.id)}
+                          >
+                            {kecamatan.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="kel"
+              render={({ field }) => (
+                <FormItem className="space-y-1 py-4 px-4 bg-white w-full">
+                  <FormLabel className="font-semibold">Kelurahan</FormLabel>
+                  <FormControl>
+                    <Select
+                      value={String(form.getValues("kel"))}
+                      onValueChange={(value) =>
+                        form.setValue("kel", value, {
+                          shouldValidate: true,
+                        })
+                      }
+                    >
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Pilih" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {kelurahans.map((kelurahan) => (
+                          <SelectItem
+                            key={kelurahan.id}
+                            value={String(kelurahan.id)}
+                          >
+                            {kelurahan.name}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -469,8 +661,17 @@ const UserAdd = ({ token, userdata }: Props) => {
             className="mx-4 gap-2 text-md"
             disabled={loadingForm}
           >
-            <Save />
-            Simpan
+            {loadingForm ? (
+              <span className="flex items-center">
+                <LoaderIcon className="mr-2 h-4 w-4 animate-spin" />
+                Loading
+              </span>
+            ) : (
+              <span className="flex items-center">
+                <Save className="mr-2 h-4 w-4" />
+                Simpan
+              </span>
+            )}
           </Button>
         </form>
       </Form>

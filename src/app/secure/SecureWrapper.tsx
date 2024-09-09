@@ -1,126 +1,51 @@
 "use client";
-import { queryClient } from "@/lib/utils";
+import { logoutAction, saveCookie } from "@/lib/actions/login";
+import axiosInstance from "@/lib/axiosInstance";
+import { decodeToken, queryClient } from "@/lib/utils";
+import { LoginDataResponse } from "@/types";
 import { QueryClientProvider } from "@tanstack/react-query";
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import axios from "axios";
 import createAuthRefreshInterceptor from "axios-auth-refresh";
-import axios, { AxiosError } from "axios";
+import { getCookie, setCookie } from "cookies-next";
+import React, { PropsWithChildren } from "react";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 type Props = {
-  children: React.ReactNode;
-  token: string;
+  refreshToken: string;
 };
 
-import React from "react";
-import { logoutAction } from "@/lib/actions/login";
+function SecureWrapper({ children, refreshToken }: PropsWithChildren<Props>) {
+  // console.log("isFetching 1 :", isFetching);
+  // console.log("data :", data);
+  // console.log("isFetching 2 :", isFetching);
 
-function SecureWrapper({ children, token }: Props) {
-  const refreshing = React.useCallback(
-    async (token: string, error: AxiosError) => {
-      console.log("tes sdsds", token);
-      return await axios
-        .get(`https://apifk.rurosi.my.id/token`, {
+  const getToken = queryClient.prefetchQuery({
+    queryKey: ["token"],
+    queryFn: () =>
+      axios
+        .get(`${process.env.BASE_API}/token`, {
           headers: {
             "Content-Type": "application/json",
-            // Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${refreshToken}`,
           },
         })
-        .then(async ({ data }) => {
-          console.log("response :", data);
-          // console.log("SESSION LAMA :", {
-          //   token: old_token,
-          //   refresh_token: bearer,
-          // });
-          // console.log("SESSION BARU :", {
-          //   token: resData.data.token,
-          //   refresh_token: resData.data.refresh_token,
-          // });
-
-          // await update({
-          //   ...session?.user,
-          //   token: resData.data.token,
-          //   refresh_token: resData.data.refresh_token,
-          // }).then(() => console.log("BERHASIL UPDATE SESSION"));
-          // if (error.config) {
-          //   error.config.headers.Authorization = `Bearer ${resData.token}`;
-          // }
-          // return Promise.resolve();
-        })
-        .catch((error) => {
-          console.log("ERROR", error);
-          if (error.response?.status === 401) {
-            // logoutAction();
-          }
-        });
-      /* try {
-        return await axios
-          .get(`https://apifk.rurosi.my.id/token`, {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-          })
-          .then(async ({ data }) => {
-            console.log("response :", data);
-            // console.log("SESSION LAMA :", {
-            //   token: old_token,
-            //   refresh_token: bearer,
-            // });
-            // console.log("SESSION BARU :", {
-            //   token: resData.data.token,
-            //   refresh_token: resData.data.refresh_token,
-            // });
-
-            // await update({
-            //   ...session?.user,
-            //   token: resData.data.token,
-            //   refresh_token: resData.data.refresh_token,
-            // }).then(() => console.log("BERHASIL UPDATE SESSION"));
-            // if (error.config) {
-            //   error.config.headers.Authorization = `Bearer ${resData.token}`;
-            // }
-            // return Promise.resolve();
-          });
-      } catch (error) {
-        // console.log("ERROR", error);
-        return Promise.reject(error);
-      } */
-    },
-    []
-  );
+        .then((res) => {
+          // console.log("New Token :", res.data.accessToken);
+          // console.log("TOKEN :", token);
+          // console.log("RefreshToken :", refreshToken);
+          // axiosInstance(res.data.accessToken);
+          return res.data;
+        }),
+  });
 
   React.useEffect(() => {
-    createAuthRefreshInterceptor(
-      axios,
-      async (error: AxiosError) => {
-        return refreshing(token, error);
-        // console.log("tes return");
-      },
-      {
-        statusCodes: [403],
-      }
-    );
-    // console.log("tes :", token);
-  }, [refreshing, token]);
-
-  /* const slashToken = async () => {
-    const token = await axios
-      .get(`https://apifk.rurosi.my.id/token`, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      })
-      .then((res) => {
-        console.log("RESPON TOKEN :", res);
-      });
-  };
-  React.useEffect(() => {
-    slashToken();
-  }, []); */
+    getToken;
+  }, [getToken]);
 
   return (
     <QueryClientProvider client={queryClient}>
       {children}
-      {/* <ReactQueryDevtools initialIsOpen={false} buttonPosition="relative" /> */}
+      <ReactQueryDevtools initialIsOpen={false} buttonPosition="relative" />
     </QueryClientProvider>
   );
 }

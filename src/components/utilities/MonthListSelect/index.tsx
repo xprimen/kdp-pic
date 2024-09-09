@@ -1,4 +1,10 @@
-import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer";
+import {
+  Drawer,
+  DrawerContent,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from "@/components/ui/drawer";
 import React from "react";
 
 type Props = {
@@ -11,6 +17,9 @@ const MonthListSelect = ({ setValue, children, months }: Props) => {
 
   return (
     <Drawer open={open} onOpenChange={setOpen}>
+      <DrawerHeader>
+        <DrawerTitle>Periode :</DrawerTitle>
+      </DrawerHeader>
       <DrawerTrigger asChild>{children}</DrawerTrigger>
       <DrawerContent>
         {months.map((month, i) => (

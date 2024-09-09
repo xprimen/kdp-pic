@@ -1,5 +1,11 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // experimental: {
+  //   typedRoutes: true,
+  // },
+  env: {
+    BASE_API: process.env.BASE_API,
+  },
   images: {
     remotePatterns: [
       {

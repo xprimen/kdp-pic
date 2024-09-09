@@ -1,60 +1,81 @@
-import { AddUser, TMawil, TSubmawil, TUser } from "@/types";
-import axios from "axios";
+// "use server";
+import {
+  AddUser,
+  TKecamatan,
+  TKelurahan,
+  TKota,
+  TMawil,
+  TPropinsi,
+  TSubmawil,
+  TUser,
+} from "@/types";
+import axiosInstance from "../axiosInstance";
 
-export const getUsers = async (token: string): Promise<TUser[]> => {
-  return await axios
-    .get("https://apifk.rurosi.my.id/userspk", {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    })
+export const getUsers = async (accessToken: string): Promise<TUser[]> => {
+  return await axiosInstance(accessToken)
+    .get("/userspk")
     .then((res) => {
-      // console.log("response :", res.data);
       return res.data;
-    })
-    .catch((err) => {
-      console.log(err);
     });
 };
 
 export const saveUser = async ({
-  data,
-  token,
+  values,
+  accessToken,
 }: {
-  data: AddUser;
-  token: string;
+  values: AddUser;
+  accessToken: string;
 }) => {
-  return await axios.post("https://apifk.rurosi.my.id/users", data, {
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-  });
+  return await axiosInstance(accessToken).post("/users", values);
   // return true;
 };
 
-export const getMawil = async (token: string): Promise<TMawil[]> => {
-  return await axios
-    .get("https://apifk.rurosi.my.id/mawil", {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    })
+export const getMawil = async (accessToken: string): Promise<TMawil[]> => {
+  return await axiosInstance(accessToken)
+    .get("/mawil")
     .then((res) => res.data);
 };
 
 export const getSubmawil = async (
-  token: string,
+  accessToken: string,
   mawil: number
 ): Promise<TSubmawil[]> => {
-  return await axios
-    .get("https://apifk.rurosi.my.id/submawil/" + mawil, {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    })
+  return await axiosInstance(accessToken)
+    .get("/submawil/" + mawil)
+    .then((res) => res.data);
+};
+
+export const getPropinsi = async (
+  accessToken: string
+): Promise<TPropinsi[]> => {
+  return await axiosInstance(accessToken)
+    .get("/propinsi/")
+    .then((res) => res.data);
+};
+
+export const getKota = async (
+  accessToken: string,
+  propinsi: string
+): Promise<TKota[]> => {
+  return await axiosInstance(accessToken)
+    .get("/kota/" + propinsi)
+    .then((res) => res.data);
+};
+
+export const getKecamatan = async (
+  accessToken: string,
+  kota: string
+): Promise<TKecamatan[]> => {
+  return await axiosInstance(accessToken)
+    .get("/kec/" + kota)
+    .then((res) => res.data);
+};
+
+export const getKelurahan = async (
+  accessToken: string,
+  kec: string
+): Promise<TKelurahan[]> => {
+  return await axiosInstance(accessToken)
+    .get("/kel/" + kec)
     .then((res) => res.data);
 };
