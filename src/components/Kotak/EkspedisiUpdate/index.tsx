@@ -199,8 +199,11 @@ const EkspedisiUpdate = ({ id, userdata }: Props) => {
           onSubmit={form.handleSubmit(onSubmit)}
           className="space-y-1 flex flex-col"
         >
-          <div className="bg-white px-4">
-            <h2>Pengirim : {data?.pengirim.nama}</h2>
+          <div className="bg-white px-4 py-4">
+            <h2>
+              Pengirim :{" "}
+              <span className="font-bold">{data?.pengirim.nama}</span>
+            </h2>
           </div>
           <div className="flex flex-col">
             <div className="flex items-center p-4 bg-green-500 font-bold">
@@ -271,6 +274,7 @@ const EkspedisiUpdate = ({ id, userdata }: Props) => {
                   </FormLabel>
                   <FormControl>
                     <DatePicker
+                      autoComplete="off"
                       className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                       id="tgl_terima"
                       {...field}

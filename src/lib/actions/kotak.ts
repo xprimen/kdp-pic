@@ -4,7 +4,6 @@ import {
   TKotak,
   TUpdateEkspedisiKotak,
 } from "@/types";
-import axios from "axios";
 import axiosInstance from "../axiosInstance";
 
 // idle, terpasang, wajib unboxing, belum unboxing, sudah unboxing, belum setor, sudah setor
@@ -87,6 +86,76 @@ export const getPenempatan = async (
       const data = res.data as TEkspedisiKotak[];
       return data;
     });
+};
+
+export const getKotakIdle = async (
+  token: string,
+  userId: LoginDataResponse["id"]
+): Promise<TKotak[]> => {
+  const ret = [
+    {
+      id: 1,
+      kode_kotak: "KDPFK0001",
+      status_kotak: 1,
+      status_terima: 1,
+      qrcode_link: "http://qrcode.com/KDPFK0001",
+    },
+    {
+      id: 2,
+      kode_kotak: "KDPFK0002",
+      status_kotak: 1,
+      status_terima: 1,
+      qrcode_link: "http://qrcode.com/KDPFK0002",
+    },
+    {
+      id: 3,
+      kode_kotak: "KDPFK0003",
+      status_kotak: 1,
+      status_terima: 1,
+      qrcode_link: "http://qrcode.com/KDPFK0003",
+    },
+    {
+      id: 4,
+      kode_kotak: "KDPFK0004",
+      status_kotak: 2,
+      status_terima: 1,
+      qrcode_link: "http://qrcode.com/KDPFK0004",
+    },
+    {
+      id: 5,
+      kode_kotak: "KDPFK0005",
+      status_kotak: 2,
+      status_terima: 1,
+      qrcode_link: "http://qrcode.com/KDPFK0005",
+    },
+    {
+      id: 6,
+      kode_kotak: "KDPFK0006",
+      status_kotak: 1,
+      status_terima: 1,
+      qrcode_link: "http://qrcode.com/KDPFK0006",
+    },
+    {
+      id: 7,
+      kode_kotak: "KDPFK0007",
+      status_kotak: 3,
+      status_terima: 1,
+      qrcode_link: "http://qrcode.com/KDPFK0007",
+    },
+  ];
+  return ret;
+  /* return await axiosInstance(token)
+    .get("/terimakotakpw", {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    })
+    .then((res) => {
+      const data = res.data as TEkspedisiKotak[];
+      console.log(data);
+      return data;
+    }); */
 };
 
 export const savePenerimaanKotak = async ({

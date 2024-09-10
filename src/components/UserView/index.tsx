@@ -70,7 +70,7 @@ const UserView = ({ token, refreshToken }: Props) => {
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-slate-500 text-sm flex justify-between">
+                  <div className="text-slate-500 text-sm flex justify-between space-y-2 flex-col">
                     <span>@{dt.username}</span>
                     <div>
                       <span className="text-slate-700 font-semibold">

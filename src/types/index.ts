@@ -26,6 +26,21 @@ export const ACCEPTED_IMAGE_TYPES = [
   "image/webp",
 ];
 
+export const statusKotakBGColor = [
+  "bg-grey-400",
+  "bg-white",
+  "bg-green-400",
+  "bg-red-400",
+];
+
+export const statusMessage = [
+  "Dikrim",
+  "Idle",
+  "Terpasang",
+  "Belum Setor",
+  "Sudah Setor",
+];
+
 export const UserSchema = z.object({
   username: z.string().min(2, { message: "Minimal 2 huruf" }).max(50),
   nama: z.string().min(2, { message: "Minimal 2 huruf" }),
@@ -89,19 +104,11 @@ export const AddUserSchema = UserSchema.omit({ mawil: true, sub_mawil: true })
 export type AddUser = z.infer<typeof AddUserSchema>;
 
 export const KotakSchema = z.object({
-  id: z.string(),
-  qrcode: z.string(),
-  user_input: z.number().nullable(),
-  user_wilayah: z.number().nullable(),
-  user_kotak: z.number().nullable(),
-  status_kotak: z.enum([
-    "0", // dikirim dan belum diterima
-    "1", // sudah diterima dan Idle
-    "2", // terpasang
-    "3", // Ubox belum setor
-    "4", // sudah setor
-  ]),
-  // status_pengiriman: z.enum(["dikirim", "diterima"]).optional(),
+  id: z.number(),
+  kode_kotak: z.string(),
+  status_kotak: z.number(),
+  status_terima: z.number(),
+  qrcode_link: z.string(),
 });
 
 export type TKotak = z.infer<typeof KotakSchema>;

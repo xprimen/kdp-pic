@@ -12,13 +12,14 @@ import Link from "next/link";
 type Props = {
   userdata: LoginDataResponse;
 };
-const PenerimaanView = ({ userdata }: Props) => {
+const EkspedisiView = ({ userdata }: Props) => {
   const { data, isFetching } = useQuery({
     queryKey: ["ekspedisi"],
     queryFn: async (): Promise<TEkspedisiKotak[]> => {
       const { accessToken } = (await queryClient.getQueryData(["token"])) as {
         accessToken: string;
       };
+      console.log("USERID :", userdata.id);
       return await getEkspedisiKotak(accessToken, userdata.id);
     },
     // refetchOnWindowFocus: true,
@@ -87,4 +88,4 @@ const PenerimaanView = ({ userdata }: Props) => {
   );
 };
 
-export default PenerimaanView;
+export default EkspedisiView;

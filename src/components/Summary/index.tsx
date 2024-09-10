@@ -3,6 +3,7 @@ import {
   Box,
   CalendarIcon,
   ChevronDown,
+  ChevronRight,
   HandCoins,
   HeartHandshake,
   MapPin,
@@ -22,6 +23,7 @@ import { ScrollArea, ScrollBar } from "../ui/scroll-area";
 import { Separator } from "../ui/separator";
 import MonthListSelect from "../utilities/MonthListSelect";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 const Summary = () => {
   const router = useRouter();
@@ -130,8 +132,13 @@ const Summary = () => {
         </Card>
       </div>
       <DashboardChart />
-      <div className="flex flex-col">
-        <h2 className="font-semibold px-4">Kotak</h2>
+      <div className="flex flex-col py-4">
+        <div className="flex justify-between px-4">
+          <h2 className="font-semibold px-4">Kotak</h2>
+          <Link href="/secure/kotak?tab=pasang" className="flex items-center">
+            <span>Detail</span> <ChevronRight className="text-slate-500" />
+          </Link>
+        </div>
         <ScrollArea className="whitespace-nowrap">
           <div className="flex space-x-4 p-4">
             {[...Array(10)].map((_, i) => (
