@@ -14,6 +14,7 @@ import { queryClient } from "@/lib/utils";
 import {
   ACCEPTED_IMAGE_TYPES,
   LoginDataResponse,
+  MAX_FILE_SIZE,
   TEkspedisiDetail,
   TEkspedisiKotak,
   TUpdateEkspedisiKotak,
@@ -142,7 +143,54 @@ const EkspedisiUpdate = ({ id, userdata }: Props) => {
     if (data?.id_penerima) form.setValue("id_penerima", data.id_penerima);
   }, [data?.id_penerima, form]);
 
-  // console.log("TESTES :", typeof form.getValues("tgl_terima"));
+  // console.log("TESTES :", data);
+
+  const toBase64 = (file: any): Promise<string> =>
+    new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => {
+        if (reader.result === null) {
+          reject(new Error("Failed to read file"));
+        } else {
+          resolve(reader.result as string);
+        }
+      };
+      reader.onerror = (error) => reject(error);
+    });
+
+  const fileToBase64 = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    let files = e.target?.files as FileList;
+    const file = files.item(0);
+    if (file) {
+      if (file.size > MAX_FILE_SIZE) {
+        return form.setError("bukti_terima", {
+          message: "Ukuran File Terlalu Besar",
+        });
+      }
+      if (!ACCEPTED_IMAGE_TYPES.includes(files?.[0]?.type)) {
+        return form.setError("bukti_terima", {
+          message: "Tipe File Tidak Didukung",
+        });
+      }
+
+      // create URL Image
+      const urlImage = URL.createObjectURL(file);
+      setImagePreview(urlImage);
+
+      const fileWithBase64 = await toBase64(file);
+      // setImageBase64(fileWithBase64);
+      // form.setValue("bukti_terima", file.name, { shouldValidate: true });
+      form.setValue("bukti_terima", fileWithBase64, { shouldValidate: true });
+      setImageFile(files);
+    }
+  };
+
+  const onChangeImage = (e: React.ChangeEvent<HTMLInputElement>) => {
+    let files = e.target?.files as FileList;
+    const file = files.item(0);
+    if (file?.size) fileToBase64(e);
+  };
 
   return (
     <>
@@ -152,7 +200,7 @@ const EkspedisiUpdate = ({ id, userdata }: Props) => {
           className="space-y-1 flex flex-col"
         >
           <div className="bg-white px-4">
-            <h2>Pengirim : Nama Pengirim</h2>
+            <h2>Pengirim : {data?.pengirim.nama}</h2>
           </div>
           <div className="flex flex-col">
             <div className="flex items-center p-4 bg-green-500 font-bold">
@@ -165,9 +213,9 @@ const EkspedisiUpdate = ({ id, userdata }: Props) => {
               <div key={index} className="flex items-center border-b px-4">
                 <Label
                   htmlFor={`id_kotak${index}`}
-                  className="text-slate-500 text-sm flex-1 font-semibold py-4"
+                  className="text-slate-500 text-sm flex-1 font-bold py-4"
                 >
-                  {item.id_kotak}
+                  {item.kotak.id_kotak}
                 </Label>
                 <FormField
                   control={form.control}
@@ -258,7 +306,7 @@ const EkspedisiUpdate = ({ id, userdata }: Props) => {
                       // name="ktp"
                       accept={ACCEPTED_IMAGE_TYPES.join(",")}
                       type="file"
-                      // onChange={onChangeKTP}
+                      onChange={onChangeImage}
                       value={
                         imageFile && imageFile.item(0)
                           ? imageFile.item(0)?.name
@@ -266,6 +314,9 @@ const EkspedisiUpdate = ({ id, userdata }: Props) => {
                       }
                     />
                   </FormControl>
+                  {/* <FormDescription>
+                  This is your public display name.
+                </FormDescription> */}
                   <FormMessage />
                   {imagePreview && (
                     <div className="flex relative">

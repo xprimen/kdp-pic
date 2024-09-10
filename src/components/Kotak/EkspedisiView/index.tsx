@@ -3,11 +3,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import TableToolbars from "@/components/utilities/TableToolbars";
 import { getEkspedisiKotak } from "@/lib/actions/kotak";
-import axiosInstance from "@/lib/axiosInstance";
 import { queryClient } from "@/lib/utils";
 import { LoginDataResponse, TEkspedisiKotak } from "@/types";
 import { useQuery } from "@tanstack/react-query";
-import { Calendar, CheckSquare, FileBox, Info } from "lucide-react";
+import { Calendar, CheckCircle, FileBox, Info } from "lucide-react";
 import Link from "next/link";
 
 type Props = {
@@ -59,13 +58,13 @@ const PenerimaanView = ({ userdata }: Props) => {
                 <CardTitle className="text-lg flex justify-between items-center gap-x-2">
                   <div className="flex items-center gap-x-2">
                     <FileBox size="20" />
-                    <h2>Kiriman Kotak</h2>
+                    <h2>Kiriman Kotak dari {dt.pengirim.nama}</h2>
                   </div>
-                  {/* {new Intl.DateTimeFormat('id-ID').format( new Date(dt.tgl_terima)) ? (
-                    <CheckSquare size="20" className="text-green-500" />
+                  {dt.status_terima === 1 ? (
+                    <CheckCircle size="20" className="text-green-500" />
                   ) : (
                     <Info size="20" className="text-yellow-500" />
-                  )} */}
+                  )}
                 </CardTitle>
               </CardHeader>
               <CardContent>

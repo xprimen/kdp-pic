@@ -22,8 +22,8 @@ export const MAX_FILE_SIZE = 1024 * 5 * 1000;
 export const ACCEPTED_IMAGE_TYPES = [
   "image/jpeg",
   "image/jpg",
-  // "image/png",
-  // "image/webp",
+  "image/png",
+  "image/webp",
 ];
 
 export const UserSchema = z.object({
@@ -106,22 +106,24 @@ export const KotakSchema = z.object({
 
 export type TKotak = z.infer<typeof KotakSchema>;
 
-export type kirimanKotakBE = {
-  id_kirim: number;
-  id_kotak: number;
-  status_terima: number;
-  kirim_kotak: {
-    tgl_kirim: Date;
-    id_penerima: number;
-    status_terima: number;
-  };
-};
+// export type kirimanKotakBE = {
+//   id_kirim: number;
+//   id_kotak: number;
+//   status_terima: number;
+//   kirim_kotak: {
+//     tgl_kirim: Date;
+//     id_penerima: number;
+//     status_terima: number;
+//   };
+// };
 
 export const EkspedisiDetailSchema = z.object({
   id: z.number(),
   id_kirim: z.number(),
   id_kotak: z.number(),
-  // kode_kotak: z.string(),
+  kotak: z.object({
+    id_kotak: z.string(),
+  }),
 });
 
 export type TEkspedisiDetail = z.infer<typeof EkspedisiDetailSchema>;
@@ -133,6 +135,10 @@ export const EkspedisiKotakSchema = z.object({
   status_terima: z.number(),
   tgl_kirim: z.date(),
   detail_kirim_kotaks: z.array(EkspedisiDetailSchema),
+  user_input: z.string(),
+  pengirim: z.object({
+    nama: z.string(),
+  }),
 });
 
 export type TEkspedisiKotak = z.infer<typeof EkspedisiKotakSchema>;
@@ -149,7 +155,7 @@ export const UpdateEkspedisiKotakSchema = z.object({
   //   required_error: "Tanggal Diterima Wajib Diisi",
   // }),
   tgl_terima: z.string().min(1, "Tanggal Diterima Wajib Diisi"),
-  bukti_terima: z.string().optional(),
+  bukti_terima: z.string().default(""),
 });
 
 export type TUpdateEkspedisiKotak = z.infer<typeof UpdateEkspedisiKotakSchema>;
