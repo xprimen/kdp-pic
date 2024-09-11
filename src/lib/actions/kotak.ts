@@ -7,145 +7,74 @@ import {
 import axiosInstance from "../axiosInstance";
 
 // idle, terpasang, wajib unboxing, belum unboxing, sudah unboxing, belum setor, sudah setor
-/* export const getKotak = async (
-  token: string,
-  status_kotak: Pick<TKotak, "status_kotak">["status_kotak"],
-  status_pengiriman: Pick<
-    TKotak,
-    "status_pengiriman"
-  >["status_pengiriman"] = undefined
-): Promise<TKotak[]> => {
-  //   return await axios.get("https://apifk.rurosi.my.id/kotak", {
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //       Authorization: `Bearer ${token}`,
-  //     },
-  //   });
-
-  return axios
-    .get("https://json-server-tester.vercel.app/kotak", {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
-    .then((ret: { data: TKotak[] }) => {
-      if (status_pengiriman !== undefined) {
-        return ret.data.filter(
-          (kotak) =>
-            kotak.status_pengiriman === status_pengiriman &&
-            kotak.status_kotak === status_kotak
-        );
-      } else {
-        return ret.data;
-      }
-      // }
-      // return ret.data;
-    });
-}; */
-
-function transformData(inputData: any) {
-  const transformedData = inputData.map((item: any) => {
-    return {
-      id_kirim: item.id_kirim,
-      id_penerima: item.kirim_kotak.id_penerima,
-      status_penerima: item.kirim_kotak.status_terima,
-      tgl_kirim: item.kirim_kotak.tgl_kirim,
-    };
-  });
-  return transformedData;
-}
+export const getKotak = (token: string) => {
+  const data = [
+    {
+      id: 1,
+      id_kotak: "KDPFK0001",
+      id_status_kotak: 1,
+      status_terima: 1,
+      tgl_start: null,
+      tgl_stop: null,
+    },
+    {
+      id: 2,
+      id_kotak: "KDPFK0002",
+      id_status_kotak: 1,
+      status_terima: 1,
+      tgl_start: null,
+      tgl_stop: null,
+    },
+    {
+      id: 3,
+      id_kotak: "KDPFK0003",
+      id_status_kotak: 1,
+      status_terima: 1,
+      tgl_start: null,
+      tgl_stop: null,
+    },
+    {
+      id: 4,
+      id_kotak: "KDPFK0004",
+      id_status_kotak: 2,
+      status_terima: 1,
+      tgl_start: null,
+      tgl_stop: null,
+    },
+    {
+      id: 5,
+      id_kotak: "KDPFK0005",
+      id_status_kotak: 2,
+      status_terima: 1,
+      tgl_start: null,
+      tgl_stop: null,
+    },
+    {
+      id: 6,
+      id_kotak: "KDPFK0006",
+      id_status_kotak: 1,
+      status_terima: 1,
+      tgl_start: null,
+      tgl_stop: null,
+    },
+    {
+      id: 7,
+      id_kotak: "KDPFK0007",
+      id_status_kotak: 3,
+      status_terima: 1,
+      tgl_start: null,
+      tgl_stop: null,
+    },
+  ];
+  return data;
+};
 
 export const getEkspedisiKotak = async (
   token: string,
   userId: LoginDataResponse["id"]
-) => {
-  return await axiosInstance(token)
-    .get("/kotakpw/" + userId, {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    })
-    .then((res) => {
-      const data = res.data as TEkspedisiKotak[];
-      return data;
-    });
-};
-export const getPenempatan = async (
-  token: string,
-  userId: LoginDataResponse["id"]
-) => {
-  return await axiosInstance(token)
-    .get("/kotakpw/" + userId, {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    })
-    .then((res) => {
-      const data = res.data as TEkspedisiKotak[];
-      return data;
-    });
-};
-
-export const getKotakIdle = async (
-  token: string,
-  userId: LoginDataResponse["id"]
-): Promise<TKotak[]> => {
-  const ret = [
-    {
-      id: 1,
-      kode_kotak: "KDPFK0001",
-      status_kotak: 1,
-      status_terima: 1,
-      qrcode_link: "http://qrcode.com/KDPFK0001",
-    },
-    {
-      id: 2,
-      kode_kotak: "KDPFK0002",
-      status_kotak: 1,
-      status_terima: 1,
-      qrcode_link: "http://qrcode.com/KDPFK0002",
-    },
-    {
-      id: 3,
-      kode_kotak: "KDPFK0003",
-      status_kotak: 1,
-      status_terima: 1,
-      qrcode_link: "http://qrcode.com/KDPFK0003",
-    },
-    {
-      id: 4,
-      kode_kotak: "KDPFK0004",
-      status_kotak: 2,
-      status_terima: 1,
-      qrcode_link: "http://qrcode.com/KDPFK0004",
-    },
-    {
-      id: 5,
-      kode_kotak: "KDPFK0005",
-      status_kotak: 2,
-      status_terima: 1,
-      qrcode_link: "http://qrcode.com/KDPFK0005",
-    },
-    {
-      id: 6,
-      kode_kotak: "KDPFK0006",
-      status_kotak: 1,
-      status_terima: 1,
-      qrcode_link: "http://qrcode.com/KDPFK0006",
-    },
-    {
-      id: 7,
-      kode_kotak: "KDPFK0007",
-      status_kotak: 3,
-      status_terima: 1,
-      qrcode_link: "http://qrcode.com/KDPFK0007",
-    },
-  ];
-  return ret;
+): Promise<TEkspedisiKotak[]> => {
   /* return await axiosInstance(token)
-    .get("/terimakotakpw", {
+    .get("/terimakotakpw/" + userId, {
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
@@ -153,9 +82,63 @@ export const getKotakIdle = async (
     })
     .then((res) => {
       const data = res.data as TEkspedisiKotak[];
-      console.log(data);
       return data;
     }); */
+  const data = [
+    {
+      id: 1,
+      id_penerima: 12,
+      status_terima: 1,
+      tgl_kirim: new Date("2024-09-09"),
+      user_input: "d7cbc852-15f4-45ab-b8f6-09d5c9a2df56",
+      pengirim: {
+        nama: "Hasan",
+      },
+      detail_kirim_kotaks: [
+        {
+          id: 1,
+          id_kotak: 1,
+          id_kirim: 1,
+          kotak: {
+            id_kotak: "KDP0001",
+          },
+        },
+        {
+          id: 2,
+          id_kotak: 2,
+          id_kirim: 1,
+          kotak: {
+            id_kotak: "KDP0002",
+          },
+        },
+        {
+          id: 3,
+          id_kotak: 3,
+          id_kirim: 1,
+          kotak: {
+            id_kotak: "KDP0003",
+          },
+        },
+        {
+          id: 4,
+          id_kotak: 4,
+          id_kirim: 1,
+          kotak: {
+            id_kotak: "KDP0004",
+          },
+        },
+        {
+          id: 5,
+          id_kotak: 5,
+          id_kirim: 1,
+          kotak: {
+            id_kotak: "KDP0005",
+          },
+        },
+      ],
+    },
+  ];
+  return Promise.resolve(data);
 };
 
 export const savePenerimaanKotak = async ({

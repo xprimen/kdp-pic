@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import React from "react";
 
 type Props = {
-  add: {
+  add?: {
     variant?: ButtonProps["variant"];
     size?: ButtonProps["size"];
     link: string;
@@ -42,10 +42,10 @@ const buttonDefaultCfg = {
 
 const TableToolbars = ({ add, filter, className }: Props) => {
   const router = useRouter();
-  add = { ...buttonDefaultCfg.add, ...add } as Props["add"];
+  add = add ? ({ ...buttonDefaultCfg.add, ...add } as Props["add"]) : undefined;
   filter = { ...buttonDefaultCfg.filter, ...filter } as Props["filter"];
   return (
-    <ScrollArea className={`py-4 ${className} bg-white`}>
+    <ScrollArea className={`py-4 px-2 ${className} bg-white`}>
       {add && (
         <Button
           variant={add?.variant}

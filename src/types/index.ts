@@ -105,10 +105,12 @@ export type AddUser = z.infer<typeof AddUserSchema>;
 
 export const KotakSchema = z.object({
   id: z.number(),
-  kode_kotak: z.string(),
-  status_kotak: z.number(),
-  status_terima: z.number(),
-  qrcode_link: z.string(),
+  id_kotak: z.string(),
+  id_status_kotak: z.number(),
+  // status_terima: z.number(),
+  // qrcode_link: z.string(),
+  tgl_start: z.date().nullable(),
+  tgl_stop: z.date().nullable(),
 });
 
 export type TKotak = z.infer<typeof KotakSchema>;

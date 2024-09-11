@@ -30,7 +30,7 @@ function SecureWrapper({ children, refreshToken }: PropsWithChildren<Props>) {
           },
         })
         .then((res) => {
-          // console.log("New Token :", res.data.accessToken);
+          console.log("New Token :", res.data.accessToken);
           // console.log("TOKEN :", token);
           // console.log("RefreshToken :", refreshToken);
           // axiosInstance(res.data.accessToken);

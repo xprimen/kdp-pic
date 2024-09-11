@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Skeleton } from "@/components/ui/skeleton";
 import TableToolbars from "@/components/utilities/TableToolbars";
-import { getKotakIdle } from "@/lib/actions/kotak";
+import { getKotak } from "@/lib/actions/kotak";
 import { queryClient } from "@/lib/utils";
 import {
   LoginDataResponse,
@@ -27,14 +27,18 @@ const PasangView = ({ userdata }: Props) => {
       const { accessToken } = (await queryClient.getQueryData(["token"])) as {
         accessToken: string;
       };
-      return await getKotakIdle(accessToken, userdata.id);
+      const data = await getKotak(accessToken);
+      const filterIdle = data.filter(
+        (dt: TKotak) => dt.id_status_kotak === 1 || dt.id_status_kotak === 3
+      );
+      return filterIdle;
     },
     // refetchOnWindowFocus: true,
   });
 
   return (
     <div className="mb-20">
-      <TableToolbars add={{ link: "/secure/kotak/pasang" }} />
+      <TableToolbars />
       <div className="flex flex-col gap-2 my-4">
         {isFetching &&
           [...Array(10)].map((_, i) => (
@@ -61,42 +65,22 @@ const PasangView = ({ userdata }: Props) => {
             key={dt.id}
             className="bg-white px-4 py-2"
           >
-            <Card className={`w-full ${statusKotakBGColor[dt.status_kotak]}`}>
-              <CardHeader className="py-2">
-                <CardTitle className="text-lg flex items-center gap-x-2">
-                  <Box size="20" /> {dt.kode_kotak}{" "}
+            <Card
+              className={`w-full ${statusKotakBGColor[dt.id_status_kotak]}`}
+            >
+              <CardHeader className="py-6">
+                <CardTitle className="text-lg flex items-center space-x-4 justify-between">
+                  <div className="flex items-center space-x-4">
+                    <Box size="20" />
+                    <span>{dt.id_kotak}</span>
+                  </div>
                   <span
-                    className={`text-sm text-white capitalize bg-slate-400 rounded-lg px-3`}
+                    className={`text-sm capitalize bg-slate-100 text-slate-600 rounded-lg px-3`}
                   >
-                    {statusMessage[dt.status_kotak]}
+                    {statusMessage[dt.id_status_kotak]}
                   </span>
                 </CardTitle>
               </CardHeader>
-              <CardContent>
-                <div className="text-slate-500 text-sm flex justify-between">
-                  <Dialog>
-                    <DialogTrigger asChild>
-                      <Button variant="outline" type="button">
-                        <QrCode size={16} className="mr-1" /> Cetak
-                      </Button>
-                    </DialogTrigger>
-                    <DialogContent className="sm:max-w-md">
-                      <div className="text-slate-700 font-semibold">
-                        <Image
-                          src={
-                            "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=" +
-                            dt.id
-                          }
-                          width={200}
-                          height={200}
-                          alt="qr-code"
-                        />
-                        {dt.status_terima}
-                      </div>
-                    </DialogContent>
-                  </Dialog>
-                </div>
-              </CardContent>
             </Card>
           </Link>
         ))}

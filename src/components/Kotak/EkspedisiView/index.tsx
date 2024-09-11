@@ -19,7 +19,7 @@ const EkspedisiView = ({ userdata }: Props) => {
       const { accessToken } = (await queryClient.getQueryData(["token"])) as {
         accessToken: string;
       };
-      console.log("USERID :", userdata.id);
+      // console.log("USERID :", userdata.id);
       return await getEkspedisiKotak(accessToken, userdata.id);
     },
     // refetchOnWindowFocus: true,
