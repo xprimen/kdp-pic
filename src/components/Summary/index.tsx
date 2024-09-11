@@ -24,6 +24,10 @@ import { Separator } from "../ui/separator";
 import MonthListSelect from "../utilities/MonthListSelect";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { useQuery } from "@tanstack/react-query";
+import { TKotak } from "@/types";
+import { queryClient } from "@/lib/utils";
+import { getKotak } from "@/lib/actions/kotak";
 
 const Summary = () => {
   const router = useRouter();
@@ -47,6 +51,21 @@ const Summary = () => {
   // const offsetReverseMonths = months
   //   .concat(...months.splice(0, new Date().getMonth()))
   //   .reverse();
+
+  const { data, isFetching } = useQuery({
+    queryKey: ["kotak"],
+    queryFn: async (): Promise<TKotak[]> => {
+      const { accessToken } = (await queryClient.getQueryData(["token"])) as {
+        accessToken: string;
+      };
+      const data = await getKotak(accessToken);
+      // const filterIdle = data.filter(
+      //   (dt: TKotak) => dt.id_status_kotak === 1 || dt.id_status_kotak === 3
+      // );
+      return data;
+    },
+    // refetchOnWindowFocus: true,
+  });
 
   const kotak_segel = [0, 2, 7];
   const kotak_belum_setor = [4, 5];
@@ -141,34 +160,35 @@ const Summary = () => {
         </div>
         <ScrollArea className="whitespace-nowrap">
           <div className="flex space-x-4 p-4">
-            {[...Array(10)].map((_, i) => (
-              <Card
-                key={i}
-                className={`w-72 ${
-                  kotak_segel.includes(i)
-                    ? "bg-green-600 text-white"
-                    : kotak_belum_setor.includes(i)
-                    ? "bg-red-600 text-white"
-                    : ""
-                }`}
-              >
-                <CardHeader>
-                  <CardTitle className="flex text-lg justify-between">
-                    <span>Kotak {i + 1}</span>
-                    {!kotak_standby.includes(i) && (
-                      <MapPin className="w-6 h-6" />
-                    )}
-                  </CardTitle>
-                </CardHeader>
-                <Separator />
-                <CardContent className="flex flex-col pt-4">
-                  <div className="flex gap-x-2">
-                    <User /> PIC
-                  </div>
-                  {!kotak_standby.includes(i) && <div>Rp 1.000.000</div>}
-                </CardContent>
-              </Card>
-            ))}
+            {data &&
+              data.map((kotak, i) => (
+                <Card
+                  key={i}
+                  className={`w-72 ${
+                    kotak.id_status_kotak === 2
+                      ? "bg-green-600 text-white"
+                      : kotak.id_status_kotak === 3
+                      ? "bg-red-600 text-white"
+                      : ""
+                  }`}
+                >
+                  <CardHeader>
+                    <CardTitle className="flex text-lg justify-between">
+                      <span>Kotak {i + 1}</span>
+                      {kotak.id_status_kotak === 2 && (
+                        <MapPin className="w-6 h-6" />
+                      )}
+                    </CardTitle>
+                  </CardHeader>
+                  <Separator />
+                  <CardContent className="flex flex-col pt-4">
+                    <div className="flex gap-x-2">
+                      <User /> PIC
+                    </div>
+                    {kotak.id_status_kotak === 3 && <div>Rp 1.000.000</div>}
+                  </CardContent>
+                </Card>
+              ))}
           </div>
           <ScrollBar orientation="horizontal" />
         </ScrollArea>
