@@ -36,14 +36,14 @@ const KotakTabs = ({ userdata }: Props) => {
       </TabsList>
       {userdata.role === "2" && (
         <TabsContent value="ekspedisi" asChild>
-          <EkspedisiView userdata={userdata} />
+          <EkspedisiView />
         </TabsContent>
       )}
       <TabsContent value="pasang" asChild>
-        <PasangView userdata={userdata} />
+        <PasangView />
       </TabsContent>
       <TabsContent value="buka" asChild>
-        <BukaView userdata={userdata} />
+        <BukaView />
       </TabsContent>
     </Tabs>
   );

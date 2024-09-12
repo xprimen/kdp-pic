@@ -35,9 +35,8 @@ import { toast } from "@/components/ui/use-toast";
 
 type Props = {
   id: number;
-  userdata: LoginDataResponse;
 };
-const EkspedisiUpdate = ({ id, userdata }: Props) => {
+const EkspedisiUpdate = ({ id }: Props) => {
   const router = useRouter();
   const [loadingForm, setLoadingForm] = React.useState(false);
   const [imageFile, setImageFile] = React.useState<FileList>();
@@ -71,7 +70,7 @@ const EkspedisiUpdate = ({ id, userdata }: Props) => {
       const { accessToken } = (await queryClient.getQueryData(["token"])) as {
         accessToken: string;
       };
-      const getData = await getEkspedisiKotak(accessToken, userdata.id);
+      const getData = await getEkspedisiKotak(accessToken);
       const dataFilter = getData.filter((dt) => dt.id === id)[0];
       setData(dataFilter);
       return getData;
@@ -218,7 +217,7 @@ const EkspedisiUpdate = ({ id, userdata }: Props) => {
                   htmlFor={`id_kotak${index}`}
                   className="text-slate-500 text-sm flex-1 font-bold py-4"
                 >
-                  {item.kotak.id_kotak}
+                  {item.kotak.kode_kotak}
                 </Label>
                 <FormField
                   control={form.control}

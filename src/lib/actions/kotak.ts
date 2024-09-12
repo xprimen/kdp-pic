@@ -7,8 +7,8 @@ import {
 import axiosInstance from "../axiosInstance";
 
 // idle, terpasang, wajib unboxing, belum unboxing, sudah unboxing, belum setor, sudah setor
-export const getKotak = (token: string) => {
-  const data = [
+export const getKotak = async (token: string) => {
+  /* const data = [
     {
       id: 1,
       id_kotak: "KDPFK0001",
@@ -66,25 +66,25 @@ export const getKotak = (token: string) => {
       tgl_stop: null,
     },
   ];
-  return data;
+  return data; */
+  return await axiosInstance(token)
+    .get("/kotakpw")
+    .then((res) => {
+      const data = res.data as TKotak[];
+      return data;
+    });
 };
 
 export const getEkspedisiKotak = async (
-  token: string,
-  userId: LoginDataResponse["id"]
+  token: string
 ): Promise<TEkspedisiKotak[]> => {
-  /* return await axiosInstance(token)
-    .get("/terimakotakpw/" + userId, {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    })
+  return await axiosInstance(token)
+    .get("/terimakotakpw/")
     .then((res) => {
       const data = res.data as TEkspedisiKotak[];
       return data;
-    }); */
-  const data = [
+    });
+  /* const data = [
     {
       id: 1,
       id_penerima: 12,
@@ -138,7 +138,7 @@ export const getEkspedisiKotak = async (
       ],
     },
   ];
-  return Promise.resolve(data);
+  return Promise.resolve(data); */
 };
 
 export const savePenerimaanKotak = async ({

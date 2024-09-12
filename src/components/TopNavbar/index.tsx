@@ -6,14 +6,18 @@ type Props = {
   backButton?: boolean;
   title: string;
   rightButtons?: React.ReactNode;
+  sticky?: "sticky" | "relative" | "absolute" | "fixed" | "static";
 };
 const TopNavbar = ({
   backButton = false,
   title = "Beranda",
   rightButtons,
+  sticky = "sticky",
 }: Props) => {
   return (
-    <div className="sticky bg-slate-50/85 out-of-range:shadow-lg top-0 w-full mx-auto z-10 max-w-screen-sm max-h-20 h-20">
+    <div
+      className={`${sticky} bg-slate-50/85 out-of-range:shadow-lg top-0 w-full mx-auto z-10 max-w-screen-sm max-h-20 h-20`}
+    >
       {/* <div className="w-full max-h-[60px] h-[60px]"> */}
       <div className="flex items-center justify-center h-full px-2">
         {backButton && (

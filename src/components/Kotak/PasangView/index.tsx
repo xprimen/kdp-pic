@@ -2,6 +2,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import TableToolbars from "@/components/utilities/TableToolbars";
 import { getKotak } from "@/lib/actions/kotak";
@@ -13,14 +14,11 @@ import {
   TKotak,
 } from "@/types";
 import { useQuery } from "@tanstack/react-query";
-import { Box, QrCode } from "lucide-react";
+import { Box, QrCode, UserCircle } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
-type Props = {
-  userdata: LoginDataResponse;
-};
-const PasangView = ({ userdata }: Props) => {
+const PasangView = () => {
   const { data, isFetching } = useQuery({
     queryKey: ["kotakIdle"],
     queryFn: async (): Promise<TKotak[]> => {
@@ -81,6 +79,13 @@ const PasangView = ({ userdata }: Props) => {
                   </span>
                 </CardTitle>
               </CardHeader>
+              <Separator />
+              <CardContent className="text-sm flex justify-between pt-4">
+                <div className="flex items-center space-x-4">
+                  <UserCircle size="20" />
+                  <span>{dt.PkUser?.nama || dt.PwUser?.nama}</span>
+                </div>
+              </CardContent>
             </Card>
           </Link>
         ))}

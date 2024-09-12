@@ -26,7 +26,7 @@ export const loginAction = async (
       },
     })
     .then((res: AxiosResponse) => {
-      // console.log(res);
+      // console.log(res.data);
       /* let refreshToken = "";
       let expiresRefreshToken = "";
       let maxAgeRefreshToken = 0;
@@ -74,22 +74,22 @@ export const loginAction = async (
 
       cookies().set("token", accessToken, {
         path: "/",
-        httpOnly: true,
-        secure: true,
+        httpOnly: process.env.NODE_ENV === "production" ? true : false,
+        secure: process.env.NODE_ENV === "production" ? true : false,
         // expires: decodedData.exp * 1000,
       });
       cookies().set("refreshToken", refreshToken, {
         path: "/",
-        httpOnly: true,
-        secure: true,
+        httpOnly: process.env.NODE_ENV === "production" ? true : false,
+        secure: process.env.NODE_ENV === "production" ? true : false,
         // maxAge: maxAgeRefreshToken,
         // sameSite: "none",
         // expires: decodedDataRT.exp * 1000,
       });
       cookies().set("userdata", JSON.stringify(dataSave), {
         path: "/",
-        httpOnly: true,
-        secure: true,
+        httpOnly: process.env.NODE_ENV === "production" ? true : false,
+        secure: process.env.NODE_ENV === "production" ? true : false,
         // expires: new Date(decodedData.exp * 1000),
       });
       return {

@@ -6,15 +6,10 @@ import { cookies } from "next/headers";
 import React from "react";
 
 const Page = ({ params: { id } }: { params: { id: string } }) => {
-  const userdata = (): LoginDataResponse => {
-    const data = cookies().get("userdata")?.value;
-    return data ? JSON.parse(data) : null;
-  };
-
   return (
     <AnimateSlideIn direction="left" className="pb-4">
       <TopNavbar title="Penerimaan Kotak" backButton />
-      <EkspedisiUpdate id={Number(id)} userdata={userdata()} />
+      <EkspedisiUpdate id={Number(id)} />
     </AnimateSlideIn>
   );
 };

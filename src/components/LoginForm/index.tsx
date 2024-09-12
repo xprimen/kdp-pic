@@ -40,8 +40,10 @@ export function LoginForm() {
 
   async function onSubmit(values: LoginFormInput) {
     setLoading(true);
+    // console.log("TESTING");
     try {
       const loginProcess = await loginAction(values);
+      // console.log(loginProcess);
       if (loginProcess.success) {
         // alert(loginProcess.message);
         toast({

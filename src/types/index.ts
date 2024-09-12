@@ -107,10 +107,21 @@ export const KotakSchema = z.object({
   id: z.number(),
   id_kotak: z.string(),
   id_status_kotak: z.number(),
+  id_pw: z.number(),
   // status_terima: z.number(),
   // qrcode_link: z.string(),
   tgl_start: z.date().nullable(),
   tgl_stop: z.date().nullable(),
+  PwUser: z
+    .object({
+      nama: z.string().nullable(),
+    })
+    .nullable(),
+  PkUser: z
+    .object({
+      nama: z.string().nullable(),
+    })
+    .nullable(),
 });
 
 export type TKotak = z.infer<typeof KotakSchema>;
@@ -131,7 +142,7 @@ export const EkspedisiDetailSchema = z.object({
   id_kirim: z.number(),
   id_kotak: z.number(),
   kotak: z.object({
-    id_kotak: z.string(),
+    kode_kotak: z.string(),
   }),
 });
 
@@ -146,7 +157,7 @@ export const EkspedisiKotakSchema = z.object({
   detail_kirim_kotaks: z.array(EkspedisiDetailSchema),
   user_input: z.string(),
   pengirim: z.object({
-    nama: z.string(),
+    nama: z.string().nullable(),
   }),
 });
 

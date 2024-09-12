@@ -9,10 +9,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Calendar, CheckCircle, FileBox, Info } from "lucide-react";
 import Link from "next/link";
 
-type Props = {
-  userdata: LoginDataResponse;
-};
-const EkspedisiView = ({ userdata }: Props) => {
+const EkspedisiView = () => {
   const { data, isFetching } = useQuery({
     queryKey: ["ekspedisi"],
     queryFn: async (): Promise<TEkspedisiKotak[]> => {
@@ -20,7 +17,7 @@ const EkspedisiView = ({ userdata }: Props) => {
         accessToken: string;
       };
       // console.log("USERID :", userdata.id);
-      return await getEkspedisiKotak(accessToken, userdata.id);
+      return await getEkspedisiKotak(accessToken);
     },
     // refetchOnWindowFocus: true,
   });

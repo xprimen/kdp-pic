@@ -21,6 +21,7 @@ function SecureWrapper({ children, refreshToken }: PropsWithChildren<Props>) {
 
   const getToken = queryClient.prefetchQuery({
     queryKey: ["token"],
+
     queryFn: () =>
       axios
         .get(`${process.env.BASE_API}/token`, {
@@ -30,11 +31,14 @@ function SecureWrapper({ children, refreshToken }: PropsWithChildren<Props>) {
           },
         })
         .then((res) => {
-          console.log("New Token :", res.data.accessToken);
+          console.log("New Token Client :", res.data.accessToken);
           // console.log("TOKEN :", token);
           // console.log("RefreshToken :", refreshToken);
           // axiosInstance(res.data.accessToken);
           return res.data;
+        })
+        .catch((err) => {
+          // console.log(err);
         }),
   });
 
@@ -45,7 +49,7 @@ function SecureWrapper({ children, refreshToken }: PropsWithChildren<Props>) {
   return (
     <QueryClientProvider client={queryClient}>
       {children}
-      <ReactQueryDevtools initialIsOpen={false} buttonPosition="relative" />
+      {/* <ReactQueryDevtools initialIsOpen={false} buttonPosition="relative" /> */}
     </QueryClientProvider>
   );
 }
