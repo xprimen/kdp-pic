@@ -1,14 +1,12 @@
 "use client";
 import {
-  Box,
   CalendarIcon,
   ChevronDown,
-  ChevronRight,
   HandCoins,
   HeartHandshake,
   MapPin,
-  User,
 } from "lucide-react";
+import { useRouter } from "next/navigation";
 import React from "react";
 import DashboardChart from "../DashboardChart";
 import { Button } from "../ui/button";
@@ -19,15 +17,7 @@ import {
   CardHeader,
   CardTitle,
 } from "../ui/card";
-import { ScrollArea, ScrollBar } from "../ui/scroll-area";
-import { Separator } from "../ui/separator";
 import MonthListSelect from "../utilities/MonthListSelect";
-import { useRouter } from "next/navigation";
-import Link from "next/link";
-import { useQuery } from "@tanstack/react-query";
-import { TKotak } from "@/types";
-import { queryClient } from "@/lib/utils";
-import { getKotak } from "@/lib/actions/kotak";
 import KotakScrollHorizontal from "./KotakScrollHorizontal";
 import TotalKotak from "./TotalKotak";
 

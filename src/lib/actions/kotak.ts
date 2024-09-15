@@ -3,6 +3,7 @@ import {
   TEkspedisiKotak,
   TKotak,
   TUpdateEkspedisiKotak,
+  TUpdatePasangKotak,
 } from "@/types";
 import axiosInstance from "../axiosInstance";
 
@@ -143,11 +144,21 @@ export const getEkspedisiKotak = async (
 
 export const savePenerimaanKotak = async ({
   values,
-  accessToken,
+  token,
 }: {
   values: TUpdateEkspedisiKotak;
-  accessToken: string;
+  token: string;
 }) => {
-  return await axiosInstance(accessToken).post("/terimakotakpw", values);
-  // return true;
+  return await axiosInstance(token).patch("/terimakotakpw/", values);
+};
+
+export const savePasangKotak = async ({
+  values,
+  token,
+}: {
+  values: TUpdatePasangKotak;
+  token: string;
+}) => {
+  const { id, ...sendData } = values;
+  return await axiosInstance(token).patch("/penempatan/" + values.id, sendData);
 };

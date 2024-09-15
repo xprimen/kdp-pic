@@ -5,7 +5,12 @@ import React from "react";
 import BukaView from "../BukaView";
 import EkspedisiView from "../EkspedisiView";
 import PasangView from "../PasangView";
-import { useParams, useSearchParams } from "next/navigation";
+import {
+  useParams,
+  usePathname,
+  useRouter,
+  useSearchParams,
+} from "next/navigation";
 import { LoginDataResponse } from "@/types";
 
 type Props = {
@@ -13,8 +18,20 @@ type Props = {
 };
 
 const KotakTabs = ({ userdata }: Props) => {
-  const params = useSearchParams();
-  const tabParams = params.get("tab");
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
+  const createQueryString = React.useCallback(
+    (name: string, value: string) => {
+      const params = new URLSearchParams(searchParams.toString());
+      params.set(name, value);
+
+      return router.push(pathname + "?" + params.toString());
+    },
+    [pathname, router, searchParams]
+  );
+
+  const tabParams = searchParams.get("tab");
   const tab = tabParams ? tabParams : "ekspedisi";
   const gridCols = () => {
     return userdata.role === "2" ? "grid-cols-3" : "grid-cols-2";
@@ -23,14 +40,26 @@ const KotakTabs = ({ userdata }: Props) => {
     <Tabs defaultValue={tab}>
       <TabsList className={`grid w-full ${gridCols()} bg-slate-100 h-14`}>
         {userdata.role === "2" && (
-          <TabsTrigger value="ekspedisi" className="h-full text-md">
+          <TabsTrigger
+            onClick={() => createQueryString("tab", "ekspedisi")}
+            value="ekspedisi"
+            className="h-full text-md"
+          >
             Terima/Kirim
           </TabsTrigger>
         )}
-        <TabsTrigger value="pasang" className="h-full text-md">
+        <TabsTrigger
+          onClick={() => createQueryString("tab", "pasang")}
+          value="pasang"
+          className="h-full text-md"
+        >
           Pasang
         </TabsTrigger>
-        <TabsTrigger value="buka" className="h-full text-md">
+        <TabsTrigger
+          onClick={() => createQueryString("tab", "buka")}
+          value="buka"
+          className="h-full text-md"
+        >
           Buka
         </TabsTrigger>
       </TabsList>

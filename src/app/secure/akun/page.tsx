@@ -3,9 +3,8 @@ import BottomNavbar from "@/components/BottomNavbar";
 import TopNavbar from "@/components/TopNavbar";
 import { Label } from "@/components/ui/label";
 import UserInfo from "@/components/UserInfo";
-import { LoginDataResponse } from "@/types";
+import { userdata } from "@/lib/utils-server";
 import { ChevronRight, KeyRoundIcon } from "lucide-react";
-import { cookies } from "next/headers";
 import Link from "next/link";
 
 const links = [
@@ -17,11 +16,6 @@ const links = [
 ];
 
 const Akun = () => {
-  const userdata = (): LoginDataResponse => {
-    const data = cookies().get("userdata")?.value;
-    return data ? JSON.parse(data) : null;
-  };
-
   return (
     <>
       <TopNavbar title="Akun" />

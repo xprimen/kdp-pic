@@ -1,69 +1,109 @@
 "use client";
-import { Icon } from "leaflet";
+import { TGeocodeMarkers } from "@/types";
+import { Icon, Marker } from "leaflet";
 import "leaflet/dist/leaflet.css";
 import React from "react";
-import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
-import { useMapEvents } from "react-leaflet/hooks";
+import {
+  MapContainer,
+  Marker as MarkerComp,
+  Popup,
+  TileLayer,
+} from "react-leaflet";
 
 type Props = {
-  center?: { lat: number; lng: number };
+  center: number[];
+  markers?: TGeocodeMarkers | null;
+  setValue?: (val: string) => void;
 };
 
-const Map = ({ center }: Props) => {
-  const newCenter = [center?.lat, center?.lng];
+const Map = ({ center, markers, setValue }: Props) => {
+  // console.log(markers);
+  const markerRef = React.useRef<Marker | null>(null);
+  // const newCenter = center?.split(",") || [0,0];
+  const latitude = center[0];
+  const longitude = center[1];
   // const map = useMapEvents("click", () => {
   //   map.setView([center?.lat,center?.lng]);
   // });
 
-  const markers = [
-    {
-      geocode: [-4.1260987, 104.1792463, 10],
-      popup: "Ini Contoh 1",
-    },
-    {
-      geocode: [-4.1271987, 104.1292463, 10],
-      popup: "Ini Contoh 2",
-    },
-    {
-      geocode: [-4.1282987, 104.1392463, 10],
-      popup: "Ini Contoh 3",
-    },
-    {
-      geocode: [-4.1293987, 104.1492463, 10],
-      popup: "Ini Contoh 4",
-    },
-  ];
-
   const customIcon = new Icon({
-    iconUrl: "https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png",
-    iconSize: [25, 41],
-    iconAnchor: [12, 41],
-    popupAnchor: [1, -34],
-    shadowSize: [41, 41],
+    // iconUrl: "https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png",
+    iconUrl: "/assets/kotak.png",
+    iconSize: [40, 40],
+    iconAnchor: [12, 40],
   });
+  // const customIcon = new Icon({
+  //   iconUrl: "/assets/kotak.png",
+  // });
+
+  const eventHandlers = React.useMemo(
+    () => ({
+      dragend() {
+        const marker = markerRef.current;
+        if (marker && setValue) {
+          // console.log(marker.getLatLng());
+          const latLng = marker.getLatLng();
+          // console.log("MARKER :", latLng);
+          setValue(latLng.lat + "," + latLng.lng);
+        }
+      },
+    }),
+    [setValue]
+  );
 
   return (
-    <MapContainer
-      center={center}
-      zoom={12}
-      scrollWheelZoom={false}
-      className="w-full"
-      style={{ minHeight: 500 }}
-    >
-      <TileLayer
-        attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-      />
-      {markers.map((marker, i) => (
-        <Marker
-          key={i}
-          position={[marker.geocode[0], marker.geocode[1]]}
-          icon={customIcon}
-        >
-          <Popup>{marker.popup}</Popup>
-        </Marker>
-      ))}
-    </MapContainer>
+    <div className="flex h-full bg-red-400">
+      {/* <div>{JSON.stringify(markers)}</div> */}
+      <MapContainer
+        center={[latitude, longitude]}
+        zoom={markers ? 13 : 16}
+        // zoom={21}
+        scrollWheelZoom={false}
+        className="w-full"
+        // style={{ minHeight: 500 }}
+      >
+        <TileLayer
+          attribution="&copy;google"
+          url="https://www.google.cn/maps/vt?lyrs=m@189&gl=cn&x={x}&y={y}&z={z}"
+          subdomains={["mt0", "mt1", "mt2", "mt3"]}
+          maxZoom={21}
+        />
+        {/* <TileLayer
+        attribution="&copy;googles"
+        url="http://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}"
+        subdomains={["mt0", "mt1", "mt2", "mt3"]}
+      /> */}
+        {/* <ReactLeafletGoogleLayer apiKey="AIzaSyDioFkflTTj67Zuj3N5hCnyL6ztpRCKcxI" /> */}
+        {markers ? (
+          markers?.map((marker, i) => (
+            <MarkerComp
+              key={i}
+              position={[marker.geocode[0], marker.geocode[1]]}
+              icon={customIcon}
+            >
+              <Popup>{marker.popup}</Popup>
+            </MarkerComp>
+          ))
+        ) : (
+          <MarkerComp
+            draggable={true}
+            eventHandlers={eventHandlers}
+            position={[latitude, longitude]}
+            ref={markerRef}
+            icon={customIcon}
+            // icon={markerIcon}
+          >
+            <Popup autoClose>
+              <div className="text-center">
+                Anda Disini.
+                <br />
+                Tekan dan Geser Pin untuk mengubah posisi
+              </div>
+            </Popup>
+          </MarkerComp>
+        )}
+      </MapContainer>
+    </div>
   );
 };
 

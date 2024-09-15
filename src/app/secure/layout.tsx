@@ -1,20 +1,34 @@
-import AdminClientWrapper from "@/components/AdminClientWrapper";
+"use client";
+import QueryClientWrapper from "@/components/QueryClientWrapper";
+import { queryClient } from "@/lib/utils";
+import { QueryClientProvider } from "@tanstack/react-query";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { getCookie } from "cookies-next";
 import React from "react";
-import SecureWrapper from "./SecureWrapper";
-import { cookies } from "next/headers";
 
 type Props = {
   children: React.ReactNode;
 };
 
+// const refreshToken = () => {
+//   "server only";
+//   const headers = headers();
+//   const cookieHeader = headers.get("Set-Cookie");
+//   console.log(cookieHeader);
+//   // return cookies().get("refreshToken")?.value || "";
+// };
+
 function AdminLayout({ children }: Props) {
-  const refreshToken = () => {
-    return cookies().get("refreshToken")?.value || "";
-  };
+  const refreshToken = getCookie("refreshToken") as string;
+
+  // Access individual cookies
   return (
-    <SecureWrapper refreshToken={refreshToken()}>
-      <AdminClientWrapper>{children}</AdminClientWrapper>
-    </SecureWrapper>
+    <QueryClientProvider client={queryClient}>
+      <QueryClientWrapper refreshToken={refreshToken}>
+        {children}
+      </QueryClientWrapper>
+      <ReactQueryDevtools initialIsOpen={false} buttonPosition="relative" />
+    </QueryClientProvider>
   );
 }
 

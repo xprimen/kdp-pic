@@ -1,3 +1,4 @@
+import { latLng } from "leaflet";
 import { z } from "zod";
 
 export const loginDataResponseSchema = z.object({
@@ -108,6 +109,7 @@ export const KotakSchema = z.object({
   id_kotak: z.string(),
   id_status_kotak: z.number(),
   id_pw: z.number(),
+  latLng: z.string().optional(),
   // status_terima: z.number(),
   // qrcode_link: z.string(),
   tgl_start: z.date().nullable(),
@@ -122,6 +124,14 @@ export const KotakSchema = z.object({
       nama: z.string().nullable(),
     })
     .nullable(),
+  // history: z.array(
+  //   z.object({
+  //     id: z.number(),
+  //     jumlah: z.number(),
+  //     tgl_start: z.date().nullable(),
+  //     tgl_stop: z.date().nullable(),
+  //   })
+  // ),
 });
 
 export type TKotak = z.infer<typeof KotakSchema>;
@@ -180,6 +190,21 @@ export const UpdateEkspedisiKotakSchema = z.object({
 
 export type TUpdateEkspedisiKotak = z.infer<typeof UpdateEkspedisiKotakSchema>;
 
+export const UpdatePasangKotakSchema = z.object({
+  id: z.number(),
+  // kode_kotak: z.string(),
+  tgl_start: z.string().min(1, "Tanggal Diterima Wajib Diisi"),
+  alamat_penempatan: z.string(),
+  alamat_prov: z.string(),
+  alamat_kota: z.string(),
+  alamat_kec: z.string(),
+  alamat_kel: z.string(),
+  latLang: z.string(),
+  foto_penempatan: z.string(),
+});
+
+export type TUpdatePasangKotak = z.infer<typeof UpdatePasangKotakSchema>;
+
 export const MawilSchema = z.object({
   id: z.number(),
   nama_mawil: z.string(),
@@ -205,3 +230,14 @@ export type TKota = z.infer<typeof PropinsiSchema>;
 
 export type TKecamatan = z.infer<typeof PropinsiSchema>;
 export type TKelurahan = z.infer<typeof PropinsiSchema>;
+
+export type Location = {
+  latitude: number;
+  longitude: number;
+};
+
+export type ErrorLocation = {
+  message: string;
+};
+
+export type TGeocodeMarkers = { geocode: number[]; popup: string }[];

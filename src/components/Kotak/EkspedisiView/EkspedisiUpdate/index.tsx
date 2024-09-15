@@ -95,7 +95,7 @@ const EkspedisiUpdate = ({ id }: Props) => {
   function onSubmit(values: TUpdateEkspedisiKotak) {
     console.log("VALUES :", values);
     setLoadingForm(true);
-    const { accessToken } = queryClient.getQueryData(["token"]) as {
+    const { accessToken: token } = queryClient.getQueryData(["token"]) as {
       accessToken: string;
     };
 
@@ -110,7 +110,7 @@ const EkspedisiUpdate = ({ id }: Props) => {
       ),
     });
     mutation.mutate(
-      { values, accessToken },
+      { values, token },
       {
         onSuccess: (data, variables, context) => {
           console.log("SUCCESS : ", data);

@@ -1,15 +1,9 @@
 import BottomNavbar from "@/components/BottomNavbar";
 import Summary from "@/components/Summary";
 import UserGreeting from "@/components/UserGreeting";
-import { LoginDataResponse } from "@/types";
-import { cookies } from "next/headers";
+import { userdata } from "@/lib/utils-server";
 
 function Dashboard() {
-  const userdata = (): LoginDataResponse => {
-    const data = cookies().get("userdata")?.value;
-    return data ? JSON.parse(data) : null;
-  };
-
   /* 
   const getKotak = async () => {
     const pic_wilayah = await fetch(
@@ -62,8 +56,6 @@ function Dashboard() {
   // React.useEffect(() => {
   //   getKotak();
   // }, [getKotak]);
-
-  // console.log("kotak :", dataKotak);
 
   return (
     <div className="pb-20">

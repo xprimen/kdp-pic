@@ -9,12 +9,7 @@ import { TUser } from "@/types";
 import axiosInstance from "@/lib/axiosInstance";
 import { queryClient } from "@/lib/utils";
 
-type Props = {
-  token: string;
-  refreshToken: string;
-};
-
-const UserView = ({ token, refreshToken }: Props) => {
+const UserView = () => {
   // console.log("token : ", token);
   const { data: users, isFetching } = useQuery({
     queryKey: ["userspk"],

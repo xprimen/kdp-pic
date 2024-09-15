@@ -13,6 +13,11 @@ const nextConfig = {
         hostname: "api.qrserver.com",
         // pathname: "/images/stock/**",
       },
+      {
+        protocol: "https",
+        hostname: "unpkg.com",
+        pathname: "/leaflet@1.7.1/dist/images/**",
+      },
     ],
   },
 };

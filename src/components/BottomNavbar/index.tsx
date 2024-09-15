@@ -15,39 +15,39 @@ const linksPW: TLinks[] = [
   {
     title: "Beranda",
     href: "/secure",
-    icon: <LayoutDashboard />,
+    icon: <LayoutDashboard size={20} />,
   },
   {
     title: "PIC",
     href: "/secure/users",
-    icon: <Users />,
+    icon: <Users size={20} />,
   },
   {
     title: "Kotak",
     href: "/secure/kotak",
-    icon: <BoxIcon />,
+    icon: <BoxIcon size={20} />,
   },
   {
     title: "Akun",
     href: "/secure/akun",
-    icon: <User />,
+    icon: <User size={20} />,
   },
 ];
 const linksPK: TLinks[] = [
   {
     title: "Beranda",
     href: "/secure",
-    icon: <LayoutDashboard />,
+    icon: <LayoutDashboard size={20} />,
   },
   {
     title: "Kotak",
     href: "/secure/kotak",
-    icon: <BoxIcon />,
+    icon: <BoxIcon size={20} />,
   },
   {
     title: "Akun",
     href: "/secure/akun",
-    icon: <User />,
+    icon: <User size={20} />,
   },
 ];
 

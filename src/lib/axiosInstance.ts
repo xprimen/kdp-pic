@@ -1,9 +1,5 @@
 // "use server";
 import axios from "axios";
-import createAuthRefreshInterceptor from "axios-auth-refresh";
-import { decodeToken } from "./utils";
-import { LoginDataResponse } from "@/types";
-import { saveCookie } from "./actions/login";
 
 const axiosInstance = (accessToken: string) => {
   const baseURL = process.env.BASE_API;
