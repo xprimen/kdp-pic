@@ -10,7 +10,7 @@ const UserGreeting = ({ userdata }: Props) => {
       <div className="flex-1 font-semibold">Hi, {userdata?.nama}</div>
       <Avatar>
         <AvatarFallback className="text-white bg-primary">
-          {/* {userdata.nama.slice(0, 1)} */}
+          {userdata.nama.slice(0, 1)}
         </AvatarFallback>
       </Avatar>
     </div>

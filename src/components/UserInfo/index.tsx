@@ -9,7 +9,7 @@ const UserInfo = ({ userdata }: Props) => {
     <div className="px-4 flex gap-x-4 min-h-24">
       <Avatar className="w-16 h-16">
         <AvatarFallback className="text-white bg-primary text-xl">
-          {/* {userdata?.nama.slice(0, 1)} */}
+          {userdata?.nama.slice(0, 1)}
         </AvatarFallback>
       </Avatar>
       <div className="flex-1">
