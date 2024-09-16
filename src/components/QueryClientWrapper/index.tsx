@@ -14,6 +14,7 @@ function QueryClientWrapper({
 }: PropsWithChildren<Props>) {
   useQuery({
     queryKey: ["token"],
+    refetchInterval: 1000 * 10,
     queryFn: () =>
       axios
         .get(`${process.env.BASE_API}/token`, {
