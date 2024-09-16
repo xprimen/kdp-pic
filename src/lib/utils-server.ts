@@ -12,3 +12,9 @@ export const userdata = (): LoginDataResponse => {
   //   submawil: "1",
   // };
 };
+
+export const getRefreshToken = () => {
+  const refreshToken = cookies().get("refreshToken")?.value;
+  // console.log("refresh token : ", refreshToken);
+  return refreshToken;
+};

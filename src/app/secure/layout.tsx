@@ -1,9 +1,5 @@
-"use client";
 import QueryClientWrapper from "@/components/QueryClientWrapper";
-import { queryClient } from "@/lib/utils";
-import { QueryClientProvider } from "@tanstack/react-query";
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { getCookie } from "cookies-next";
+import { getRefreshToken } from "@/lib/utils-server";
 import React from "react";
 
 type Props = {
@@ -19,17 +15,14 @@ type Props = {
 // };
 
 function AdminLayout({ children }: Props) {
-  const refreshToken = getCookie("refreshToken") as string;
+  const refreshToken = getRefreshToken() || "";
   // console.log("refresh token :", refreshToken);
 
   // Access individual cookies
   return (
-    <QueryClientProvider client={queryClient}>
-      <QueryClientWrapper refreshToken={refreshToken}>
-        {children}
-      </QueryClientWrapper>
-      <ReactQueryDevtools initialIsOpen={false} buttonPosition="relative" />
-    </QueryClientProvider>
+    <QueryClientWrapper refreshToken={refreshToken}>
+      {children}
+    </QueryClientWrapper>
   );
 }
 
