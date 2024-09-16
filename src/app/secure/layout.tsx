@@ -20,6 +20,7 @@ type Props = {
 
 function AdminLayout({ children }: Props) {
   const refreshToken = getCookie("refreshToken") as string;
+  // console.log("refresh token :", refreshToken);
 
   // Access individual cookies
   return (
