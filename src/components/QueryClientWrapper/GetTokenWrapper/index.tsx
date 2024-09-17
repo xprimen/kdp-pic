@@ -51,7 +51,7 @@ const GetTokenWrapper = ({
           },
         })
         .then((res) => {
-          console.log("New Token Client :", res);
+          // console.log("New Token Client :", res);
           // console.log("TOKEN :", token);
           // console.log("RefreshToken :", refreshToken);
           // axiosInstance(res.data.accessToken);

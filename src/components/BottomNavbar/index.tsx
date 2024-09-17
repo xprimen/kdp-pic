@@ -64,6 +64,7 @@ const BottomNavbar = ({ role }: Props) => {
       <div className="flex items-center justify-center h-full">
         {links?.map((link) => (
           <Link
+            replace
             key={link.title}
             href={link.href}
             className={`h-full w-full flex flex-col justify-center items-center p-2 space-y-1 ${
