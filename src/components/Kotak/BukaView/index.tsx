@@ -14,7 +14,7 @@ import {
   TKotak,
 } from "@/types";
 import { useQuery } from "@tanstack/react-query";
-import { Box, QrCode, UserCircle } from "lucide-react";
+import { Box, QrCode, ScanQrCodeIcon, UserCircle } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -34,7 +34,14 @@ const BukaView = () => {
 
   return (
     <div className="mb-20">
-      <TableToolbars />
+      <TableToolbars
+        add={{
+          link: "/secure/kotak/buka/scan",
+          label: "Scan Kotak",
+          variant: "default",
+          icon: <ScanQrCodeIcon className="w-4 h-4" />,
+        }}
+      />
       <div className="flex flex-col gap-2 my-4">
         {isFetching &&
           [...Array(10)].map((_, i) => (
