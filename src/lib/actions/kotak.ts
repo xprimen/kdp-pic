@@ -149,7 +149,7 @@ export const savePenerimaanKotak = async ({
   values: TUpdateEkspedisiKotak;
   token: string;
 }) => {
-  return await axiosInstance(token).patch("/terimakotakpw/", values);
+  return await axiosInstance(token).post("/terimakotakpw/", values);
 };
 
 export const savePasangKotak = async ({
