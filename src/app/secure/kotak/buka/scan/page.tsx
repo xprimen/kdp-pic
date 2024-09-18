@@ -13,15 +13,13 @@ const Page = () => {
   const [kodeScanner, setKodeScanner] = React.useState("");
 
   const { data, isFetching } = useQuery({
-    queryKey: ["kotakIdle"],
+    queryKey: ["kotakTerpasang"],
     queryFn: async (): Promise<TKotak[]> => {
       const { accessToken } = (await queryClient.getQueryData(["token"])) as {
         accessToken: string;
       };
       const data = await getKotak(accessToken);
-      const filterIdle = data.filter(
-        (dt: TKotak) => dt.id_status_kotak === 1 || dt.id_status_kotak === 3
-      );
+      const filterIdle = data.filter((dt: TKotak) => dt.id_status_kotak === 2);
       return filterIdle;
     },
     // refetchOnWindowFocus: true,
@@ -33,7 +31,7 @@ const Page = () => {
         (dt: TKotak) => dt.id_kotak === kode
       );
       if (kotakFilter.length === 1) {
-        redirect(`/secure/kotak/pasang/${kotakFilter[0].id}`);
+        redirect(`/secure/kotak/buka/${kotakFilter[0].id}`);
       } else {
         toast({
           title: "Informasi",

@@ -1,4 +1,3 @@
-import { latLng } from "leaflet";
 import { z } from "zod";
 
 export const loginDataResponseSchema = z.object({
@@ -204,6 +203,16 @@ export const UpdatePasangKotakSchema = z.object({
 });
 
 export type TUpdatePasangKotak = z.infer<typeof UpdatePasangKotakSchema>;
+
+export const UpdateBukaKotakSchema = z.object({
+  id: z.number(),
+  tgl_stop: z.string().min(1, "Tanggal Dibuka Wajib Diisi"),
+  pendapatan_kotak: z.number(),
+  pendapatan_kotak_str: z.string(),
+  foto_unboxing: z.string(),
+});
+
+export type TUpdateBukaKotak = z.infer<typeof UpdateBukaKotakSchema>;
 
 export const MawilSchema = z.object({
   id: z.number(),

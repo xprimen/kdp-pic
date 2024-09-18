@@ -4,6 +4,7 @@ import { queryClient } from "@/lib/utils";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { PropsWithChildren } from "react";
 import GetTokenWrapper from "./GetTokenWrapper";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 function QueryClientWrapper({
   children,
@@ -22,6 +23,11 @@ function QueryClientWrapper({
           {children}
         </div>
       </GetTokenWrapper>
+      <ReactQueryDevtools
+        initialIsOpen={false}
+        position="bottom"
+        buttonPosition="relative"
+      />
     </QueryClientProvider>
   );
 }
