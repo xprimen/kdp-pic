@@ -64,7 +64,7 @@ const BukaView = () => {
           ))}
         {data?.map((dt: TKotak) => (
           <Link
-            href={`/secure/kotak/pasang/${dt.id}`}
+            href={`/secure/kotak/buka/${dt.id}`}
             key={dt.id}
             className="bg-white px-4 py-2"
           >

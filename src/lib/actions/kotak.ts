@@ -2,6 +2,7 @@ import {
   LoginDataResponse,
   TEkspedisiKotak,
   TKotak,
+  TUpdateBukaKotak,
   TUpdateEkspedisiKotak,
   TUpdatePasangKotak,
 } from "@/types";
@@ -149,7 +150,7 @@ export const savePenerimaanKotak = async ({
   values: TUpdateEkspedisiKotak;
   token: string;
 }) => {
-  return await axiosInstance(token).patch("/terimakotakpw/", values);
+  return await axiosInstance(token).post("/terimakotakpw/", values);
 };
 
 export const savePasangKotak = async ({
@@ -161,4 +162,15 @@ export const savePasangKotak = async ({
 }) => {
   const { id, ...sendData } = values;
   return await axiosInstance(token).patch("/penempatan/" + values.id, sendData);
+};
+
+export const saveBukaKotak = async ({
+  values,
+  token,
+}: {
+  values: TUpdateBukaKotak;
+  token: string;
+}) => {
+  const { id, ...sendData } = values;
+  return await axiosInstance(token).patch("/unboxing/" + values.id, sendData);
 };

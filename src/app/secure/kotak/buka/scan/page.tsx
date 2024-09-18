@@ -1,5 +1,6 @@
 "use client";
 import QRCodeScanner from "@/components/QRCodeScanner";
+import TopNavbar from "@/components/TopNavbar";
 import { toast } from "@/components/ui/use-toast";
 import { getKotak } from "@/lib/actions/kotak";
 import { queryClient } from "@/lib/utils";
@@ -47,6 +48,7 @@ const Page = () => {
 
   return (
     <>
+      <TopNavbar title="Scan QRcode Kotak" backButton />
       <QRCodeScanner setValue={setKodeScanner} />
     </>
   );
