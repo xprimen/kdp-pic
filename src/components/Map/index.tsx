@@ -52,7 +52,7 @@ const Map = ({ center, markers, setValue }: Props) => {
   );
 
   return (
-    <div className="flex h-full bg-red-400">
+    <div className="flex h-full w-full bg-red-400">
       {/* <div>{JSON.stringify(markers)}</div> */}
       <MapContainer
         center={[latitude, longitude]}
@@ -60,6 +60,7 @@ const Map = ({ center, markers, setValue }: Props) => {
         // zoom={21}
         scrollWheelZoom={false}
         className="w-full"
+        // whenReady={() => {}}
         // style={{ minHeight: 500 }}
       >
         <TileLayer
