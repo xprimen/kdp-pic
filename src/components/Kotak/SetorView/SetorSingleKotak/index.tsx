@@ -12,7 +12,12 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "@/components/ui/use-toast";
-import { getKotak, saveBukaKotak } from "@/lib/actions/kotak";
+import {
+  getKotak,
+  getKotakSetor,
+  saveBukaKotak,
+  saveSetorKotak,
+} from "@/lib/actions/kotak";
 import useCurrentLocation from "@/lib/useCurrentLocation";
 import { numberToString, queryClient, terbilang } from "@/lib/utils";
 import {
@@ -23,7 +28,9 @@ import {
   TKota,
   TPropinsi,
   TUpdateBukaKotak,
+  TUpdateSetorKotak,
   UpdateBukaKotakSchema,
+  UpdateSetorKotakSchema,
 } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery } from "@tanstack/react-query";
@@ -38,7 +45,7 @@ import { useForm } from "react-hook-form";
 type Props = {
   id: number; //id kotak Number
 };
-const BukaUpdate = ({ id }: Props) => {
+const SetorSingleKotak = ({ id }: Props) => {
   const router = useRouter();
   const [loadingForm, setLoadingForm] = React.useState(false);
   const [imageFile, setImageFile] = React.useState<FileList>();
@@ -46,23 +53,23 @@ const BukaUpdate = ({ id }: Props) => {
   const [pendapatanDisplay, setPendapatanDisplay] = React.useState("");
 
   const { data: kotak, isFetching } = useQuery({
-    queryKey: ["kotak", id],
+    queryKey: ["kotakBelumSetor", id],
     queryFn: async () => {
       const { accessToken } = queryClient.getQueryData(["token"]) as {
         accessToken: string;
       };
-      const getData = await getKotak(accessToken);
+      const getData = await getKotakSetor(accessToken);
       const dataFilter = getData.filter((dt) => dt.id === id)[0];
       return dataFilter;
     },
     // refetchOnWindowFocus: true,
   });
 
-  const form = useForm<TUpdateBukaKotak>({
-    resolver: zodResolver(UpdateBukaKotakSchema),
+  const form = useForm<TUpdateSetorKotak>({
+    resolver: zodResolver(UpdateSetorKotakSchema),
     defaultValues: {
       id: id,
-      tgl_stop: new Intl.DateTimeFormat("fr-CA", {
+      tgl_setor: new Intl.DateTimeFormat("fr-CA", {
         year: "numeric",
         month: "2-digit",
         day: "2-digit",
@@ -72,13 +79,22 @@ const BukaUpdate = ({ id }: Props) => {
     // },
   });
 
+  React.useEffect(() => {
+    if (kotak) {
+      form.setValue(
+        "jumlah_setor",
+        numberToString(kotak.pendapatan_kotak, ",")
+      );
+    }
+  }, [kotak, form]);
+
   const mutation = useMutation({
-    mutationFn: saveBukaKotak,
+    mutationFn: saveSetorKotak,
   });
 
-  // console.log("ERROR FORM :", form.formState.errors);
+  console.log("ERROR FORM :", form.formState.errors);
 
-  function onSubmit(values: TUpdateBukaKotak) {
+  function onSubmit(values: TUpdateSetorKotak) {
     // console.log("VALUES :", values);
     // toast({
     //   title: "Mohon Tunggu",
@@ -113,12 +129,12 @@ const BukaUpdate = ({ id }: Props) => {
           // form.reset();
           toast({
             title: "Berhasil",
-            description: "Kotak Berhasil Dibuka",
+            description: "Kotak Berhasil Disetor",
           });
           queryClient.invalidateQueries({
-            queryKey: ["kotakIdle", "kotakTerpasang"],
+            queryKey: ["kotakBelumSetor"],
           });
-          router.replace("/secure/kotak?tab=buka");
+          router.replace("/secure/kotak?tab=setor");
         },
         onError: (error, variables, context) => {
           console.log("ERROR : ", error.message);
@@ -134,6 +150,9 @@ const BukaUpdate = ({ id }: Props) => {
       }
     );
   }
+
+  // console.log("TESTES :", form.getValues("pendapatan_kotak"));
+  // console.log("TESTES_STR :", form.getValues("pendapatan_kotak_str"));
 
   const toBase64 = (file: any): Promise<string> =>
     new Promise((resolve, reject) => {
@@ -154,12 +173,12 @@ const BukaUpdate = ({ id }: Props) => {
     const file = files.item(0);
     if (file) {
       if (file.size > MAX_FILE_SIZE) {
-        return form.setError("foto_unboxing", {
+        return form.setError("foto_bukti", {
           message: "Ukuran File Terlalu Besar",
         });
       }
       if (!ACCEPTED_IMAGE_TYPES.includes(files?.[0]?.type)) {
-        return form.setError("foto_unboxing", {
+        return form.setError("foto_bukti", {
           message: "Tipe File Tidak Didukung",
         });
       }
@@ -169,9 +188,7 @@ const BukaUpdate = ({ id }: Props) => {
       setImagePreview(urlImage);
 
       const fileWithBase64 = await toBase64(file);
-      // setImageBase64(fileWithBase64);
-      // form.setValue("foto_unboxing", file.name, { shouldValidate: true });
-      form.setValue("foto_unboxing", fileWithBase64, {
+      form.setValue("foto_bukti", fileWithBase64, {
         shouldValidate: true,
       });
       setImageFile(files);
@@ -197,62 +214,22 @@ const BukaUpdate = ({ id }: Props) => {
               {isFetching && (
                 <LoaderIcon className="mr-2 h-4 w-4 animate-spin" />
               )}{" "}
-              {kotak?.id_kotak}
+              {kotak?.kode_kotak}
             </h3>
+          </div>
+          <div className="flex items-center space-x-1 py-4 px-4 bg-white">
+            <span className="font-semibold text-sm">Jumlah Setor :</span>
+            <span className="font-medium text-sm">
+              {isFetching && <LoaderIcon className="w-4 h-4 animate-spin" />}
+              Rp {kotak && numberToString(kotak.pendapatan_kotak)}
+            </span>
           </div>
           <FormField
             control={form.control}
-            name="pendapatan_kotak"
-            render={({ field }) => (
-              <FormItem className="space-y-1 py-4 px-4 bg-white ">
-                <FormLabel className="font-semibold">
-                  Jumlah Pendapatan Kotak
-                </FormLabel>
-                <FormControl>
-                  <Input
-                    type="number"
-                    placeholder="Contoh 100000"
-                    className="resize-y"
-                    {...field}
-                    onChange={(val) => {
-                      console.log(
-                        "FORM VALUE :",
-                        numberToString(Number(val.target.value))
-                      );
-                      form.setValue(
-                        "pendapatan_kotak",
-                        Number(val.target.value),
-                        {
-                          shouldValidate: true,
-                        }
-                      );
-                      form.setValue(
-                        "pendapatan_kotak_str",
-                        numberToString(Number(val.target.value), ","),
-                        {
-                          shouldValidate: true,
-                        }
-                      );
-                      setPendapatanDisplay(
-                        numberToString(Number(val.target.value), ".")
-                      );
-                    }}
-                  />
-                </FormControl>
-                <FormDescription>Rp {pendapatanDisplay || 0}</FormDescription>
-                <FormDescription>
-                  Terbilang : {terbilang(form.getValues("pendapatan_kotak"))}{" "}
-                  Rupiah
-                </FormDescription>
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="foto_unboxing"
+            name="foto_bukti"
             render={({ field }) => (
               <FormItem className="space-y-1 py-4 px-4 bg-white">
-                <FormLabel className="font-semibold">Foto Tempat</FormLabel>
+                <FormLabel className="font-semibold">Foto Bukti</FormLabel>
                 <FormControl>
                   <Input
                     {...field}
@@ -279,7 +256,7 @@ const BukaUpdate = ({ id }: Props) => {
                       onClick={() => {
                         setImagePreview("");
                         setImageFile(undefined);
-                        form.resetField("foto_unboxing");
+                        form.resetField("foto_bukti");
                       }}
                     >
                       <CircleX size={24} />
@@ -296,38 +273,24 @@ const BukaUpdate = ({ id }: Props) => {
               </FormItem>
             )}
           />
-          <div className="flex items-center space-x-1 py-4 px-4 bg-white ">
-            <span className="font-semibold text-sm">Tanggal Pasang :</span>
-            <span className="font-medium text-sm">
-              {isFetching && <LoaderIcon className="w-4 h-4 animate-spin" />}
-              {kotak?.tgl_start &&
-                new Intl.DateTimeFormat("id-ID", {
-                  day: "2-digit",
-                  month: "long",
-                  year: "numeric",
-                }).format(new Date(kotak?.tgl_start))}
-            </span>
-          </div>
           <FormField
             control={form.control}
-            name="tgl_stop"
+            name="tgl_setor"
             render={({ field }) => {
               const date = new Date(field.value);
               return (
                 <FormItem className="flex flex-col space-y-1 py-4 px-4 bg-white">
-                  <FormLabel className="font-semibold">
-                    Tanggal Buka Kotak
-                  </FormLabel>
+                  <FormLabel className="font-semibold">Tanggal Setor</FormLabel>
                   <FormControl>
                     <DatePicker
                       autoComplete="off"
                       className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                      id="tgl_stop"
+                      id="tgl_setor"
                       {...field}
-                      value={form.getValues("tgl_stop")}
+                      value={form.getValues("tgl_setor")}
                       onChange={(date) =>
                         form.setValue(
-                          "tgl_stop",
+                          "tgl_setor",
                           new Intl.DateTimeFormat("fr-CA", {
                             year: "numeric",
                             month: "2-digit",
@@ -365,4 +328,4 @@ const BukaUpdate = ({ id }: Props) => {
   );
 };
 
-export default BukaUpdate;
+export default SetorSingleKotak;

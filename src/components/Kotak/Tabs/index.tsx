@@ -12,6 +12,7 @@ import {
   useSearchParams,
 } from "next/navigation";
 import { LoginDataResponse } from "@/types";
+import SetorView from "../SetorView";
 
 type Props = {
   userdata: LoginDataResponse;
@@ -34,7 +35,7 @@ const KotakTabs = ({ userdata }: Props) => {
   const tabParams = searchParams.get("tab");
   const tab = tabParams ? tabParams : "ekspedisi";
   const gridCols = () => {
-    return userdata.role === "2" ? "grid-cols-3" : "grid-cols-2";
+    return userdata.role === "2" ? "grid-cols-4" : "grid-cols-3";
   };
   return (
     <Tabs defaultValue={tab}>
@@ -62,6 +63,13 @@ const KotakTabs = ({ userdata }: Props) => {
         >
           Buka
         </TabsTrigger>
+        <TabsTrigger
+          onClick={() => createQueryString("tab", "setor")}
+          value="setor"
+          className="h-full text-md"
+        >
+          Setor
+        </TabsTrigger>
       </TabsList>
       {userdata.role === "2" && (
         <TabsContent value="ekspedisi" asChild>
@@ -73,6 +81,9 @@ const KotakTabs = ({ userdata }: Props) => {
       </TabsContent>
       <TabsContent value="buka" asChild>
         <BukaView />
+      </TabsContent>
+      <TabsContent value="setor" asChild>
+        <SetorView />
       </TabsContent>
     </Tabs>
   );

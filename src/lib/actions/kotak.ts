@@ -2,9 +2,11 @@ import {
   LoginDataResponse,
   TEkspedisiKotak,
   TKotak,
+  TKotakSetor,
   TUpdateBukaKotak,
   TUpdateEkspedisiKotak,
   TUpdatePasangKotak,
+  TUpdateSetorKotak,
 } from "@/types";
 import axiosInstance from "../axiosInstance";
 
@@ -73,6 +75,15 @@ export const getKotak = async (token: string) => {
     .get("/kotakpw")
     .then((res) => {
       const data = res.data as TKotak[];
+      return data;
+    });
+};
+
+export const getKotakSetor = async (token: string) => {
+  return await axiosInstance(token)
+    .get("/setorkotak")
+    .then((res) => {
+      const data = res.data as TKotakSetor[];
       return data;
     });
 };
@@ -173,4 +184,15 @@ export const saveBukaKotak = async ({
 }) => {
   const { id, ...sendData } = values;
   return await axiosInstance(token).patch("/unboxing/" + values.id, sendData);
+};
+
+export const saveSetorKotak = async ({
+  values,
+  token,
+}: {
+  values: TUpdateSetorKotak;
+  token: string;
+}) => {
+  const { id, ...sendData } = values;
+  return await axiosInstance(token).patch("/setor/" + values.id, sendData);
 };
