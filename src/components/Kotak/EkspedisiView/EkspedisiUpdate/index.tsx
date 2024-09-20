@@ -10,10 +10,11 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { toast } from "@/components/ui/use-toast";
+import { savePenerimaanKotak } from "@/lib/actions/kotak";
 import { queryClient } from "@/lib/utils";
 import {
   ACCEPTED_IMAGE_TYPES,
-  LoginDataResponse,
   MAX_FILE_SIZE,
   TEkspedisiDetail,
   TEkspedisiKotak,
@@ -21,17 +22,14 @@ import {
   UpdateEkspedisiKotakSchema,
 } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation } from "@tanstack/react-query";
 import { CircleX, LoaderIcon, Save } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import React, { useMemo, useState } from "react";
-import "react-datepicker/dist/react-datepicker.css";
-import { useForm } from "react-hook-form";
+import React, { useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { getEkspedisiKotak, savePenerimaanKotak } from "@/lib/actions/kotak";
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { toast } from "@/components/ui/use-toast";
+import { useForm } from "react-hook-form";
 
 type Props = {
   id: number;
@@ -41,43 +39,7 @@ const EkspedisiUpdate = ({ id }: Props) => {
   const [loadingForm, setLoadingForm] = React.useState(false);
   const [imageFile, setImageFile] = React.useState<FileList>();
   const [imagePreview, setImagePreview] = React.useState("");
-  const [kotaks, setKotaks] = useState([]);
   const [data, setData] = useState<TEkspedisiKotak>();
-
-  /* const data = useMemo<TEkspedisiKotak>(() => {
-    const state = queryClient.getQueryState<TEkspedisiKotak[]>(["ekspedisi"]);
-    if (state?.data) {
-      // const getData = state.data as TEkspedisiKotak[];
-      const ret = state.data.filter((dt) => dt.id === id)[0];
-      return ret;
-    } else {
-      const { accessToken } = (await queryClient.getQueryData(["token"])) as {
-        accessToken: string;
-      };
-      cosnt getEkspedisiKotak(accessToken)
-      return {
-        id: 0,
-        id_penerima: 0,
-        status_terima: 0,
-        tgl_kirim: new Date(),
-        detail_kirim_kotaks: [],
-      };
-    }
-  }, [id]); */
-  const { data: datas } = useQuery({
-    queryKey: ["ekspedisi"],
-    queryFn: async (): Promise<TEkspedisiKotak[]> => {
-      const { accessToken } = (await queryClient.getQueryData(["token"])) as {
-        accessToken: string;
-      };
-      const getData = await getEkspedisiKotak(accessToken);
-      const dataFilter = getData.filter((dt) => dt.id === id)[0];
-      setData(dataFilter);
-      return getData;
-      // console.log(getData);
-    },
-    // refetchOnWindowFocus: true,
-  });
 
   const form = useForm<TUpdateEkspedisiKotak>({
     resolver: zodResolver(UpdateEkspedisiKotakSchema),
@@ -85,7 +47,6 @@ const EkspedisiUpdate = ({ id }: Props) => {
       id_kirim: id,
     },
     shouldFocusError: false,
-    // },
   });
 
   const mutation = useMutation({
@@ -93,13 +54,11 @@ const EkspedisiUpdate = ({ id }: Props) => {
   });
 
   function onSubmit(values: TUpdateEkspedisiKotak) {
-    console.log("VALUES :", values);
     setLoadingForm(true);
     const { accessToken: token } = queryClient.getQueryData(["token"]) as {
       accessToken: string;
     };
 
-    // setTimeout(() => {
     toast({
       title: "Mohon Tunggu",
       description: (
@@ -113,10 +72,6 @@ const EkspedisiUpdate = ({ id }: Props) => {
       { values, token },
       {
         onSuccess: (data, variables, context) => {
-          console.log("SUCCESS : ", data);
-          console.log("SUCCESS : ", variables);
-          console.log("SUCCESS : ", context);
-          // form.reset();
           toast({
             title: "Berhasil",
             description: "Berhasil Menyimpan Data",
@@ -125,9 +80,6 @@ const EkspedisiUpdate = ({ id }: Props) => {
           router.replace("/secure/kotak");
         },
         onError: (error, variables, context) => {
-          console.log("ERROR : ", error.message);
-          console.log("ERROR : ", variables);
-          console.log("ERROR : ", context);
           toast({
             title: "Error",
             description: "Gagal Menyimpan Data",
@@ -141,8 +93,6 @@ const EkspedisiUpdate = ({ id }: Props) => {
   React.useEffect(() => {
     if (data?.id_penerima) form.setValue("id_penerima", data.id_penerima);
   }, [data?.id_penerima, form]);
-
-  // console.log("TESTES :", data);
 
   const toBase64 = (file: any): Promise<string> =>
     new Promise((resolve, reject) => {
@@ -178,8 +128,6 @@ const EkspedisiUpdate = ({ id }: Props) => {
       setImagePreview(urlImage);
 
       const fileWithBase64 = await toBase64(file);
-      // setImageBase64(fileWithBase64);
-      // form.setValue("bukti_terima", file.name, { shouldValidate: true });
       form.setValue("bukti_terima", fileWithBase64, { shouldValidate: true });
       setImageFile(files);
     }
@@ -247,8 +195,7 @@ const EkspedisiUpdate = ({ id }: Props) => {
                             }
                           }}
                           className="size-5 accent-green-400"
-                          value={String(item.id_kotak)} // className="ring-0 border-0 rounded-none focus-visible:outline-none
-                          // focus:outline-none focus-visible:ring-0"
+                          value={String(item.id_kotak)}
                         />
                       </FormControl>
                     </FormItem>
@@ -260,7 +207,6 @@ const EkspedisiUpdate = ({ id }: Props) => {
               {form.formState.errors.kotak?.message}
             </div>
           </div>
-          {/* <div className="flex flex-col"> */}
           <FormField
             control={form.control}
             name="tgl_terima"
@@ -305,8 +251,6 @@ const EkspedisiUpdate = ({ id }: Props) => {
                   <FormControl>
                     <Input
                       {...field}
-                      // id="ktp"
-                      // name="ktp"
                       accept={ACCEPTED_IMAGE_TYPES.join(",")}
                       type="file"
                       onChange={onChangeImage}
@@ -317,9 +261,6 @@ const EkspedisiUpdate = ({ id }: Props) => {
                       }
                     />
                   </FormControl>
-                  {/* <FormDescription>
-                  This is your public display name.
-                </FormDescription> */}
                   <FormMessage />
                   {imagePreview && (
                     <div className="flex relative">
@@ -331,9 +272,7 @@ const EkspedisiUpdate = ({ id }: Props) => {
                         onClick={() => {
                           setImagePreview("");
                           setImageFile(undefined);
-                          // form.setValue("ktp", new File([], ""), {});
                           form.resetField("bukti_terima");
-                          //   form.resetField("foto_ktp");
                         }}
                       >
                         <CircleX size={24} />

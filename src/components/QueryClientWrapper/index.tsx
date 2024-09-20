@@ -2,9 +2,9 @@
 
 import { queryClient } from "@/lib/utils";
 import { QueryClientProvider } from "@tanstack/react-query";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { PropsWithChildren } from "react";
 import GetTokenWrapper from "./GetTokenWrapper";
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 function QueryClientWrapper({
   children,
@@ -13,7 +13,6 @@ function QueryClientWrapper({
   refreshToken: string | "";
 }>) {
   return (
-    // console.log("RT QCW : ", refreshToken);
     <QueryClientProvider client={queryClient}>
       <GetTokenWrapper refreshToken={refreshToken}>
         <div

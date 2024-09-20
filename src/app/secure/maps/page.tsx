@@ -43,9 +43,8 @@ const Maps = () => {
       };
       const data = await getKotak(accessToken);
       const filterData = data.filter((dt: TKotak) => dt.id_status_kotak === 2);
-      // console.log("GEOCODE : ", filterData);
       return filterData.map((d) => {
-        const geocode = d.latLng?.split(",");
+        const geocode = d.latlang?.split(",");
         const lat = geocode ? Number(geocode[0]) : 0;
         const lng = geocode ? Number(geocode[1]) : 0;
         return {
@@ -53,24 +52,8 @@ const Maps = () => {
           popup: `Kotak ID : ${d.id_kotak}`,
         };
       });
-      // const kotaks = (await queryClient.getQueryData(["kotak"])) as TKotak[];
-      // const filterData = kotaks.filter(
-      //   (dt: TKotak) => dt.id_status_kotak === 2
-      // );
-      // return filterData.map((d) => {
-      //   const geocode = d.latLng?.split(",");
-      //   const lat = geocode ? Number(geocode[0]) : 0;
-      //   const lng = geocode ? Number(geocode[1]) : 0;
-      //   return {
-      //     geocode: [lat, lng],
-      //     popup: `Kotak ID : ${d.id_kotak}`,
-      //   };
-      // });
     },
-    // refetchOnWindowFocus: true,
   });
-
-  // console.log("KOTAKS :", setMarkers);
 
   return (
     <AnimateSlideIn direction="left" className="pb-4">

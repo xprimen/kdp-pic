@@ -74,8 +74,6 @@ const PasangUpdate = ({ id }: Props) => {
   const [kecamatans, setKecamatans] = React.useState<TKecamatan[]>([]);
   const [kelurahans, setKelurahans] = React.useState<TKelurahan[]>([]);
   const { location, error } = useCurrentLocation();
-  const [newMapPoint, setNewMapPoint] = React.useState({ lat: 0, lng: 0 });
-  // console.log("CURRENT LOCATION :", location);
 
   const { data: kotak } = useQuery({
     queryKey: ["kotak", id],
@@ -87,7 +85,6 @@ const PasangUpdate = ({ id }: Props) => {
       const dataFilter = getData.filter((dt) => dt.id === id)[0];
       return dataFilter;
     },
-    // refetchOnWindowFocus: true,
   });
 
   const form = useForm<TUpdatePasangKotak>({
@@ -101,7 +98,6 @@ const PasangUpdate = ({ id }: Props) => {
       }).format(new Date()),
     },
     shouldFocusError: false,
-    // },
   });
 
   const tryGetPropinsi = React.useCallback(async () => {
@@ -140,7 +136,7 @@ const PasangUpdate = ({ id }: Props) => {
 
   React.useEffect(() => {
     if (location) {
-      form.setValue("latLang", location?.latitude + "," + location?.longitude);
+      form.setValue("latlang", location?.latitude + "," + location?.longitude);
     }
   }, [form, location]);
 
@@ -148,24 +144,12 @@ const PasangUpdate = ({ id }: Props) => {
     mutationFn: savePasangKotak,
   });
 
-  // console.log("ERROR FORM :", form.formState.errors);
-
   function onSubmit(values: TUpdatePasangKotak) {
-    // console.log("VALUES :", values);
-    // toast({
-    //   title: "Mohon Tunggu",
-    //   description: (
-    //     <span className="flex items-center">
-    //       <code>{JSON.stringify(values)}</code>
-    //     </span>
-    //   ),
-    // });
     setLoadingForm(true);
     const { accessToken: token } = queryClient.getQueryData(["token"]) as {
       accessToken: string;
     };
 
-    // setTimeout(() => {
     toast({
       title: "Mohon Tunggu",
       description: (
@@ -179,10 +163,6 @@ const PasangUpdate = ({ id }: Props) => {
       { values, token },
       {
         onSuccess: (data, variables, context) => {
-          console.log("SUCCESS : ", data);
-          console.log("SUCCESS : ", variables);
-          console.log("SUCCESS : ", context);
-          // form.reset();
           toast({
             title: "Berhasil",
             description: "Kotak Berhasil Dipasang",
@@ -193,9 +173,6 @@ const PasangUpdate = ({ id }: Props) => {
           router.replace("/secure/kotak?tab=pasang");
         },
         onError: (error, variables, context) => {
-          console.log("ERROR : ", error.message);
-          console.log("ERROR : ", variables);
-          console.log("ERROR : ", context);
           setLoadingForm(false);
           toast({
             title: "Error",
@@ -206,12 +183,6 @@ const PasangUpdate = ({ id }: Props) => {
       }
     );
   }
-
-  // React.useEffect(() => {
-  //   if (data?.id_penerima) form.setValue("id_penerima", data.id_penerima);
-  // }, [data?.id_penerima, form]);
-
-  // console.log("TESTES :", data);
 
   const toBase64 = (file: any): Promise<string> =>
     new Promise((resolve, reject) => {
@@ -247,8 +218,6 @@ const PasangUpdate = ({ id }: Props) => {
       setImagePreview(urlImage);
 
       const fileWithBase64 = await toBase64(file);
-      // setImageBase64(fileWithBase64);
-      // form.setValue("foto_penempatan", file.name, { shouldValidate: true });
       form.setValue("foto_penempatan", fileWithBase64, {
         shouldValidate: true,
       });
@@ -275,7 +244,7 @@ const PasangUpdate = ({ id }: Props) => {
           </div>
           <FormField
             control={form.control}
-            name="latLang"
+            name="latlang"
             render={({ field }) => (
               <FormItem className="space-y-1 py-4 px-4 bg-white ">
                 <FormLabel className="font-semibold">Titik Lokasi</FormLabel>
@@ -301,28 +270,19 @@ const PasangUpdate = ({ id }: Props) => {
                       </SheetHeader>
                       <Map
                         center={
-                          form.getValues("latLang")
+                          form.getValues("latlang")
                             ? form
-                                .getValues("latLang")
+                                .getValues("latlang")
                                 .split(",")
                                 .map((d) => parseFloat(d))
                             : []
                         }
                         setValue={(val: string) => {
-                          form.setValue("latLang", val);
+                          form.setValue("latlang", val);
                         }}
                       />
                     </SheetContent>
                   </Sheet>
-                  {/* <GetLocationInMap
-                    setValue={form.setValue("latLang")}
-                    }
-                    location={form.getValues("latLang")}
-                  >
-                    <Button variant="outline">
-                      <MapPinIcon />
-                    </Button>
-                  </GetLocationInMap> */}
                 </div>
               </FormItem>
             )}
@@ -494,8 +454,6 @@ const PasangUpdate = ({ id }: Props) => {
                 <FormControl>
                   <Input
                     {...field}
-                    // id="ktp"
-                    // name="ktp"
                     accept={ACCEPTED_IMAGE_TYPES.join(",")}
                     type="file"
                     onChange={onChangeImage}
@@ -538,7 +496,6 @@ const PasangUpdate = ({ id }: Props) => {
             control={form.control}
             name="tgl_start"
             render={({ field }) => {
-              const date = new Date(field.value);
               return (
                 <FormItem className="flex flex-col space-y-1 py-4 px-4 bg-white ">
                   <FormLabel className="font-semibold">

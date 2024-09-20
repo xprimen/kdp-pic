@@ -3,9 +3,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import TableToolbars from "@/components/utilities/TableToolbars";
 import { getEkspedisiKotak } from "@/lib/actions/kotak";
-import axiosInstance from "@/lib/axiosInstance";
 import { queryClient } from "@/lib/utils";
-import { LoginDataResponse, TEkspedisiKotak } from "@/types";
+import { TEkspedisiKotak } from "@/types";
 import { useQuery } from "@tanstack/react-query";
 import { Calendar, CheckCircle, FileBox, Info } from "lucide-react";
 import Link from "next/link";
@@ -17,29 +16,9 @@ const EkspedisiView = () => {
       const { accessToken } = (await queryClient.getQueryData(["token"])) as {
         accessToken: string;
       };
-      // console.log("USERID :", userdata.id);
       return await getEkspedisiKotak(accessToken);
     },
-    // refetchOnWindowFocus: true,
   });
-
-  // const { data: dataSetor, isFetching: isFetchSetor } = useQuery({
-  //   queryKey: ["setor"],
-  //   queryFn: async () => {
-  //     const { accessToken } = (await queryClient.getQueryData(["token"])) as {
-  //       accessToken: string;
-  //     };
-  //     // console.log("USERID :", userdata.id);
-  //     return await axiosInstance(accessToken)
-  //       .get("/setorkotak")
-  //       .then((res) => {
-  //         return res.data;
-  //       });
-  //   },
-  //   // refetchOnWindowFocus: true,
-  // });
-
-  // console.log("SETOR :", dataSetor);
 
   return (
     <div className="mb-20">

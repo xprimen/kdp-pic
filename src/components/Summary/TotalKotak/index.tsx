@@ -5,13 +5,11 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
 import { getKotak } from "@/lib/actions/kotak";
 import { queryClient } from "@/lib/utils";
 import { TKotak } from "@/types";
 import { useQuery } from "@tanstack/react-query";
 import { Box, LoaderIcon } from "lucide-react";
-import React from "react";
 
 const TotalKotak = () => {
   const { data, isFetching } = useQuery({
@@ -32,7 +30,6 @@ const TotalKotak = () => {
         belumSetor: 0,
       };
       const data = await getKotak(accessToken);
-      //   console.log("TOTAL :", data);
       const filterIdle = data.filter((dt: TKotak) => dt.id_status_kotak === 1);
       const filterTerpasang = data.filter(
         (dt: TKotak) => dt.id_status_kotak === 2
@@ -50,7 +47,6 @@ const TotalKotak = () => {
 
       return ret;
     },
-    // refetchOnWindowFocus: true,
   });
 
   return (

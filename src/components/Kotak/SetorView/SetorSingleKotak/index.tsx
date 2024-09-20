@@ -3,33 +3,19 @@ import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { toast } from "@/components/ui/use-toast";
-import {
-  getKotak,
-  getKotakSetor,
-  saveBukaKotak,
-  saveSetorKotak,
-} from "@/lib/actions/kotak";
-import useCurrentLocation from "@/lib/useCurrentLocation";
-import { numberToString, queryClient, terbilang } from "@/lib/utils";
+import { getKotakSetor, saveSetorKotak } from "@/lib/actions/kotak";
+import { numberToString, queryClient } from "@/lib/utils";
 import {
   ACCEPTED_IMAGE_TYPES,
   MAX_FILE_SIZE,
-  TKecamatan,
-  TKelurahan,
-  TKota,
-  TPropinsi,
-  TUpdateBukaKotak,
   TUpdateSetorKotak,
-  UpdateBukaKotakSchema,
   UpdateSetorKotakSchema,
 } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -62,7 +48,6 @@ const SetorSingleKotak = ({ id }: Props) => {
       const dataFilter = getData.filter((dt) => dt.id === id)[0];
       return dataFilter;
     },
-    // refetchOnWindowFocus: true,
   });
 
   const form = useForm<TUpdateSetorKotak>({
@@ -76,7 +61,6 @@ const SetorSingleKotak = ({ id }: Props) => {
       }).format(new Date()),
     },
     shouldFocusError: false,
-    // },
   });
 
   React.useEffect(() => {
@@ -92,24 +76,12 @@ const SetorSingleKotak = ({ id }: Props) => {
     mutationFn: saveSetorKotak,
   });
 
-  console.log("ERROR FORM :", form.formState.errors);
-
   function onSubmit(values: TUpdateSetorKotak) {
-    // console.log("VALUES :", values);
-    // toast({
-    //   title: "Mohon Tunggu",
-    //   description: (
-    //     <span className="flex items-center">
-    //       <code>{JSON.stringify(values)}</code>
-    //     </span>
-    //   ),
-    // });
     setLoadingForm(true);
     const { accessToken: token } = queryClient.getQueryData(["token"]) as {
       accessToken: string;
     };
 
-    // setTimeout(() => {
     toast({
       title: "Mohon Tunggu",
       description: (
@@ -123,10 +95,6 @@ const SetorSingleKotak = ({ id }: Props) => {
       { values, token },
       {
         onSuccess: (data, variables, context) => {
-          console.log("SUCCESS : ", data);
-          console.log("SUCCESS : ", variables);
-          console.log("SUCCESS : ", context);
-          // form.reset();
           toast({
             title: "Berhasil",
             description: "Kotak Berhasil Disetor",
@@ -137,9 +105,6 @@ const SetorSingleKotak = ({ id }: Props) => {
           router.replace("/secure/kotak?tab=setor");
         },
         onError: (error, variables, context) => {
-          console.log("ERROR : ", error.message);
-          console.log("ERROR : ", variables);
-          console.log("ERROR : ", context);
           setLoadingForm(false);
           toast({
             title: "Error",
@@ -150,9 +115,6 @@ const SetorSingleKotak = ({ id }: Props) => {
       }
     );
   }
-
-  // console.log("TESTES :", form.getValues("pendapatan_kotak"));
-  // console.log("TESTES_STR :", form.getValues("pendapatan_kotak_str"));
 
   const toBase64 = (file: any): Promise<string> =>
     new Promise((resolve, reject) => {
@@ -233,8 +195,6 @@ const SetorSingleKotak = ({ id }: Props) => {
                 <FormControl>
                   <Input
                     {...field}
-                    // id="ktp"
-                    // name="ktp"
                     accept={ACCEPTED_IMAGE_TYPES.join(",")}
                     type="file"
                     onChange={onChangeImage}
@@ -277,7 +237,6 @@ const SetorSingleKotak = ({ id }: Props) => {
             control={form.control}
             name="tgl_setor"
             render={({ field }) => {
-              const date = new Date(field.value);
               return (
                 <FormItem className="flex flex-col space-y-1 py-4 px-4 bg-white">
                   <FormLabel className="font-semibold">Tanggal Setor</FormLabel>
