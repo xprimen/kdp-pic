@@ -135,6 +135,17 @@ export const KotakSchema = z.object({
 
 export type TKotak = z.infer<typeof KotakSchema>;
 
+export const KotakSetorSchema = z.object({
+  id: z.number(),
+  id_trkotak: z.number(),
+  kode_kotak: z.string(),
+  pendapatan_kotak: z.number(),
+  tgl_start: z.string(),
+  tgl_stop: z.string(),
+});
+
+export type TKotakSetor = z.infer<typeof KotakSetorSchema>;
+
 // export type kirimanKotakBE = {
 //   id_kirim: number;
 //   id_kotak: number;
@@ -213,6 +224,16 @@ export const UpdateBukaKotakSchema = z.object({
 });
 
 export type TUpdateBukaKotak = z.infer<typeof UpdateBukaKotakSchema>;
+
+export const UpdateSetorKotakSchema = z.object({
+  id: z.number(),
+  tgl_setor: z.string().min(1, "Tanggal Dibuka Wajib Diisi"),
+  // pendapatan_kotak: z.number(),
+  jumlah_setor: z.string(),
+  foto_bukti: z.string(),
+});
+
+export type TUpdateSetorKotak = z.infer<typeof UpdateSetorKotakSchema>;
 
 export const MawilSchema = z.object({
   id: z.number(),
