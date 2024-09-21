@@ -44,9 +44,9 @@ const KotakTabs = ({ userdata }: Props) => {
           <TabsTrigger
             onClick={() => createQueryString("tab", "ekspedisi")}
             value="ekspedisi"
-            className="h-full text-md"
+            className="h-full text-sm"
           >
-            Terima/Kirim
+            Terima / Kirim
           </TabsTrigger>
         )}
         <TabsTrigger
