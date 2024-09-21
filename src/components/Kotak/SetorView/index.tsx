@@ -25,12 +25,12 @@ const SetorView = () => {
   return (
     <div className="mb-20">
       <TableToolbars
-      // add={{
-      //   link: "/secure/kotak/pasang/scan",
-      //   label: "Setor Banyak Kotak",
-      //   variant: "default",
-      //   icon: <Boxes className="w-4 h-4" />,
-      // }}
+        add={{
+          link: "/secure/kotak/pasang/scan",
+          label: "Setor Banyak Kotak",
+          variant: "default",
+          icon: <Boxes className="w-4 h-4" />,
+        }}
       />
       <div className="flex flex-col gap-2 my-4">
         {isFetching &&

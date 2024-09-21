@@ -13,24 +13,6 @@ import { useRouter } from "next/navigation";
 
 const Map = dynamic(() => import("@/components/Map"), { ssr: false });
 
-const setMarkers: TGeocodeMarkers = [
-  {
-    geocode: [-4.1260987, 104.1792463],
-    popup: "Ini Contoh 1",
-  },
-  {
-    geocode: [-4.1271987, 104.1292463],
-    popup: "Ini Contoh 2",
-  },
-  {
-    geocode: [-4.1282987, 104.1392463],
-    popup: "Ini Contoh 3",
-  },
-  {
-    geocode: [-4.1293987, 104.1492463],
-    popup: "Ini Contoh 4",
-  },
-];
 const Maps = () => {
   const router = useRouter();
   const { location, error } = useCurrentLocation();
@@ -43,13 +25,15 @@ const Maps = () => {
       };
       const data = await getKotak(accessToken);
       const filterData = data.filter((dt: TKotak) => dt.id_status_kotak === 2);
-      return filterData.map((d) => {
+      return filterData.map((d: TKotak) => {
         const geocode = d.latlang?.split(",");
         const lat = geocode ? Number(geocode[0]) : 0;
         const lng = geocode ? Number(geocode[1]) : 0;
+        const { latlang, ...sendData } = d;
         return {
           geocode: [lat, lng],
-          popup: `Kotak ID : ${d.id_kotak}`,
+          // popup: `Kotak ID : ${d.id_kotak}`,
+          data: sendData,
         };
       });
     },

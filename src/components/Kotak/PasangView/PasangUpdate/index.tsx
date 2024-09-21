@@ -60,6 +60,7 @@ import {
 } from "@/components/ui/sheet";
 import Map from "@/components/Map";
 import { toast } from "@/components/ui/use-toast";
+import { Skeleton } from "@/components/ui/skeleton";
 
 type Props = {
   id: number; //id kotak Number
@@ -135,8 +136,10 @@ const PasangUpdate = ({ id }: Props) => {
   }, [tryGetPropinsi]);
 
   React.useEffect(() => {
-    if (location) {
+    if (location && location?.latitude !== 0 && location?.longitude !== 0) {
       form.setValue("latlang", location?.latitude + "," + location?.longitude);
+    } else {
+      form.setValue("latlang", "");
     }
   }, [form, location]);
 
@@ -238,6 +241,12 @@ const PasangUpdate = ({ id }: Props) => {
           className="space-y-1 flex flex-col"
           onSubmit={form.handleSubmit(onSubmit)}
         >
+          {error && (
+            <div className="flex justify-center items-center p-4">
+              <CircleX className="text-red-600 h-10 w-10" />
+              <p className="text-red-600">{error.message}</p>
+            </div>
+          )}
           <div className="flex gap-2 px-4 bg-white py-4 items-center">
             <FormLabel className="font-semibold">Kode Kotak :</FormLabel>
             <h3 className="font-bold">{kotak?.id_kotak}</h3>
@@ -250,7 +259,11 @@ const PasangUpdate = ({ id }: Props) => {
                 <FormLabel className="font-semibold">Titik Lokasi</FormLabel>
                 <div className="flex gap-x-2">
                   <FormControl>
-                    <Input {...field} readOnly />
+                    {location.latitude === 0 && location.longitude === 0 ? (
+                      <Skeleton className="h-10 w-full" />
+                    ) : (
+                      <Input {...field} readOnly />
+                    )}
                   </FormControl>
                   <Sheet>
                     <SheetTrigger asChild>
@@ -284,6 +297,7 @@ const PasangUpdate = ({ id }: Props) => {
                     </SheetContent>
                   </Sheet>
                 </div>
+                <FormMessage />
               </FormItem>
             )}
           />
@@ -302,6 +316,7 @@ const PasangUpdate = ({ id }: Props) => {
                     {...field}
                   />
                 </FormControl>
+                <FormMessage />
               </FormItem>
             )}
           />

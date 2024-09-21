@@ -158,12 +158,12 @@ export type TUpdateEkspedisiKotak = z.infer<typeof UpdateEkspedisiKotakSchema>;
 export const UpdatePasangKotakSchema = z.object({
   id: z.number(),
   tgl_start: z.string().min(1, "Tanggal Diterima Wajib Diisi"),
-  alamat_penempatan: z.string(),
-  alamat_prov: z.string(),
-  alamat_kota: z.string(),
-  alamat_kec: z.string(),
-  alamat_kel: z.string(),
-  latlang: z.string(),
+  alamat_penempatan: z.string().min(1, "Wajib Diisi"),
+  alamat_prov: z.string().min(1, "Wajib Diisi"),
+  alamat_kota: z.string().min(1, "Wajib Diisi"),
+  alamat_kec: z.string().min(1, "Wajib Diisi"),
+  alamat_kel: z.string().min(1, "Wajib Diisi"),
+  latlang: z.string().min(1, "Wajib Diisi"),
   foto_penempatan: z.string(),
 });
 
@@ -223,4 +223,7 @@ export type ErrorLocation = {
   message: string;
 };
 
-export type TGeocodeMarkers = { geocode: number[]; popup: string }[];
+export type TGeocodeMarkers = {
+  geocode: number[];
+  data: Omit<TKotak, "latlang">;
+}[];

@@ -96,7 +96,7 @@ const BukaUpdate = ({ id }: Props) => {
           queryClient.invalidateQueries({
             queryKey: ["kotakIdle", "kotakTerpasang"],
           });
-          router.replace("/secure/kotak?tab=pasang");
+          router.replace("/secure/kotak?tab=buka");
         },
         onError: (error, variables, context) => {
           setLoadingForm(false);
