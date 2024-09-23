@@ -2,6 +2,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
+import TableToolbars from "@/components/utilities/TableToolbars";
 import { getKotakSetor } from "@/lib/actions/kotak";
 import { numberToString, queryClient } from "@/lib/utils";
 import { TKotakSetor } from "@/types";

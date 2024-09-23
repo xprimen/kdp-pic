@@ -28,6 +28,8 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import DatePicker from "react-datepicker";
+import React, { useState } from "react";
+import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { useForm } from "react-hook-form";
 
@@ -209,6 +211,7 @@ const EkspedisiUpdate = ({ id }: Props) => {
                             }
                           }}
                           className="size-5 accent-green-400"
+                          value={String(item.id_kotak)}
                           value={String(item.id_kotak)}
                         />
                       </FormControl>
