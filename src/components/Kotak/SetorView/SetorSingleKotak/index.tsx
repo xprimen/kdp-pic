@@ -10,13 +10,13 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { toast } from "@/components/ui/use-toast";
-import { getKotakSetor, saveSetorKotak } from "@/lib/actions/kotak";
+import { getKotakSetor, saveSetorSingleKotak } from "@/lib/actions/kotak";
 import { numberToString, queryClient } from "@/lib/utils";
 import {
   ACCEPTED_IMAGE_TYPES,
   MAX_FILE_SIZE,
-  TUpdateSetorKotak,
-  UpdateSetorKotakSchema,
+  TUpdateSetorSingleKotak,
+  UpdateSetorSingleKotakSchema,
 } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery } from "@tanstack/react-query";
@@ -36,7 +36,6 @@ const SetorSingleKotak = ({ id }: Props) => {
   const [loadingForm, setLoadingForm] = React.useState(false);
   const [imageFile, setImageFile] = React.useState<FileList>();
   const [imagePreview, setImagePreview] = React.useState("");
-  const [pendapatanDisplay, setPendapatanDisplay] = React.useState("");
 
   const { data: kotak, isFetching } = useQuery({
     queryKey: ["kotakBelumSetor", id],
@@ -50,8 +49,8 @@ const SetorSingleKotak = ({ id }: Props) => {
     },
   });
 
-  const form = useForm<TUpdateSetorKotak>({
-    resolver: zodResolver(UpdateSetorKotakSchema),
+  const form = useForm<TUpdateSetorSingleKotak>({
+    resolver: zodResolver(UpdateSetorSingleKotakSchema),
     defaultValues: {
       id: id,
       tgl_setor: new Intl.DateTimeFormat("fr-CA", {
@@ -73,10 +72,10 @@ const SetorSingleKotak = ({ id }: Props) => {
   }, [kotak, form]);
 
   const mutation = useMutation({
-    mutationFn: saveSetorKotak,
+    mutationFn: saveSetorSingleKotak,
   });
 
-  function onSubmit(values: TUpdateSetorKotak) {
+  function onSubmit(values: TUpdateSetorSingleKotak) {
     setLoadingForm(true);
     const { accessToken: token } = queryClient.getQueryData(["token"]) as {
       accessToken: string;

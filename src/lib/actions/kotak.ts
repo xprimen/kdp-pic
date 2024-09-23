@@ -5,7 +5,8 @@ import {
   TUpdateBukaKotak,
   TUpdateEkspedisiKotak,
   TUpdatePasangKotak,
-  TUpdateSetorKotak,
+  TUpdateSetorMultiKotak,
+  TUpdateSetorSingleKotak,
 } from "@/types";
 import axiosInstance from "../axiosInstance";
 
@@ -71,13 +72,23 @@ export const saveBukaKotak = async ({
   return await axiosInstance(token).patch("/unboxing/" + values.id, sendData);
 };
 
+export const saveSetorSingleKotak = async ({
+  values,
+  token,
+}: {
+  values: TUpdateSetorSingleKotak;
+  token: string;
+}) => {
+  const { id, ...sendData } = values;
+  return await axiosInstance(token).patch("/unboxing/" + values.id, sendData);
+};
+
 export const saveSetorKotak = async ({
   values,
   token,
 }: {
-  values: TUpdateSetorKotak;
+  values: TUpdateSetorMultiKotak;
   token: string;
 }) => {
-  const { id, ...sendData } = values;
-  return await axiosInstance(token).patch("/setor/" + values.id, sendData);
+  return await axiosInstance(token).patch("/setor", values);
 };

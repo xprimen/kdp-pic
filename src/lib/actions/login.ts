@@ -4,7 +4,6 @@ import axios, { AxiosResponse } from "axios";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { decodeToken } from "../utils";
-import { setCookie } from "cookies-next";
 
 export const logoutAction = () => {
   cookies().delete("token");
