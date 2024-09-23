@@ -5,58 +5,14 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-<<<<<<< HEAD
-import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getKotak, getKotakSetor } from "@/lib/actions/kotak";
-=======
-import { getKotak } from "@/lib/actions/kotak";
->>>>>>> origin/main
 import { queryClient } from "@/lib/utils";
 import { TKotak, TKotakSetor } from "@/types";
 import { useQuery } from "@tanstack/react-query";
-import { Box, LoaderIcon } from "lucide-react";
+import { Box } from "lucide-react";
 
 const TotalKotak = () => {
-  /* const { data, isFetching } = useQuery({
-    queryKey: ["total-kotak"],
-    queryFn: async (): Promise<{
-      idle: number;
-      terpasang: number;
-      belumSetor: number;
-      total: number;
-    }> => {
-      const { accessToken } = (await queryClient.getQueryData(["token"])) as {
-        accessToken: string;
-      };
-      let ret = {
-        total: 0,
-        idle: 0,
-        terpasang: 0,
-        belumSetor: 0,
-      };
-      const data = await getKotak(accessToken);
-      const filterIdle = data.filter((dt: TKotak) => dt.id_status_kotak === 1);
-      const filterTerpasang = data.filter(
-        (dt: TKotak) => dt.id_status_kotak === 2
-      );
-      const filterBelumSetor = data.filter(
-        (dt: TKotak) => dt.id_status_kotak === 3
-      );
-
-      ret = {
-        idle: filterIdle.length,
-        terpasang: filterTerpasang.length,
-        belumSetor: filterBelumSetor.length,
-        total: data.length,
-      };
-
-      return ret;
-    },
-<<<<<<< HEAD
-    // refetchOnWindowFocus: true,
-  }); */
-
   const { data, isFetching } = useQuery({
     queryKey: ["kotakDashboard"],
     queryFn: async (): Promise<{
@@ -81,7 +37,6 @@ const TotalKotak = () => {
       const totalKotak =
         kotakIdle.length + kotakTerpasang.length + kotakBelumSetor.length;
 
-      // return {terpasang: kotakTerpasang, idle: kotakIdle};
       return {
         total: totalKotak,
         terpasang: kotakTerpasang.length,
@@ -89,8 +44,6 @@ const TotalKotak = () => {
         belumSetor: kotakBelumSetor.length,
       };
     },
-=======
->>>>>>> origin/main
   });
 
   return (
