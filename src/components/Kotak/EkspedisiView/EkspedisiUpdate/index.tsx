@@ -26,9 +26,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { CircleX, LoaderIcon, Save } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import React, { useState } from "react";
-import DatePicker from "react-datepicker";
-import React, { useState } from "react";
+import React from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { useForm } from "react-hook-form";
@@ -41,7 +39,7 @@ const EkspedisiUpdate = ({ id }: Props) => {
   const [loadingForm, setLoadingForm] = React.useState(false);
   const [imageFile, setImageFile] = React.useState<FileList>();
   const [imagePreview, setImagePreview] = React.useState("");
-  const [data, setData] = useState<TEkspedisiKotak>();
+  const [data, setData] = React.useState<TEkspedisiKotak>();
 
   useQuery({
     queryKey: ["kotakTerpasang"],
@@ -87,7 +85,7 @@ const EkspedisiUpdate = ({ id }: Props) => {
     mutation.mutate(
       { values, token },
       {
-        onSuccess: (data, variables, context) => {
+        onSuccess: () => {
           toast({
             title: "Berhasil",
             description: "Berhasil Menyimpan Data",
@@ -95,7 +93,7 @@ const EkspedisiUpdate = ({ id }: Props) => {
           queryClient.invalidateQueries({ queryKey: ["ekspedisi"] });
           router.replace("/secure/kotak");
         },
-        onError: (error, variables, context) => {
+        onError: () => {
           toast({
             title: "Error",
             description: "Gagal Menyimpan Data",
@@ -211,7 +209,6 @@ const EkspedisiUpdate = ({ id }: Props) => {
                             }
                           }}
                           className="size-5 accent-green-400"
-                          value={String(item.id_kotak)}
                           value={String(item.id_kotak)}
                         />
                       </FormControl>

@@ -93,7 +93,7 @@ const SetorSingleKotak = ({ id }: Props) => {
     mutation.mutate(
       { values, token },
       {
-        onSuccess: (data, variables, context) => {
+        onSuccess: () => {
           toast({
             title: "Berhasil",
             description: "Kotak Berhasil Disetor",
@@ -103,7 +103,7 @@ const SetorSingleKotak = ({ id }: Props) => {
           });
           router.replace("/secure/kotak?tab=setor");
         },
-        onError: (error, variables, context) => {
+        onError: () => {
           setLoadingForm(false);
           toast({
             title: "Error",
