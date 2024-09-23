@@ -5,9 +5,13 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+<<<<<<< HEAD
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getKotak, getKotakSetor } from "@/lib/actions/kotak";
+=======
+import { getKotak } from "@/lib/actions/kotak";
+>>>>>>> origin/main
 import { queryClient } from "@/lib/utils";
 import { TKotak, TKotakSetor } from "@/types";
 import { useQuery } from "@tanstack/react-query";
@@ -49,6 +53,7 @@ const TotalKotak = () => {
 
       return ret;
     },
+<<<<<<< HEAD
     // refetchOnWindowFocus: true,
   }); */
 
@@ -84,6 +89,8 @@ const TotalKotak = () => {
         belumSetor: kotakBelumSetor.length,
       };
     },
+=======
+>>>>>>> origin/main
   });
 
   return (
