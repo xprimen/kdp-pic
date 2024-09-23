@@ -35,14 +35,7 @@
     "axios": "^1.7.4",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
-    "cookies-next": "^4.2.1",
->>>>>>> f6eeb7182601500d1092f963f04e62b33c5fb31b
     "file-saver": "^2.0.5",
-=======
->>>>>>> origin/main
     "html5-qrcode": "^2.3.8",
     "leaflet": "^1.9.4",
     "lodash": "^4.17.21",
