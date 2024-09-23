@@ -17,8 +17,10 @@ import { useQuery } from "@tanstack/react-query";
 import { Box, QrCode, ScanQrCodeIcon, UserCircle } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 const PasangView = () => {
+  const router = useRouter();
   const { data, isFetching } = useQuery({
     queryKey: ["kotakIdle"],
     queryFn: async (): Promise<TKotak[]> => {
@@ -92,6 +94,15 @@ const PasangView = () => {
                   <UserCircle size="20" />
                   <span>{dt.PkUser?.nama || dt.PwUser?.nama}</span>
                 </div>
+                <Button
+                  variant="outline"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    router.push("/secure/kotak/qrcode/" + dt.id_kotak);
+                  }}
+                >
+                  <QrCode size="25" />
+                </Button>
               </CardContent>
             </Card>
           </Link>

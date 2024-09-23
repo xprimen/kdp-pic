@@ -6,15 +6,16 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { getKotak } from "@/lib/actions/kotak";
+import { Skeleton } from "@/components/ui/skeleton";
+import { getKotak, getKotakSetor } from "@/lib/actions/kotak";
 import { queryClient } from "@/lib/utils";
-import { TKotak } from "@/types";
+import { TKotak, TKotakSetor } from "@/types";
 import { useQuery } from "@tanstack/react-query";
 import { Box, LoaderIcon } from "lucide-react";
 import React from "react";
 
 const TotalKotak = () => {
-  const { data, isFetching } = useQuery({
+  /* const { data, isFetching } = useQuery({
     queryKey: ["total-kotak"],
     queryFn: async (): Promise<{
       idle: number;
@@ -51,6 +52,40 @@ const TotalKotak = () => {
       return ret;
     },
     // refetchOnWindowFocus: true,
+  }); */
+
+  const { data, isFetching } = useQuery({
+    queryKey: ["kotakDashboard"],
+    queryFn: async (): Promise<{
+      total: number;
+      belumSetor: number;
+      terpasang: number;
+      idle: number;
+    }> => {
+      const { accessToken } = (await queryClient.getQueryData(["token"])) as {
+        accessToken: string;
+      };
+      const data = await getKotak(accessToken);
+      const kotakTerpasang = data.filter(
+        (dt: TKotak) => dt.id_status_kotak === 2
+      );
+      const kotakIdle = data.filter((dt: TKotak) => dt.id_status_kotak === 1);
+
+      const kotakBelumSetor = (await getKotakSetor(
+        accessToken
+      )) as TKotakSetor[];
+
+      const totalKotak =
+        kotakIdle.length + kotakTerpasang.length + kotakBelumSetor.length;
+
+      // return {terpasang: kotakTerpasang, idle: kotakIdle};
+      return {
+        total: totalKotak,
+        terpasang: kotakTerpasang.length,
+        idle: kotakIdle.length,
+        belumSetor: kotakBelumSetor.length,
+      };
+    },
   });
 
   return (
@@ -60,7 +95,7 @@ const TotalKotak = () => {
         <CardDescription>Total Kotak</CardDescription>
         {isFetching ? (
           <CardTitle className="flex items-center">
-            <LoaderIcon className="mr-2 animate-spin" /> Loading...
+            <Skeleton className="w-32 h-8" />
           </CardTitle>
         ) : (
           <CardTitle className="text-4xl">{data?.total} Kotak</CardTitle>
@@ -70,7 +105,7 @@ const TotalKotak = () => {
         <div className="text-xs text-muted-foreground flex items-center space-x-1">
           <div className="text-blue-600 flex items-center space-x-1 border-r-black/50 border-r pr-2">
             {isFetching ? (
-              <LoaderIcon className="animate-spin" />
+              <Skeleton className="w-8 h-4" />
             ) : (
               <span>{data?.idle}</span>
             )}
@@ -78,7 +113,7 @@ const TotalKotak = () => {
           </div>
           <div className="text-green-600 flex items-center space-x-1 border-r-black/50 border-r pr-2">
             {isFetching ? (
-              <LoaderIcon className="animate-spin" />
+              <Skeleton className="w-8 h-4" />
             ) : (
               <span>{data?.terpasang}</span>
             )}
@@ -86,7 +121,7 @@ const TotalKotak = () => {
           </div>
           <div className="text-red-600 flex items-center space-x-1">
             {isFetching ? (
-              <LoaderIcon className="animate-spin" />
+              <Skeleton className="w-8 h-4" />
             ) : (
               <span>{data?.belumSetor}</span>
             )}

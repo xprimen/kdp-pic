@@ -225,7 +225,7 @@ export const UpdateBukaKotakSchema = z.object({
 
 export type TUpdateBukaKotak = z.infer<typeof UpdateBukaKotakSchema>;
 
-export const UpdateSetorKotakSchema = z.object({
+export const UpdateSetorSingleKotakSchema = z.object({
   id: z.number(),
   tgl_setor: z.string().min(1, "Tanggal Dibuka Wajib Diisi"),
   // pendapatan_kotak: z.number(),
@@ -233,7 +233,20 @@ export const UpdateSetorKotakSchema = z.object({
   foto_bukti: z.string(),
 });
 
-export type TUpdateSetorKotak = z.infer<typeof UpdateSetorKotakSchema>;
+export type TUpdateSetorSingleKotak = z.infer<
+  typeof UpdateSetorSingleKotakSchema
+>;
+
+export const UpdateSetorMultiKotakSchema = z.object({
+  tgl_setor: z.string().min(1, "Tanggal Dibuka Wajib Diisi"),
+  kotak: z.array(z.string()).min(1, "Minimal 1 kotak dipilih"),
+  jumlah_setor: z.string(),
+  foto_bukti: z.string(),
+});
+
+export type TUpdateSetorMultiKotak = z.infer<
+  typeof UpdateSetorMultiKotakSchema
+>;
 
 export const MawilSchema = z.object({
   id: z.number(),

@@ -9,14 +9,16 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { toast } from "@/components/ui/use-toast";
-import { getKotakSetor, saveSetorSingleKotak } from "@/lib/actions/kotak";
-import { numberToString, queryClient } from "@/lib/utils";
+import { getKotakSetor, saveSetorKotak } from "@/lib/actions/kotak";
+import { numberToString, queryClient, terbilang } from "@/lib/utils";
 import {
   ACCEPTED_IMAGE_TYPES,
   MAX_FILE_SIZE,
-  TUpdateSetorSingleKotak,
-  UpdateSetorSingleKotakSchema,
+  TKotakSetor,
+  TUpdateSetorMultiKotak,
+  UpdateSetorMultiKotakSchema,
 } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery } from "@tanstack/react-query";
@@ -28,31 +30,27 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { useForm } from "react-hook-form";
 
-type Props = {
-  id: number; //id kotak Number
-};
-const SetorSingleKotak = ({ id }: Props) => {
+const SetorMultiKotak = () => {
   const router = useRouter();
   const [loadingForm, setLoadingForm] = React.useState(false);
   const [imageFile, setImageFile] = React.useState<FileList>();
   const [imagePreview, setImagePreview] = React.useState("");
+  const [jumlahSetoran, setJumlahSetoran] = React.useState<number>(0);
 
-  const { data: kotak, isFetching } = useQuery({
-    queryKey: ["kotakBelumSetor", id],
-    queryFn: async () => {
-      const { accessToken } = queryClient.getQueryData(["token"]) as {
+  const { data, isFetching } = useQuery({
+    queryKey: ["kotakBelumSetor"],
+    queryFn: async (): Promise<TKotakSetor[]> => {
+      const { accessToken } = (await queryClient.getQueryData(["token"])) as {
         accessToken: string;
       };
-      const getData = await getKotakSetor(accessToken);
-      const dataFilter = getData.filter((dt) => dt.id === id)[0];
-      return dataFilter;
+      const data = await getKotakSetor(accessToken);
+      return data;
     },
   });
 
-  const form = useForm<TUpdateSetorSingleKotak>({
-    resolver: zodResolver(UpdateSetorSingleKotakSchema),
+  const form = useForm<TUpdateSetorMultiKotak>({
+    resolver: zodResolver(UpdateSetorMultiKotakSchema),
     defaultValues: {
-      id: id,
       tgl_setor: new Intl.DateTimeFormat("fr-CA", {
         year: "numeric",
         month: "2-digit",
@@ -60,23 +58,23 @@ const SetorSingleKotak = ({ id }: Props) => {
       }).format(new Date()),
     },
     shouldFocusError: false,
+    // },
   });
-
-  React.useEffect(() => {
-    if (kotak) {
-      form.setValue(
-        "jumlah_setor",
-        numberToString(kotak.pendapatan_kotak, ",")
-      );
-    }
-  }, [kotak, form]);
 
   const mutation = useMutation({
-    mutationFn: saveSetorSingleKotak,
+    mutationFn: saveSetorKotak,
   });
 
-  function onSubmit(values: TUpdateSetorSingleKotak) {
-    setLoadingForm(true);
+  function onSubmit(values: TUpdateSetorMultiKotak) {
+    // toast({
+    //   title: "Tes",
+    //   description: (
+    //     <span className="flex items-center">
+    //       <code>{JSON.stringify(values, null, 2)}</code>
+    //     </span>
+    //   ),
+    // });
+    // setLoadingForm(true);
     const { accessToken: token } = queryClient.getQueryData(["token"]) as {
       accessToken: string;
     };
@@ -94,6 +92,9 @@ const SetorSingleKotak = ({ id }: Props) => {
       { values, token },
       {
         onSuccess: (data, variables, context) => {
+          console.log("SUCCESS : ", data);
+          console.log("SUCCESS : ", variables);
+          console.log("SUCCESS : ", context);
           toast({
             title: "Berhasil",
             description: "Kotak Berhasil Disetor",
@@ -104,6 +105,9 @@ const SetorSingleKotak = ({ id }: Props) => {
           router.replace("/secure/kotak?tab=setor");
         },
         onError: (error, variables, context) => {
+          console.log("ERROR : ", error.message);
+          console.log("ERROR : ", variables);
+          console.log("ERROR : ", context);
           setLoadingForm(false);
           toast({
             title: "Error",
@@ -169,20 +173,85 @@ const SetorSingleKotak = ({ id }: Props) => {
           className="space-y-1 flex flex-col"
           onSubmit={form.handleSubmit(onSubmit)}
         >
-          <div className="flex gap-2 px-4 bg-white py-4 items-center">
-            <FormLabel className="font-semibold">Kode Kotak :</FormLabel>
-            <h3 className="font-bold">
-              {isFetching && (
-                <LoaderIcon className="mr-2 h-4 w-4 animate-spin" />
-              )}{" "}
-              {kotak?.kode_kotak}
-            </h3>
+          <div className="flex flex-col">
+            <div className="flex items-center p-4 bg-green-500 font-bold">
+              <h2 className="flex-1 text-white">Kotak</h2>
+              <div className="w-24 text-center text-white">
+                Jumlah ({data?.length})
+              </div>
+            </div>
+            {data?.map((item: TKotakSetor, index) => (
+              <div key={index} className="flex items-center border-b px-4">
+                <Label
+                  htmlFor={`id_kotak${index}`}
+                  className="text-slate-500 text-sm flex-1 font-bold py-4"
+                >
+                  {item.kode_kotak} : Rp {numberToString(item.pendapatan_kotak)}
+                </Label>
+                <FormField
+                  control={form.control}
+                  name="kotak"
+                  render={({ field }) => (
+                    <FormItem className="space-y-1 px-4">
+                      <FormControl>
+                        <Input
+                          id={"id_kotak" + index}
+                          type="checkbox"
+                          {...field}
+                          onChange={(e) => {
+                            let jumlah_setor =
+                              parseInt(
+                                form
+                                  .getValues("jumlah_setor")
+                                  ?.replaceAll(",", "")
+                              ) || 0;
+                            const kotaksVal: string[] =
+                              form.getValues("kotak") || [];
+                            if (e.target.checked === true) {
+                              kotaksVal.push(String(item.id_trkotak));
+                              form.setValue("kotak", kotaksVal);
+                              form.setError("kotak", {
+                                message: "",
+                              });
+                              jumlah_setor += item.pendapatan_kotak;
+                            } else {
+                              kotaksVal.splice(
+                                kotaksVal.indexOf(String(item.id_trkotak)),
+                                1
+                              );
+                              form.setValue("kotak", kotaksVal);
+                              jumlah_setor =
+                                jumlah_setor - item.pendapatan_kotak;
+                            }
+                            setJumlahSetoran(jumlah_setor);
+                            form.setValue(
+                              "jumlah_setor",
+                              numberToString(jumlah_setor, ",")
+                            );
+                          }}
+                          className="size-5 accent-green-400"
+                          value={String(item.id_trkotak)}
+                        />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+              </div>
+            ))}
+            <div className="text-red-500 px-4">
+              {form.formState.errors.kotak?.message}
+            </div>
           </div>
           <div className="flex items-center space-x-1 py-4 px-4 bg-white">
-            <span className="font-semibold text-sm">Jumlah Setor :</span>
-            <span className="font-medium text-sm">
+            <span className="font-semibold text-lg">Jumlah Setor :</span>
+            <span className="font-medium text-lg">
               {isFetching && <LoaderIcon className="w-4 h-4 animate-spin" />}
-              Rp {kotak && numberToString(kotak.pendapatan_kotak)}
+              Rp {numberToString(jumlahSetoran)}
+            </span>
+          </div>
+          <div className="px-4 py-4 bg-white">
+            <span className="text-sm">
+              Terbilang : {terbilang(jumlahSetoran)} Rupiah
             </span>
           </div>
           <FormField
@@ -194,6 +263,8 @@ const SetorSingleKotak = ({ id }: Props) => {
                 <FormControl>
                   <Input
                     {...field}
+                    // id="ktp"
+                    // name="ktp"
                     accept={ACCEPTED_IMAGE_TYPES.join(",")}
                     type="file"
                     onChange={onChangeImage}
@@ -287,4 +358,4 @@ const SetorSingleKotak = ({ id }: Props) => {
   );
 };
 
-export default SetorSingleKotak;
+export default SetorMultiKotak;

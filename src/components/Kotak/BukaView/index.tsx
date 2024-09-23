@@ -17,8 +17,10 @@ import { useQuery } from "@tanstack/react-query";
 import { Box, QrCode, ScanQrCodeIcon, UserCircle } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 const BukaView = () => {
+  const router = useRouter();
   const { data, isFetching } = useQuery({
     queryKey: ["kotakTerpasang"],
     queryFn: async (): Promise<TKotak[]> => {
@@ -68,23 +70,6 @@ const BukaView = () => {
             key={dt.id}
             className="bg-white px-4 py-2"
           >
-            {/* <Card
-              className={`w-full ${statusKotakBGColor[dt.id_status_kotak]}`}
-            >
-              <CardHeader className="py-6">
-                <CardTitle className="text-lg flex items-center space-x-4 justify-between">
-                  <div className="flex items-center space-x-4">
-                    <Box size="20" />
-                    <span>{dt.id_kotak}</span>
-                  </div>
-                  <span
-                    className={`text-sm capitalize bg-slate-100 text-slate-600 rounded-lg px-3`}
-                  >
-                    {statusMessage[dt.id_status_kotak]}
-                  </span>
-                </CardTitle>
-              </CardHeader>
-            </Card> */}
             <Card
               className={`w-full ${statusKotakBGColor[dt.id_status_kotak]}`}
             >
@@ -107,6 +92,15 @@ const BukaView = () => {
                   <UserCircle size="20" />
                   <span>{dt.PkUser?.nama || dt.PwUser?.nama}</span>
                 </div>
+                <Button
+                  variant="outline"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    router.push("/secure/kotak/qrcode/" + dt.id_kotak);
+                  }}
+                >
+                  <QrCode size="25" />
+                </Button>
               </CardContent>
             </Card>
           </Link>

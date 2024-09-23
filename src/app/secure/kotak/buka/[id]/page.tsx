@@ -7,7 +7,7 @@ import React from "react";
 const Page = ({ params: { id } }: { params: { id: string } }) => {
   return (
     <AnimateSlideIn direction="left" className="pb-4">
-      <TopNavbar title="Pasang Kotak" backButton />
+      <TopNavbar title="Buka Kotak" backButton />
       {/* <EkspedisiUpdate id={Number(id)} /> */}
       <BukaUpdate id={Number(id)} />
     </AnimateSlideIn>
