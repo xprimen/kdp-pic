@@ -1,5 +1,5 @@
 import { Html5QrcodeScanner } from "html5-qrcode";
-import React, { useMemo } from "react";
+import React from "react";
 
 type Props = {
   setValue: React.Dispatch<React.SetStateAction<string>>;
@@ -23,11 +23,9 @@ const QRCodeScanner = ({ setValue }: Props) => {
     const success = (result: any) => {
       scanner.clear();
       setValue(result);
-      //    console.log("result", result);
     };
     const error = (err: any) => {
       setError(err);
-      //    console.log("error", err);
     };
 
     scanner.render(success, error);

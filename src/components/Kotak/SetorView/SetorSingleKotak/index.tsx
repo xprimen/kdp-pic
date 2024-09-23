@@ -10,13 +10,22 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { toast } from "@/components/ui/use-toast";
+<<<<<<< HEAD
 import { getKotakSetor, saveSetorSingleKotak } from "@/lib/actions/kotak";
+=======
+import { getKotakSetor, saveSetorKotak } from "@/lib/actions/kotak";
+>>>>>>> origin/main
 import { numberToString, queryClient } from "@/lib/utils";
 import {
   ACCEPTED_IMAGE_TYPES,
   MAX_FILE_SIZE,
+<<<<<<< HEAD
   TUpdateSetorSingleKotak,
   UpdateSetorSingleKotakSchema,
+=======
+  TUpdateSetorKotak,
+  UpdateSetorKotakSchema,
+>>>>>>> origin/main
 } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery } from "@tanstack/react-query";
@@ -75,7 +84,11 @@ const SetorSingleKotak = ({ id }: Props) => {
     mutationFn: saveSetorSingleKotak,
   });
 
+<<<<<<< HEAD
   function onSubmit(values: TUpdateSetorSingleKotak) {
+=======
+  function onSubmit(values: TUpdateSetorKotak) {
+>>>>>>> origin/main
     setLoadingForm(true);
     const { accessToken: token } = queryClient.getQueryData(["token"]) as {
       accessToken: string;
@@ -236,7 +249,6 @@ const SetorSingleKotak = ({ id }: Props) => {
             control={form.control}
             name="tgl_setor"
             render={({ field }) => {
-              const date = new Date(field.value);
               return (
                 <FormItem className="flex flex-col space-y-1 py-4 px-4 bg-white">
                   <FormLabel className="font-semibold">Tanggal Setor</FormLabel>

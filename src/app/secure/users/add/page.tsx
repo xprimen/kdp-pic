@@ -17,7 +17,7 @@ const Page = () => {
   return (
     <AnimateSlideIn direction="left" className="pb-4">
       <TopNavbar title="Tambah User PIC" backButton />
-      <UserAdd token={token()} userdata={userdata()} />
+      <UserAdd userdata={userdata()} />
     </AnimateSlideIn>
   );
 };

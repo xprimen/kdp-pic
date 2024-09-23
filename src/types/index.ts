@@ -1,7 +1,6 @@
 import { z } from "zod";
 
 export const loginDataResponseSchema = z.object({
-  // username: z.string(),
   nama: z.string(),
   role: z.string(),
   id: z.string(),
@@ -71,30 +70,6 @@ export const AddUserSchema = UserSchema.omit({ mawil: true, sub_mawil: true })
     confPassword: z.string().min(2, { message: "Minimal 2 huruf" }).max(50),
     id_mawil: z.string().min(1, { message: "Wajib Dipilih" }),
     id_submawil: z.string().min(1, { message: "Wajib Dipilih" }),
-    // ktp: z.string().min(1, { message: "KTP Wajib Diisi" }),
-    /* ktp: z
-      .any()
-      .refine((files) => {
-        console.log("REFINE :", files);
-        return files?.length === 0;
-      }, "KTP Wajib Diisi.") // if no file files?.length === 0, if file files?.length === 1
-      .refine(
-        (files) => files?.[0]?.size >= MAX_FILE_SIZE,
-        `Max file size is 5MB.`
-      ) // this should be greater than or equals (>=) not less that or equals (<=)
-      .refine(
-        (files) => ACCEPTED_IMAGE_TYPES.includes(files?.[0]?.type),
-        ".jpg, .jpeg, .png and .webp files are accepted."
-      ), */
-    // .transform((data) => {
-    //   console.log("transform :", data);
-    //   return data;
-    // }),
-    // ktp: z.string(),
-    // ktp: z.custom<FileList>((v) => v instanceof FileList),
-    // filename_ktp: z.string().min(1, { message: "KTP Wajib Diisi" }),
-
-    // foto_ktp: z.string().optional(),
   })
   .refine((data) => data.password === data.confPassword, {
     message: "Konfirmasi Password Berbeda",
@@ -108,9 +83,7 @@ export const KotakSchema = z.object({
   id_kotak: z.string(),
   id_status_kotak: z.number(),
   id_pw: z.number(),
-  latLng: z.string().optional(),
-  // status_terima: z.number(),
-  // qrcode_link: z.string(),
+  latlang: z.string().optional(),
   tgl_start: z.date().nullable(),
   tgl_stop: z.date().nullable(),
   PwUser: z
@@ -146,17 +119,6 @@ export const KotakSetorSchema = z.object({
 
 export type TKotakSetor = z.infer<typeof KotakSetorSchema>;
 
-// export type kirimanKotakBE = {
-//   id_kirim: number;
-//   id_kotak: number;
-//   status_terima: number;
-//   kirim_kotak: {
-//     tgl_kirim: Date;
-//     id_penerima: number;
-//     status_terima: number;
-//   };
-// };
-
 export const EkspedisiDetailSchema = z.object({
   id: z.number(),
   id_kirim: z.number(),
@@ -170,7 +132,6 @@ export type TEkspedisiDetail = z.infer<typeof EkspedisiDetailSchema>;
 
 export const EkspedisiKotakSchema = z.object({
   id: z.number(),
-  // nama_pengirim: z.string(),
   id_penerima: z.number(),
   status_terima: z.number(),
   tgl_kirim: z.date(),
@@ -188,12 +149,6 @@ export const UpdateEkspedisiKotakSchema = z.object({
   kotak: z.array(z.string()).min(1, "Minimal 1 kotak dipilih"),
   id_penerima: z.number(),
   status_terima: z.number().default(1),
-  // alamat_penerima: z.string(),
-  // keterangan: z.string().nullable(),
-  // tgl_kirim: z.date(),
-  // tgl_terima: z.string({
-  //   required_error: "Tanggal Diterima Wajib Diisi",
-  // }),
   tgl_terima: z.string().min(1, "Tanggal Diterima Wajib Diisi"),
   bukti_terima: z.string().default(""),
 });
@@ -202,14 +157,13 @@ export type TUpdateEkspedisiKotak = z.infer<typeof UpdateEkspedisiKotakSchema>;
 
 export const UpdatePasangKotakSchema = z.object({
   id: z.number(),
-  // kode_kotak: z.string(),
   tgl_start: z.string().min(1, "Tanggal Diterima Wajib Diisi"),
-  alamat_penempatan: z.string(),
-  alamat_prov: z.string(),
-  alamat_kota: z.string(),
-  alamat_kec: z.string(),
-  alamat_kel: z.string(),
-  latLang: z.string(),
+  alamat_penempatan: z.string().min(1, "Wajib Diisi"),
+  alamat_prov: z.string().min(1, "Wajib Diisi"),
+  alamat_kota: z.string().min(1, "Wajib Diisi"),
+  alamat_kec: z.string().min(1, "Wajib Diisi"),
+  alamat_kel: z.string().min(1, "Wajib Diisi"),
+  latlang: z.string().min(1, "Wajib Diisi"),
   foto_penempatan: z.string(),
 });
 
@@ -228,7 +182,6 @@ export type TUpdateBukaKotak = z.infer<typeof UpdateBukaKotakSchema>;
 export const UpdateSetorSingleKotakSchema = z.object({
   id: z.number(),
   tgl_setor: z.string().min(1, "Tanggal Dibuka Wajib Diisi"),
-  // pendapatan_kotak: z.number(),
   jumlah_setor: z.string(),
   foto_bukti: z.string(),
 });
@@ -283,4 +236,7 @@ export type ErrorLocation = {
   message: string;
 };
 
-export type TGeocodeMarkers = { geocode: number[]; popup: string }[];
+export type TGeocodeMarkers = {
+  geocode: number[];
+  data: Omit<TKotak, "latlang">;
+}[];

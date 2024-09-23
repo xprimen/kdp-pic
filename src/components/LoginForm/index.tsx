@@ -13,6 +13,7 @@ import { LoginFormInput, LoginFormInputSchema } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { LoaderIcon, LogIn } from "lucide-react";
 import { useRouter } from "next/navigation";
+import React from "react";
 import { useForm } from "react-hook-form";
 import { loginAction } from "../../lib/actions/login";
 import {
@@ -24,7 +25,6 @@ import {
   FormMessage,
 } from "../ui/form";
 import { useToast } from "../ui/use-toast";
-import React from "react";
 
 export function LoginForm() {
   const router = useRouter();
@@ -40,20 +40,15 @@ export function LoginForm() {
 
   async function onSubmit(values: LoginFormInput) {
     setLoading(true);
-    // console.log("TESTING");
     try {
       const loginProcess = await loginAction(values);
-      // console.log(loginProcess);
       if (loginProcess.success) {
-        // alert(loginProcess.message);
         toast({
           description: loginProcess.message,
           title: "Login Success",
           variant: "default",
           duration: 3000,
         });
-        // if (loginProcess.data)
-        //   localStorage.setItem("userdata", JSON.stringify(loginProcess.data));
 
         setLoading(false);
         router.replace("/secure");
@@ -98,9 +93,6 @@ export function LoginForm() {
                     <FormControl>
                       <Input {...field} />
                     </FormControl>
-                    {/* <FormDescription>
-                      This is your public display name.
-                    </FormDescription> */}
                     <FormMessage />
                   </FormItem>
                 )}
@@ -116,9 +108,6 @@ export function LoginForm() {
                     <FormControl>
                       <Input {...field} type="password" />
                     </FormControl>
-                    {/* <FormDescription>
-                      This is your public display name.
-                    </FormDescription> */}
                     <FormMessage />
                   </FormItem>
                 )}

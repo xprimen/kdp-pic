@@ -1,5 +1,4 @@
 "use client";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -8,6 +7,7 @@ import { getKotakSetor } from "@/lib/actions/kotak";
 import { numberToString, queryClient } from "@/lib/utils";
 import { TKotakSetor } from "@/types";
 import { useQuery } from "@tanstack/react-query";
+<<<<<<< HEAD
 import {
   Banknote,
   BeakerIcon,
@@ -17,6 +17,9 @@ import {
   LucideBanknote,
   PiggyBank,
 } from "lucide-react";
+=======
+import { Box, Boxes } from "lucide-react";
+>>>>>>> origin/main
 import Link from "next/link";
 
 const SetorView = () => {
@@ -27,13 +30,8 @@ const SetorView = () => {
         accessToken: string;
       };
       const data = await getKotakSetor(accessToken);
-      //   const filterIdle = data.filter(
-      //     (dt: TKotak) => dt.id_status_kotak === 1 || dt.id_status_kotak === 3
-      //   );
-      //   console.log("DATA SETOR KOTAK :", data);
       return data;
     },
-    // refetchOnWindowFocus: true,
   });
 
   return (
@@ -76,12 +74,46 @@ const SetorView = () => {
             </div>
           ))}
         {data?.map((dt: TKotakSetor) => (
+<<<<<<< HEAD
           <Card key={dt.id} className="mx-4">
             <CardHeader className="py-6">
               <CardTitle className="text-lg flex items-center space-x-4 justify-between">
                 <div className="flex items-center space-x-4">
                   <Box size="20" />
                   <span>{dt.kode_kotak}</span>
+=======
+          <Link
+            href={`/secure/kotak/setor/${dt.id}`}
+            key={dt.id}
+            className="bg-white px-4 py-2"
+          >
+            <Card>
+              <CardHeader className="py-6">
+                <CardTitle className="text-lg flex items-center space-x-4 justify-between">
+                  <div className="flex items-center space-x-4">
+                    <Box size="20" />
+                    <span>{dt.kode_kotak}</span>
+                  </div>
+                  <div>
+                    <span className="text-sm">Pasang :</span>
+                    <span
+                      className={`text-sm capitalize bg-slate-100 text-slate-600 rounded-lg px-3`}
+                    >
+                      {new Intl.DateTimeFormat("id-ID", {
+                        year: "numeric",
+                        month: "short",
+                        day: "numeric",
+                      }).format(new Date(dt.tgl_start))}
+                    </span>
+                  </div>
+                </CardTitle>
+              </CardHeader>
+              <Separator />
+              <CardContent className="text-sm flex justify-between pt-4">
+                <div className="flex items-center space-x-2 font-semibold text-lg">
+                  <span>Rp</span>
+                  <span>{numberToString(Number(dt.pendapatan_kotak))}</span>
+>>>>>>> origin/main
                 </div>
                 <div className="flex items-center space-x-2">
                   <span className="text-sm">Pasang :</span>

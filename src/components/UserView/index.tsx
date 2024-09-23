@@ -1,36 +1,23 @@
 "use client";
+import { getUsers } from "@/lib/actions/users";
+import { queryClient } from "@/lib/utils";
+import { TUser } from "@/types";
+import { useQuery } from "@tanstack/react-query";
 import { User } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
-import TableToolbars from "../utilities/TableToolbars";
-import { useQuery } from "@tanstack/react-query";
-import { getUsers } from "@/lib/actions/users";
 import { Skeleton } from "../ui/skeleton";
-import { TUser } from "@/types";
-import axiosInstance from "@/lib/axiosInstance";
-import { queryClient } from "@/lib/utils";
+import TableToolbars from "../utilities/TableToolbars";
 
 const UserView = () => {
-  // console.log("token : ", token);
   const { data: users, isFetching } = useQuery({
     queryKey: ["userspk"],
     queryFn: async () => {
       const { accessToken } = (await queryClient.getQueryData(["token"])) as {
         accessToken: string;
       };
-      // console.log("NEW TOKEN :", accessToken);
       return getUsers(accessToken);
-      /* return axiosInstance(accessToken)
-        .get("/userspk")
-        .then((res) => {
-          console.log(res.data);
-          return res.data;
-        }); */
     },
-    // refetchOnWindowFocus: true,
   });
-
-  // console.log("loading : ", isFetching);
-  // console.log("users :", users);
 
   return (
     <div className="mb-20">

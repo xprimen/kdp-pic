@@ -10,18 +10,12 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { toast } from "@/components/ui/use-toast";
 import { getKotak, saveBukaKotak } from "@/lib/actions/kotak";
-import useCurrentLocation from "@/lib/useCurrentLocation";
 import { numberToString, queryClient, terbilang } from "@/lib/utils";
 import {
   ACCEPTED_IMAGE_TYPES,
   MAX_FILE_SIZE,
-  TKecamatan,
-  TKelurahan,
-  TKota,
-  TPropinsi,
   TUpdateBukaKotak,
   UpdateBukaKotakSchema,
 } from "@/types";
@@ -55,7 +49,6 @@ const BukaUpdate = ({ id }: Props) => {
       const dataFilter = getData.filter((dt) => dt.id === id)[0];
       return dataFilter;
     },
-    // refetchOnWindowFocus: true,
   });
 
   const form = useForm<TUpdateBukaKotak>({
@@ -69,25 +62,13 @@ const BukaUpdate = ({ id }: Props) => {
       }).format(new Date()),
     },
     shouldFocusError: false,
-    // },
   });
 
   const mutation = useMutation({
     mutationFn: saveBukaKotak,
   });
 
-  // console.log("ERROR FORM :", form.formState.errors);
-
   function onSubmit(values: TUpdateBukaKotak) {
-    // console.log("VALUES :", values);
-    // toast({
-    //   title: "Mohon Tunggu",
-    //   description: (
-    //     <span className="flex items-center">
-    //       <code>{JSON.stringify(values)}</code>
-    //     </span>
-    //   ),
-    // });
     setLoadingForm(true);
     const { accessToken: token } = queryClient.getQueryData(["token"]) as {
       accessToken: string;
@@ -107,9 +88,6 @@ const BukaUpdate = ({ id }: Props) => {
       { values, token },
       {
         onSuccess: (data, variables, context) => {
-          console.log("SUCCESS : ", data);
-          console.log("SUCCESS : ", variables);
-          console.log("SUCCESS : ", context);
           // form.reset();
           toast({
             title: "Berhasil",
@@ -121,9 +99,6 @@ const BukaUpdate = ({ id }: Props) => {
           router.replace("/secure/kotak?tab=buka");
         },
         onError: (error, variables, context) => {
-          console.log("ERROR : ", error.message);
-          console.log("ERROR : ", variables);
-          console.log("ERROR : ", context);
           setLoadingForm(false);
           toast({
             title: "Error",
@@ -169,8 +144,6 @@ const BukaUpdate = ({ id }: Props) => {
       setImagePreview(urlImage);
 
       const fileWithBase64 = await toBase64(file);
-      // setImageBase64(fileWithBase64);
-      // form.setValue("foto_unboxing", file.name, { shouldValidate: true });
       form.setValue("foto_unboxing", fileWithBase64, {
         shouldValidate: true,
       });
@@ -215,10 +188,6 @@ const BukaUpdate = ({ id }: Props) => {
                     className="resize-y"
                     {...field}
                     onChange={(val) => {
-                      console.log(
-                        "FORM VALUE :",
-                        numberToString(Number(val.target.value))
-                      );
                       form.setValue(
                         "pendapatan_kotak",
                         Number(val.target.value),
@@ -256,8 +225,6 @@ const BukaUpdate = ({ id }: Props) => {
                 <FormControl>
                   <Input
                     {...field}
-                    // id="ktp"
-                    // name="ktp"
                     accept={ACCEPTED_IMAGE_TYPES.join(",")}
                     type="file"
                     onChange={onChangeImage}
@@ -312,7 +279,6 @@ const BukaUpdate = ({ id }: Props) => {
             control={form.control}
             name="tgl_stop"
             render={({ field }) => {
-              const date = new Date(field.value);
               return (
                 <FormItem className="flex flex-col space-y-1 py-4 px-4 bg-white">
                   <FormLabel className="font-semibold">
