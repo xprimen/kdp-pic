@@ -58,7 +58,6 @@ const SetorMultiKotak = () => {
       }).format(new Date()),
     },
     shouldFocusError: false,
-    // },
   });
 
   const mutation = useMutation({
@@ -66,15 +65,6 @@ const SetorMultiKotak = () => {
   });
 
   function onSubmit(values: TUpdateSetorMultiKotak) {
-    // toast({
-    //   title: "Tes",
-    //   description: (
-    //     <span className="flex items-center">
-    //       <code>{JSON.stringify(values, null, 2)}</code>
-    //     </span>
-    //   ),
-    // });
-    // setLoadingForm(true);
     const { accessToken: token } = queryClient.getQueryData(["token"]) as {
       accessToken: string;
     };
@@ -92,9 +82,6 @@ const SetorMultiKotak = () => {
       { values, token },
       {
         onSuccess: (data, variables, context) => {
-          console.log("SUCCESS : ", data);
-          console.log("SUCCESS : ", variables);
-          console.log("SUCCESS : ", context);
           toast({
             title: "Berhasil",
             description: "Kotak Berhasil Disetor",
@@ -105,9 +92,6 @@ const SetorMultiKotak = () => {
           router.replace("/secure/kotak?tab=setor");
         },
         onError: (error, variables, context) => {
-          console.log("ERROR : ", error.message);
-          console.log("ERROR : ", variables);
-          console.log("ERROR : ", context);
           setLoadingForm(false);
           toast({
             title: "Error",

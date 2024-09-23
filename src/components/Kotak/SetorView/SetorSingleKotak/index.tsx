@@ -236,7 +236,6 @@ const SetorSingleKotak = ({ id }: Props) => {
             control={form.control}
             name="tgl_setor"
             render={({ field }) => {
-              const date = new Date(field.value);
               return (
                 <FormItem className="flex flex-col space-y-1 py-4 px-4 bg-white">
                   <FormLabel className="font-semibold">Tanggal Setor</FormLabel>

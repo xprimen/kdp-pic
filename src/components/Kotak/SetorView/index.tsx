@@ -1,22 +1,12 @@
 "use client";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
-import TableToolbars from "@/components/utilities/TableToolbars";
 import { getKotakSetor } from "@/lib/actions/kotak";
 import { numberToString, queryClient } from "@/lib/utils";
 import { TKotakSetor } from "@/types";
 import { useQuery } from "@tanstack/react-query";
-import {
-  Banknote,
-  BeakerIcon,
-  Box,
-  Boxes,
-  CreditCard,
-  LucideBanknote,
-  PiggyBank,
-} from "lucide-react";
+import { Box, CreditCard } from "lucide-react";
 import Link from "next/link";
 
 const SetorView = () => {
@@ -27,13 +17,8 @@ const SetorView = () => {
         accessToken: string;
       };
       const data = await getKotakSetor(accessToken);
-      //   const filterIdle = data.filter(
-      //     (dt: TKotak) => dt.id_status_kotak === 1 || dt.id_status_kotak === 3
-      //   );
-      //   console.log("DATA SETOR KOTAK :", data);
       return data;
     },
-    // refetchOnWindowFocus: true,
   });
 
   return (

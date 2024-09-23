@@ -6,17 +6,8 @@ type Props = {
   children: React.ReactNode;
 };
 
-// const refreshToken = () => {
-//   "server only";
-//   const headers = headers();
-//   const cookieHeader = headers.get("Set-Cookie");
-//   console.log(cookieHeader);
-//   // return cookies().get("refreshToken")?.value || "";
-// };
-
 function AdminLayout({ children }: Props) {
   const refreshToken = getRefreshToken() || "";
-  // console.log("refresh token :", refreshToken);
 
   // Access individual cookies
   return (

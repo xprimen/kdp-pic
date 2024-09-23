@@ -26,9 +26,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { CircleX, LoaderIcon, Save } from "lucide-react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import React from "react";
 import { useForm } from "react-hook-form";
-import TopNavbar from "../TopNavbar";
 import { Button } from "../ui/button";
 import {
   Form,
@@ -39,9 +39,6 @@ import {
   FormMessage,
 } from "../ui/form";
 import { Input } from "../ui/input";
-import { Textarea } from "../ui/textarea";
-import { toast } from "../ui/use-toast";
-import { useRouter } from "next/navigation";
 import {
   Select,
   SelectContent,
@@ -49,13 +46,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
+import { Textarea } from "../ui/textarea";
+import { toast } from "../ui/use-toast";
 
 type Props = {
-  token: string;
   userdata: LoginDataResponse;
 };
 
-const UserAdd = ({ token, userdata }: Props) => {
+const UserAdd = ({ userdata }: Props) => {
   const router = useRouter();
   const [loadingForm, setLoadingForm] = React.useState(false);
   const [imageFile, setImageFile] = React.useState<FileList>();
@@ -75,7 +73,6 @@ const UserAdd = ({ token, userdata }: Props) => {
       role: "3",
       confPassword: "",
       id_mawil: String(userdata.mawil),
-      // submawil: ,
       nik: "",
       tlp: "",
       alamat: "",
@@ -141,21 +138,6 @@ const UserAdd = ({ token, userdata }: Props) => {
 
   const mutation = useMutation({
     mutationFn: saveUser,
-    /* onSuccess: () => {
-      // Invalidate and refetch
-      toast({
-        title: "Berhasil",
-        description: "Berhasil Menambahkan User PIC Kotak Baru",
-      });
-      queryClient.invalidateQueries({ queryKey: ["users"] });
-    },
-    onError: () => {
-      toast({
-        title: "Error",
-        description: "Gagal Menambahkan User",
-        variant: "destructive",
-      });
-    }, */
   });
 
   async function onSubmit(values: AddUser) {
@@ -165,7 +147,6 @@ const UserAdd = ({ token, userdata }: Props) => {
       accessToken: string;
     };
 
-    // setTimeout(() => {
     toast({
       title: "Mohon Tunggu",
       description: (
@@ -175,16 +156,10 @@ const UserAdd = ({ token, userdata }: Props) => {
         </span>
       ),
     });
-    // setLoadingForm(false);
-    // }, 2000);
     mutation.mutate(
       { values, accessToken },
       {
         onSuccess: (data, variables, context) => {
-          // console.log("SUCCESS : ", data);
-          // console.log("SUCCESS : ", variables);
-          // console.log("SUCCESS : ", context);
-          // form.reset();
           toast({
             title: "Berhasil",
             description: `Berhasil Menambahkan User PIC ${variables.values.nama}`,
@@ -193,9 +168,6 @@ const UserAdd = ({ token, userdata }: Props) => {
           router.replace("/secure/users");
         },
         onError: (error, variables, context) => {
-          // console.log("ERROR : ", error.message);
-          // console.log("ERROR : ", variables);
-          // console.log("ERROR : ", context);
           toast({
             title: "Error",
             description: "Gagal Menambahkan User",
@@ -240,9 +212,7 @@ const UserAdd = ({ token, userdata }: Props) => {
       setImagePreview(urlImage);
 
       const fileWithBase64 = await toBase64(file);
-      // setImageBase64(fileWithBase64);
       form.setValue("image", file.name, { shouldValidate: true });
-      //   form.setValue("foto_ktp", fileWithBase64, { shouldValidate: true });
       setImageFile(files);
     }
   };
@@ -267,15 +237,8 @@ const UserAdd = ({ token, userdata }: Props) => {
               <FormItem className="space-y-1 py-4 px-4 bg-white ">
                 <FormLabel className="font-semibold">Username</FormLabel>
                 <FormControl>
-                  <Input
-                    {...field}
-                    // className="ring-0 border-0 rounded-none focus-visible:outline-none
-                    // focus:outline-none focus-visible:ring-0"
-                  />
+                  <Input {...field} />
                 </FormControl>
-                {/* <FormDescription>
-                  This is your public display name.
-                </FormDescription> */}
                 <FormMessage />
               </FormItem>
             )}
@@ -289,9 +252,6 @@ const UserAdd = ({ token, userdata }: Props) => {
                 <FormControl>
                   <Input {...field} />
                 </FormControl>
-                {/* <FormDescription>
-                  This is your public display name.
-                </FormDescription> */}
                 <FormMessage />
               </FormItem>
             )}
@@ -306,9 +266,6 @@ const UserAdd = ({ token, userdata }: Props) => {
                   <FormControl>
                     <Input {...field} />
                   </FormControl>
-                  {/* <FormDescription>
-                  This is your public display name.
-                </FormDescription> */}
                   <FormMessage />
                 </FormItem>
               )}
@@ -322,8 +279,6 @@ const UserAdd = ({ token, userdata }: Props) => {
                   <FormControl>
                     <Input
                       {...field}
-                      // id="ktp"
-                      // name="ktp"
                       accept={ACCEPTED_IMAGE_TYPES.join(",")}
                       type="file"
                       onChange={onChangeKTP}
@@ -334,9 +289,6 @@ const UserAdd = ({ token, userdata }: Props) => {
                       }
                     />
                   </FormControl>
-                  {/* <FormDescription>
-                  This is your public display name.
-                </FormDescription> */}
                   <FormMessage />
                   {imagePreview && (
                     <div className="flex relative">
@@ -348,9 +300,7 @@ const UserAdd = ({ token, userdata }: Props) => {
                         onClick={() => {
                           setImagePreview("");
                           setImageFile(undefined);
-                          // form.setValue("ktp", new File([], ""), {});
                           form.resetField("image");
-                          //   form.resetField("foto_ktp");
                         }}
                       >
                         <CircleX size={24} />
@@ -378,9 +328,6 @@ const UserAdd = ({ token, userdata }: Props) => {
                   <FormControl>
                     <Input {...field} type="password" />
                   </FormControl>
-                  {/* <FormDescription>
-                  This is your public display name.
-                </FormDescription> */}
                   <FormMessage />
                 </FormItem>
               )}
@@ -396,9 +343,6 @@ const UserAdd = ({ token, userdata }: Props) => {
                   <FormControl>
                     <Input {...field} type="password" />
                   </FormControl>
-                  {/* <FormDescription>
-                  This is your public display name.
-                </FormDescription> */}
                   <FormMessage />
                 </FormItem>
               )}
@@ -411,15 +355,8 @@ const UserAdd = ({ token, userdata }: Props) => {
               <FormItem className="space-y-1 py-4 px-4 bg-white ">
                 <FormLabel className="font-semibold">Telepon</FormLabel>
                 <FormControl>
-                  <Input
-                    {...field}
-                    // className="ring-0 border-0 rounded-none focus-visible:outline-none
-                    // focus:outline-none focus-visible:ring-0"
-                  />
+                  <Input {...field} />
                 </FormControl>
-                {/* <FormDescription>
-                  This is your public display name.
-                </FormDescription> */}
                 <FormMessage />
               </FormItem>
             )}
@@ -432,7 +369,6 @@ const UserAdd = ({ token, userdata }: Props) => {
                 <FormItem className="space-y-1 py-4 px-4 bg-white w-full">
                   <FormLabel className="font-semibold">Mawil</FormLabel>
                   <FormControl>
-                    {/* <Input {...field} /> */}
                     <Select
                       disabled
                       value={String(form.getValues("id_mawil"))}
@@ -454,9 +390,6 @@ const UserAdd = ({ token, userdata }: Props) => {
                       </SelectContent>
                     </Select>
                   </FormControl>
-                  {/* <FormDescription>
-                  This is your public display name.
-                </FormDescription> */}
                   <FormMessage />
                 </FormItem>
               )}
@@ -643,15 +576,8 @@ const UserAdd = ({ token, userdata }: Props) => {
               <FormItem className="space-y-1 py-4 px-4 bg-white ">
                 <FormLabel className="font-semibold">Alamat</FormLabel>
                 <FormControl>
-                  <Textarea
-                    {...field}
-                    // className="ring-0 border-0 rounded-none focus-visible:outline-none
-                    // focus:outline-none focus-visible:ring-0"
-                  />
+                  <Textarea {...field} />
                 </FormControl>
-                {/* <FormDescription>
-                  This is your public display name.
-                </FormDescription> */}
                 <FormMessage />
               </FormItem>
             )}
