@@ -159,15 +159,15 @@ const UserAdd = ({ userdata }: Props) => {
     mutation.mutate(
       { values, accessToken },
       {
-        onSuccess: (data, variables, context) => {
+        onSuccess: () => {
           toast({
             title: "Berhasil",
-            description: `Berhasil Menambahkan User PIC ${variables.values.nama}`,
+            description: `Berhasil Menambahkan User PIC ${values.nama}`,
           });
           queryClient.invalidateQueries({ queryKey: ["users"] });
           router.replace("/secure/users");
         },
-        onError: (error, variables, context) => {
+        onError: () => {
           toast({
             title: "Error",
             description: "Gagal Menambahkan User",

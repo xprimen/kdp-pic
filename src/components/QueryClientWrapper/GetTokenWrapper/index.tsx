@@ -1,6 +1,7 @@
 "use client";
+import { logoutAction } from "@/lib/actions/login";
 import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { PropsWithChildren } from "react";
 
 const GetTokenWrapper = ({
@@ -20,6 +21,11 @@ const GetTokenWrapper = ({
         })
         .then((res) => {
           return res.data;
+        })
+        .catch((error: AxiosError) => {
+          if (error.response?.status === 403) {
+            logoutAction();
+          }
         }),
   });
   return <>{children}</>;

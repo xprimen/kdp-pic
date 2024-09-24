@@ -165,7 +165,7 @@ const PasangUpdate = ({ id }: Props) => {
     mutation.mutate(
       { values, token },
       {
-        onSuccess: (data, variables, context) => {
+        onSuccess: () => {
           toast({
             title: "Berhasil",
             description: "Kotak Berhasil Dipasang",
@@ -175,7 +175,7 @@ const PasangUpdate = ({ id }: Props) => {
           });
           router.replace("/secure/kotak?tab=pasang");
         },
-        onError: (error, variables, context) => {
+        onError: () => {
           setLoadingForm(false);
           toast({
             title: "Error",
@@ -241,12 +241,12 @@ const PasangUpdate = ({ id }: Props) => {
           className="space-y-1 flex flex-col"
           onSubmit={form.handleSubmit(onSubmit)}
         >
-          {error && (
+          {/* {error && (
             <div className="flex justify-center items-center p-4">
               <CircleX className="text-red-600 h-10 w-10" />
               <p className="text-red-600">{error.message}</p>
             </div>
-          )}
+          )} */}
           <div className="flex gap-2 px-4 bg-white py-4 items-center">
             <FormLabel className="font-semibold">Kode Kotak :</FormLabel>
             <h3 className="font-bold">{kotak?.id_kotak}</h3>

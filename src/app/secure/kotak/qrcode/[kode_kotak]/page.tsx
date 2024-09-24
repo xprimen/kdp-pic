@@ -31,6 +31,9 @@ const Page = ({
     <div className="flex flex-col h-screen">
       <TopNavbar title="QRCode Kotak" backButton />
       <div className="flex flex-col items-center space-y-8 justify-center h-full">
+        <h2 className="text-xl text-center">
+          Kode Kotak : <span className="font-bold">{kode_kotak}</span>
+        </h2>
         <QRCodeCanvas
           ref={qrcodeCanvas}
           value={kode_kotak}

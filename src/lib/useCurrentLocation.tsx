@@ -1,6 +1,7 @@
 // const useCurrentLocation = (): {
+import { toast } from "@/components/ui/use-toast";
 import { ErrorLocation, Location } from "@/types";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 
 const useCurrentLocation = (): {
   location: Location;
@@ -12,16 +13,23 @@ const useCurrentLocation = (): {
   });
   const [error, setError] = useState<ErrorLocation | null>(null);
 
-  const handleSuccess = (position: GeolocationPosition) => {
+  const handleSuccess = useCallback((position: GeolocationPosition) => {
     setLocation({
       latitude: position.coords.latitude,
       longitude: position.coords.longitude,
     });
-  };
+  }, []);
 
-  const handleError = (error: GeolocationPositionError) => {
+  const handleError = useCallback((error: GeolocationPositionError) => {
+    console.log("Error GEOLOCATION :", error);
+    toast({
+      title: "Warning",
+      variant: "destructive",
+      description: "Aktifkan GPS/Lokasi untuk mengakses Peta",
+      className: "z-50",
+    });
     setError({ message: error.message });
-  };
+  }, []);
 
   useEffect(() => {
     const geo = navigator.geolocation;
@@ -31,7 +39,7 @@ const useCurrentLocation = (): {
     }
 
     geo.getCurrentPosition(handleSuccess, handleError);
-  }, []);
+  }, [handleSuccess, handleError]);
 
   return { location, error };
 };

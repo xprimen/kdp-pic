@@ -74,7 +74,6 @@ const BukaUpdate = ({ id }: Props) => {
       accessToken: string;
     };
 
-    // setTimeout(() => {
     toast({
       title: "Mohon Tunggu",
       description: (
@@ -87,8 +86,7 @@ const BukaUpdate = ({ id }: Props) => {
     mutation.mutate(
       { values, token },
       {
-        onSuccess: (data, variables, context) => {
-          // form.reset();
+        onSuccess: () => {
           toast({
             title: "Berhasil",
             description: "Kotak Berhasil Dibuka",
@@ -98,7 +96,7 @@ const BukaUpdate = ({ id }: Props) => {
           });
           router.replace("/secure/kotak?tab=buka");
         },
-        onError: (error, variables, context) => {
+        onError: () => {
           setLoadingForm(false);
           toast({
             title: "Error",

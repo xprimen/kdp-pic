@@ -62,10 +62,12 @@ const Maps = () => {
             <Loader className="mr-2 h-8 w-8 animate-spin" />
           </div>
         ) : (
-          <Map
-            center={[location.latitude, location.longitude]}
-            markers={data}
-          />
+          !error && (
+            <Map
+              center={[location.latitude, location.longitude]}
+              markers={data}
+            />
+          )
         )}
       </div>
     </AnimateSlideIn>
