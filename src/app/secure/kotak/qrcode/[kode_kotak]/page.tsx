@@ -17,7 +17,7 @@ const Page = ({
 
   const qrcodeCanvas = useRef<HTMLCanvasElement>(null);
 
-  /* const b64toBlob = (
+  const b64toBlob = (
     base64Image: string,
     contentType = "image/png",
     sliceSize = 512
@@ -41,19 +41,31 @@ const Page = ({
 
     // Return BLOB image after conversion
     return new Blob([uInt8Array], { type: contentType });
-  }; */
+  };
 
   const handleDownload = () => {
     if (qrcodeCanvas.current) {
       const canvas = qrcodeCanvas.current;
-      const link = document.createElement("a");
-      // const base64Image = canvas.toDataURL();
-      // const blob = b64toBlob(base64Image);
-      link.download = `QRCode Kotak ${kode_kotak}.png`;
+      // const link = document.createElement("a");
+      const base64Image = canvas.toDataURL();
+      const blob = b64toBlob(base64Image);
       // link.href = URL.createObjectURL(blob);
-      link.href = canvas.toDataURL();
-      console.log("LINK URL QRCODE : ", link.href);
-      link.click();
+      // link.download = `QRCode Kotak ${kode_kotak}.png`;
+      // link.href = canvas.toDataURL();
+      // console.log("LINK URL QRCODE : ", link.href);
+      // link.click();
+      // postMessage(blob, "download-qrcode-kotak");
+      postMessage(
+        {
+          type: "download-qrcode-kotak",
+          data: {
+            kode_kotak,
+            base64Image,
+            blob,
+          },
+        },
+        "*"
+      );
       // console.log("LINK URL QRCODE : ", link.href);
     }
   };
