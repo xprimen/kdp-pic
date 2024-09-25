@@ -17,13 +17,42 @@ const Page = ({
 
   const qrcodeCanvas = useRef<HTMLCanvasElement>(null);
 
+  const b64toBlob = (
+    base64Image: string,
+    contentType = "image/png",
+    sliceSize = 512
+  ) => {
+    // Split into two parts
+    const parts = base64Image.split(";base64,");
+
+    // Hold the content type
+    const imageType = parts[0].split(":")[1];
+
+    // Decode Base64 string
+    const decodedData = globalThis.atob(parts[1]);
+
+    // Create UNIT8ARRAY of size same as row data length
+    const uInt8Array = new Uint8Array(decodedData.length);
+
+    // Insert all character code into uInt8Array
+    for (let i = 0; i < decodedData.length; ++i) {
+      uInt8Array[i] = decodedData.charCodeAt(i);
+    }
+
+    // Return BLOB image after conversion
+    return new Blob([uInt8Array], { type: contentType });
+  };
+
   const handleDownload = () => {
     if (qrcodeCanvas.current) {
       const canvas = qrcodeCanvas.current;
       const link = document.createElement("a");
+      const base64Image = canvas.toDataURL();
+      const blob = b64toBlob(base64Image);
       link.download = `QRCode Kotak ${kode_kotak}.png`;
-      link.href = canvas.toDataURL("image/png");
+      link.href = URL.createObjectURL(blob);
       link.click();
+      // console.log("LINK URL QRCODE : ", link.href);
     }
   };
 
