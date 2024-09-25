@@ -54,6 +54,7 @@ const Page = ({
       link.href = canvas.toDataURL();
       console.log("LINK URL QRCODE : ", link.href);
       link.click();
+      // console.log("LINK URL QRCODE : ", link.href);
     }
   };
 
