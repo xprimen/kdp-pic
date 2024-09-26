@@ -4,6 +4,7 @@ import React, { useRef } from "react";
 import { QRCodeCanvas, QRCodeSVG } from "qrcode.react";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 const Page = ({
   params: { kode_kotak },
@@ -19,7 +20,7 @@ const Page = ({
 
   const qrcodeCanvas = useRef<HTMLCanvasElement>(null);
 
-  const b64toBlob = (
+  /* const b64toBlob = (
     base64Image: string,
     contentType = "image/png",
     sliceSize = 512
@@ -70,7 +71,7 @@ const Page = ({
         "*"
       );
     }
-  };
+  }; */
 
   return (
     <div className="flex flex-col h-screen">
@@ -94,9 +95,16 @@ const Page = ({
             opacity: 1,
           }}
         />
-        <Button variant="default" size="lg" onClick={() => handleDownload()}>
+        {/* <Button variant="default" size="lg" onClick={() => handleDownload()}>
           Download
-        </Button>
+        </Button> */}
+        <Link
+          target="_blank"
+          href={`/cetak_qrcode/${kode_kotak}`}
+          className="text-center text-lg font-bold bg-green-600 p-4 rounded-md text-white hover:bg-green-700"
+        >
+          Download
+        </Link>
       </div>
     </div>
   );
