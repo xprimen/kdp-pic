@@ -51,12 +51,11 @@ const Page = ({
       const link = document.createElement("a");
       const base64Image = canvas.toDataURL();
       const blob = b64toBlob(base64Image);
-      // link.href = URL.createObjectURL(blob);
       link.download = `QRCode Kotak ${kode_kotak}.png`;
-      link.href = canvas.toDataURL("image/png");
-      // console.log("LINK URL QRCODE : ", link);
+      // link.href = URL.createObjectURL(blob);
+      link.href = canvas.toDataURL();
+      console.log("LINK URL QRCODE : ", link.href);
       link.click();
-      // postMessage(blob, "download-qrcode-kotak");
       // console.log("LINK URL QRCODE : ", link.href);
       // router.push(base64Image);
       postMessage(
