@@ -7,7 +7,6 @@ const Page = ({ params: { id } }: { params: { id: string } }) => {
   return (
     <AnimateSlideIn direction="left" className="pb-4">
       <TopNavbar title="Pasang Kotak" backButton />
-      {/* <EkspedisiUpdate id={Number(id)} /> */}
       <PasangUpdate id={Number(id)} />
     </AnimateSlideIn>
   );

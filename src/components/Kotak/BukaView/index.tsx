@@ -1,21 +1,26 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import TableToolbars from "@/components/utilities/TableToolbars";
 import { getKotak } from "@/lib/actions/kotak";
 import { queryClient } from "@/lib/utils";
-import {
-  LoginDataResponse,
-  statusKotakBGColor,
-  statusMessage,
-  TKotak,
-} from "@/types";
+import { statusKotakBGColor, statusMessage, TKotak } from "@/types";
 import { useQuery } from "@tanstack/react-query";
-import { Box, QrCode, ScanQrCodeIcon, UserCircle } from "lucide-react";
-import Image from "next/image";
+import {
+  Box,
+  PencilLine,
+  QrCode,
+  ScanQrCodeIcon,
+  UserCircle,
+} from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
@@ -65,13 +70,11 @@ const BukaView = () => {
             </div>
           ))}
         {data?.map((dt: TKotak) => (
-          <Link
-            href={`/secure/kotak/buka/${dt.id}`}
-            key={dt.id}
-            className="bg-white px-4 py-2"
-          >
+          <div key={dt.id} className="bg-white px-4 py-2">
             <Card
-              className={`w-full ${statusKotakBGColor[dt.id_status_kotak]}`}
+              className={`w-full text-slate-800 ${
+                statusKotakBGColor[dt.id_status_kotak]
+              }`}
             >
               <CardHeader className="py-6">
                 <CardTitle className="text-lg flex items-center space-x-4 justify-between">
@@ -102,8 +105,24 @@ const BukaView = () => {
                   <QrCode size="25" />
                 </Button>
               </CardContent>
+              <CardFooter className="flex justify-between">
+                <Link
+                  href={`/secure/kotak/buka/${dt.id}`}
+                  className="bg-orange-500 text-white px-4 py-2 rounded-md flex items-center space-x-1"
+                >
+                  <PencilLine size="14" />
+                  <span>Edit</span>
+                </Link>
+                <Link
+                  href={`/secure/kotak/buka/${dt.id}`}
+                  className="bg-rose-600 text-white px-4 py-2 rounded-md flex items-center space-x-1"
+                >
+                  <Box size="14" />
+                  <span>Buka</span>
+                </Link>
+              </CardFooter>
             </Card>
-          </Link>
+          </div>
         ))}
       </div>
     </div>

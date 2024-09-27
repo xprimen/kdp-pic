@@ -29,7 +29,7 @@ export const statusKotakBGColor = [
   "bg-grey-400",
   "bg-white",
   "bg-green-400",
-  "bg-red-400",
+  "bg-red-500 text-white",
 ];
 
 export const statusMessage = [
@@ -115,9 +115,26 @@ export const KotakSetorSchema = z.object({
   pendapatan_kotak: z.number(),
   tgl_start: z.string(),
   tgl_stop: z.string(),
+  id_status_kotak: z.number().default(3),
+  setor: z
+    .object({
+      tgl_setor: z.string(),
+    })
+    .optional(),
 });
 
 export type TKotakSetor = z.infer<typeof KotakSetorSchema>;
+
+// export const KotakSudahSetorSchema = KotakSetorSchema.omit({
+//   id_trkotak: true,
+// }).extend({
+//   id_status_kotak: z.number(),
+//   setor: z.object({
+//     tgl_setor: z.string(),
+//   }),
+// });
+
+// export type TKotakSudahSetor = z.infer<typeof KotakSudahSetorSchema>;
 
 export const EkspedisiDetailSchema = z.object({
   id: z.number(),

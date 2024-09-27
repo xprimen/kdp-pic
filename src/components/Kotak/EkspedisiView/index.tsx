@@ -4,7 +4,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import TableToolbars from "@/components/utilities/TableToolbars";
 import { getEkspedisiKotak } from "@/lib/actions/kotak";
 import { queryClient } from "@/lib/utils";
-import { TEkspedisiKotak } from "@/types";
+import { statusKotakBGColor, TEkspedisiKotak } from "@/types";
 import { useQuery } from "@tanstack/react-query";
 import { Calendar, CheckCircle, FileBox, Info } from "lucide-react";
 import Link from "next/link";
@@ -49,7 +49,7 @@ const EkspedisiView = () => {
             key={dt.id}
             className="bg-white px-4 py-2"
           >
-            <Card>
+            <Card className={statusKotakBGColor[dt.status_terima]}>
               <CardHeader className="py-2">
                 <CardTitle className="text-lg flex justify-between items-center gap-x-2">
                   <div className="flex items-center gap-x-2">

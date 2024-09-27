@@ -30,9 +30,10 @@ const TotalKotak = () => {
       );
       const kotakIdle = data.filter((dt: TKotak) => dt.id_status_kotak === 1);
 
-      const kotakBelumSetor = (await getKotakSetor(
-        accessToken
-      )) as TKotakSetor[];
+      let kotakBelumSetor = (await getKotakSetor(accessToken)) as TKotakSetor[];
+      kotakBelumSetor = kotakBelumSetor.filter(
+        (dt: TKotakSetor) => dt.id_status_kotak === 3
+      );
 
       const totalKotak =
         kotakIdle.length + kotakTerpasang.length + kotakBelumSetor.length;

@@ -20,12 +20,40 @@ export const getKotak = async (token: string) => {
     });
 };
 
-export const getKotakSetor = async (token: string) => {
+export const getKotakSetor = async (
+  token: string,
+  sort: "asc" | "desc" = "desc"
+) => {
   return await axiosInstance(token)
     .get("/setorkotak")
-    .then((res) => {
+    .then(async (res) => {
       const data = res.data as TKotakSetor[];
-      return data;
+      const dataAddStatusKotak = data.map((item) => {
+        return { ...item, id_status_kotak: 3 };
+      });
+      const kotakSudahSetor = await getKotakSudahDisetor(token).then((res) => {
+        return res.map((item: any) => {
+          return { ...item, kode_kotak: item.id_kotak };
+        });
+      });
+
+      let kotakSudahSetorSorted: {
+        asc: TKotakSetor[];
+        desc: TKotakSetor[];
+      } = {
+        asc: [],
+        desc: [],
+      };
+      kotakSudahSetorSorted["asc"] = [...kotakSudahSetor];
+      kotakSudahSetorSorted["desc"] = kotakSudahSetor.sort((a, b) =>
+        a.setor.tgl_setor > b.setor.tgl_setor
+          ? -1
+          : a.setor.tgl_setor < b.setor.tgl_setor
+          ? 1
+          : 0
+      );
+
+      return [...dataAddStatusKotak, ...kotakSudahSetorSorted[sort]];
     });
 };
 
@@ -91,4 +119,33 @@ export const saveSetorKotak = async ({
   token: string;
 }) => {
   return await axiosInstance(token).patch("/setor", values);
+};
+
+// /allkotaksetor  //keseluruhan
+export const getTotalDonasi = async (token: string) => {
+  return await axiosInstance(token)
+    .get("/dashboardunboxingsetor ")
+    .then((res) => {
+      const data = res.data;
+      return data;
+    });
+};
+
+export const getTotalSetor = async (token: string) => {
+  return await axiosInstance(token)
+    .get("/dashboardkotaksetorPW ")
+    .then((res) => {
+      const data = res.data;
+      return data;
+    });
+};
+
+export const getKotakSudahDisetor = async (
+  token: string
+): Promise<TKotakSetor[]> => {
+  return await axiosInstance(token)
+    .get("/allkotaksetorpw")
+    .then((res) => {
+      return res.data as TKotakSetor[];
+    });
 };

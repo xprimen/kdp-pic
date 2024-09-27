@@ -43,8 +43,8 @@ const SetorMultiKotak = () => {
       const { accessToken } = (await queryClient.getQueryData(["token"])) as {
         accessToken: string;
       };
-      const data = await getKotakSetor(accessToken);
-      return data;
+      const data = (await getKotakSetor(accessToken)) as TKotakSetor[];
+      return data.filter((item) => item.id_status_kotak === 3);
     },
   });
 
@@ -87,7 +87,7 @@ const SetorMultiKotak = () => {
             description: "Kotak Berhasil Disetor",
           });
           queryClient.invalidateQueries({
-            queryKey: ["kotakBelumSetor"],
+            queryKey: ["historyKotakSetor", "kotakTerpasang"],
           });
           router.replace("/secure/kotak?tab=setor");
         },

@@ -42,7 +42,6 @@ const Maps = () => {
   return (
     <AnimateSlideIn direction="left" className="pb-4">
       <TopNavbar
-        sticky="relative"
         title="Peta Kotak"
         backButton
         rightButtons={
