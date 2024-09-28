@@ -66,10 +66,15 @@ const KotakScrollHorizontal = () => {
                 }`}
               >
                 <CardHeader>
-                  <CardTitle className="flex text-lg justify-between">
+                  <CardTitle className="flex text-lg justify-between items-center">
                     <span>Kotak {kotak.id_kotak}</span>
                     {kotak.id_status_kotak === 2 && (
-                      <MapPin className="w-6 h-6" />
+                      <Link
+                        href="/secure/maps"
+                        className="bg-rose-700 rounded-full text-white p-2 text-xs"
+                      >
+                        <MapPin className="w-6 h-6" />
+                      </Link>
                     )}
                   </CardTitle>
                 </CardHeader>

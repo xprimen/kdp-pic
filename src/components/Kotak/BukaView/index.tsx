@@ -70,15 +70,15 @@ const BukaView = () => {
             </div>
           ))}
         {data?.map((dt: TKotak) => (
-          <div key={dt.id} className="bg-white px-4 py-2">
+          <div key={dt.id} className="px-4">
             <Card
               className={`w-full text-slate-800 ${
                 statusKotakBGColor[dt.id_status_kotak]
               }`}
             >
-              <CardHeader className="py-6">
+              <CardHeader className="py-4">
                 <CardTitle className="text-lg flex items-center space-x-4 justify-between">
-                  <div className="flex items-center space-x-4">
+                  <div className="flex items-center space-x-2">
                     <Box size="20" />
                     <span>{dt.id_kotak}</span>
                   </div>
@@ -89,14 +89,16 @@ const BukaView = () => {
                   </span>
                 </CardTitle>
               </CardHeader>
-              <Separator />
-              <CardContent className="text-sm flex justify-between pt-4">
-                <div className="flex items-center space-x-4">
+              <Separator className="bg-green-400" />
+              <CardContent className="text-sm flex justify-between py-4">
+                <div className="flex items-center space-x-2">
                   <UserCircle size="20" />
                   <span>{dt.PkUser?.nama || dt.PwUser?.nama}</span>
                 </div>
                 <Button
                   variant="outline"
+                  size="sm"
+                  className="text-slate-600"
                   onClick={(e) => {
                     e.preventDefault();
                     router.push("/secure/kotak/qrcode/" + dt.id_kotak);
@@ -105,17 +107,18 @@ const BukaView = () => {
                   <QrCode size="25" />
                 </Button>
               </CardContent>
-              <CardFooter className="flex justify-between">
+              <Separator className="bg-green-400" />
+              <CardFooter className="grid grid-cols-2 justify-between p-0">
                 <Link
                   href={`/secure/kotak/buka/${dt.id}`}
-                  className="bg-orange-500 text-white px-4 py-2 rounded-md flex items-center space-x-1"
+                  className="bg-green-500 text-white px-4 py-4 justify-center rounded-bl-md flex items-center space-x-1 hover:bg-orange-600 active:bg-orange-600 focus:bg-orange-600"
                 >
                   <PencilLine size="14" />
                   <span>Edit</span>
                 </Link>
                 <Link
                   href={`/secure/kotak/buka/${dt.id}`}
-                  className="bg-rose-600 text-white px-4 py-2 rounded-md flex items-center space-x-1"
+                  className="bg-green-500 hover:bg-red-600 active:bg-red-600 focus:bg-red-600 text-white px-4 py-4 justify-center rounded-br-md flex items-center space-x-1"
                 >
                   <Box size="14" />
                   <span>Buka</span>

@@ -28,7 +28,7 @@ export const ACCEPTED_IMAGE_TYPES = [
 export const statusKotakBGColor = [
   "bg-grey-400",
   "bg-white",
-  "bg-green-400",
+  "bg-green-600 text-white",
   "bg-red-500 text-white",
 ];
 
