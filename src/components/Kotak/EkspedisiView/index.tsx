@@ -22,7 +22,7 @@ const EkspedisiView = () => {
 
   return (
     <div className="mb-20">
-      <TableToolbars add={{ link: "/secure/kotak/pasang" }} />
+      <TableToolbars />
       <div className="flex flex-col gap-2 my-4">
         {isFetching &&
           [...Array(10)].map((_, i) => (

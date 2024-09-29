@@ -86,6 +86,11 @@ export const KotakSchema = z.object({
   latlang: z.string().optional(),
   tgl_start: z.date().nullable(),
   tgl_stop: z.date().nullable(),
+  alamat_prov: z.string(),
+  alamat_kota: z.string(),
+  alamat_kec: z.string(),
+  alamat_kel: z.string(),
+  alamat_penempatan: z.string(),
   PwUser: z
     .object({
       nama: z.string().nullable(),

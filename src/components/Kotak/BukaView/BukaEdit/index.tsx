@@ -1,12 +1,13 @@
 "use client";
+import Map from "@/components/Map";
 import { Button } from "@/components/ui/button";
 import {
-  Form,
-  FormControl,
+  FormLabel,
   FormField,
   FormItem,
-  FormLabel,
+  FormControl,
   FormMessage,
+  Form,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import {
@@ -16,56 +17,49 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Sheet,
+  SheetTrigger,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
+import { toast } from "@/components/ui/use-toast";
+import { getKotak, getKotakSetor, savePasangKotak } from "@/lib/actions/kotak";
 import {
-  getKotak,
-  savePasangKotak,
-  savePenerimaanKotak,
-} from "@/lib/actions/kotak";
-import {
+  getPropinsi,
+  getKota,
   getKecamatan,
   getKelurahan,
-  getKota,
-  getPropinsi,
 } from "@/lib/actions/users";
 import useCurrentLocation from "@/lib/useCurrentLocation";
 import { queryClient } from "@/lib/utils";
 import {
-  ACCEPTED_IMAGE_TYPES,
-  MAX_FILE_SIZE,
+  TPropinsi,
+  TKota,
   TKecamatan,
   TKelurahan,
-  TKota,
-  TKotak,
-  TPropinsi,
   TUpdatePasangKotak,
-  UpdateEkspedisiKotakSchema,
   UpdatePasangKotakSchema,
+  MAX_FILE_SIZE,
+  ACCEPTED_IMAGE_TYPES,
 } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { CircleX, LoaderIcon, MapPinIcon, Save } from "lucide-react";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import { LoaderIcon, MapPinIcon, CircleX, Save } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React from "react";
 import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
 import { useForm } from "react-hook-form";
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
-import Map from "@/components/Map";
-import { toast } from "@/components/ui/use-toast";
-import { Skeleton } from "@/components/ui/skeleton";
 
 type Props = {
   id: number; //id kotak Number
 };
-const PasangUpdate = ({ id }: Props) => {
+
+const BukaEdit = ({ id }: Props) => {
   const router = useRouter();
   const [loadingForm, setLoadingForm] = React.useState(false);
   const [imageFile, setImageFile] = React.useState<FileList>();
@@ -83,23 +77,29 @@ const PasangUpdate = ({ id }: Props) => {
         accessToken: string;
       };
       const getData = await getKotak(accessToken);
+      // console.log(getData, id);
       const dataFilter = getData.filter((dt) => dt.id === id)[0];
       return dataFilter;
     },
   });
 
+  //   console.log("DATA :", kotak);
+
   const form = useForm<TUpdatePasangKotak>({
     resolver: zodResolver(UpdatePasangKotakSchema),
     defaultValues: {
       id: id,
-      tgl_start: new Intl.DateTimeFormat("fr-CA", {
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit",
-      }).format(new Date()),
+      //   tgl_start: new Intl.DateTimeFormat("fr-CA", {
+      //     year: "numeric",
+      //     month: "2-digit",
+      //     day: "2-digit",
+      //   }).format(new Date()),
+      // alamat_prov: kotak?.alamat_prov,
     },
     shouldFocusError: false,
   });
+
+  console.log("form values :", form.getValues());
 
   const tryGetPropinsi = React.useCallback(async () => {
     const { accessToken } = (await queryClient.getQueryData(["token"])) as {
@@ -131,9 +131,9 @@ const PasangUpdate = ({ id }: Props) => {
     setKelurahans(newKelurahan);
   };
 
-  React.useEffect(() => {
-    tryGetPropinsi();
-  }, [tryGetPropinsi]);
+  // React.useEffect(() => {
+  //   tryGetPropinsi();
+  // }, [tryGetPropinsi]);
 
   React.useEffect(() => {
     if (location && location?.latitude !== 0 && location?.longitude !== 0) {
@@ -171,9 +171,9 @@ const PasangUpdate = ({ id }: Props) => {
             description: "Kotak Berhasil Dipasang",
           });
           queryClient.invalidateQueries({
-            queryKey: ["kotakIdle", "kotakTerpasang", "kotakBelumSetor"],
+            queryKey: ["kotakIdle", "kotakTerpasang"],
           });
-          router.replace("/secure/kotak?tab=buka");
+          router.replace("/secure/kotak?tab=pasang");
         },
         onError: () => {
           setLoadingForm(false);
@@ -241,12 +241,6 @@ const PasangUpdate = ({ id }: Props) => {
           className="space-y-1 flex flex-col"
           onSubmit={form.handleSubmit(onSubmit)}
         >
-          {/* {error && (
-            <div className="flex justify-center items-center p-4">
-              <CircleX className="text-red-600 h-10 w-10" />
-              <p className="text-red-600">{error.message}</p>
-            </div>
-          )} */}
           <div className="flex gap-2 px-4 bg-white py-4 items-center">
             <FormLabel className="font-semibold">Kode Kotak :</FormLabel>
             <h3 className="font-bold">{kotak?.id_kotak}</h3>
@@ -301,6 +295,7 @@ const PasangUpdate = ({ id }: Props) => {
               </FormItem>
             )}
           />
+
           <FormField
             control={form.control}
             name="alamat_penempatan"
@@ -330,6 +325,7 @@ const PasangUpdate = ({ id }: Props) => {
                   <FormControl>
                     <Select
                       value={String(form.getValues("alamat_prov"))}
+                      // defaultValue={kotak?.alamat_prov || ""}
                       onValueChange={(value) => {
                         form.setValue("alamat_prov", value, {
                           shouldValidate: true,
@@ -563,4 +559,4 @@ const PasangUpdate = ({ id }: Props) => {
   );
 };
 
-export default PasangUpdate;
+export default BukaEdit;

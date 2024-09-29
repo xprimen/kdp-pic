@@ -73,21 +73,23 @@ const SetorView = () => {
               <div className="flex flex-col items-center space-x-2">
                 <span className="text-sm font-bold">Pasang</span>
                 <span className={`text-sm capitalize border rounded-lg px-3`}>
-                  {new Intl.DateTimeFormat("id-ID", {
-                    year: "numeric",
-                    month: "short",
-                    day: "numeric",
-                  }).format(new Date(dt.tgl_start))}
+                  {dt.tgl_start &&
+                    new Intl.DateTimeFormat("id-ID", {
+                      year: "numeric",
+                      month: "short",
+                      day: "numeric",
+                    }).format(new Date(dt.tgl_start))}
                 </span>
               </div>
               <div className="flex flex-col items-center space-x-2">
                 <span className="text-sm font-bold">Buka</span>
                 <span className={`text-sm capitalize border rounded-lg px-3`}>
-                  {new Intl.DateTimeFormat("id-ID", {
-                    year: "numeric",
-                    month: "short",
-                    day: "numeric",
-                  }).format(new Date(dt.tgl_stop))}
+                  {dt.tgl_stop &&
+                    new Intl.DateTimeFormat("id-ID", {
+                      year: "numeric",
+                      month: "short",
+                      day: "numeric",
+                    }).format(new Date(dt.tgl_stop))}
                 </span>
               </div>
               {dt.setor?.tgl_setor && (

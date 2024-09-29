@@ -85,7 +85,13 @@ const BukaView = () => {
                   <span
                     className={`text-sm capitalize bg-slate-100 text-slate-600 rounded-lg px-3`}
                   >
-                    {statusMessage[dt.id_status_kotak]}
+                    {statusMessage[dt.id_status_kotak]} :{" "}
+                    {dt.tgl_start &&
+                      new Intl.DateTimeFormat("id-ID", {
+                        year: "numeric",
+                        month: "short",
+                        day: "numeric",
+                      }).format(new Date(dt.tgl_start))}
                   </span>
                 </CardTitle>
               </CardHeader>
@@ -110,7 +116,7 @@ const BukaView = () => {
               <Separator className="bg-green-400" />
               <CardFooter className="grid grid-cols-2 justify-between p-0">
                 <Link
-                  href={`/secure/kotak/buka/${dt.id}`}
+                  href={`/secure/kotak/pasang/${dt.id}`}
                   className="bg-green-500 text-white px-4 py-4 justify-center rounded-bl-md flex items-center space-x-1 hover:bg-orange-600 active:bg-orange-600 focus:bg-orange-600"
                 >
                   <PencilLine size="14" />
