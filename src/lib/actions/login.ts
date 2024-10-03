@@ -2,14 +2,14 @@
 import { LoginDataResponse, LoginFormInput } from "@/types";
 import axios, { AxiosResponse } from "axios";
 import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
+import { redirect, RedirectType } from "next/navigation";
 import { decodeToken } from "../utils";
 
 export const logoutAction = () => {
   cookies().delete("token");
   cookies().delete("userdata");
   cookies().delete("refreshToken");
-  redirect("/");
+  redirect("/", RedirectType.replace);
 };
 export const loginAction = async (
   values: LoginFormInput

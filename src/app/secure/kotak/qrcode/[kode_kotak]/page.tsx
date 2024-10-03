@@ -13,8 +13,8 @@ const Page = ({
 }) => {
   const router = useRouter();
   const size = 378;
-  const height = size / 3;
-  const width = size / 3;
+  const height = size / 4;
+  const width = size / 4;
   const jarakX = (size - width) / 2;
   const jarakY = (size - height) / 2;
 
@@ -44,14 +44,14 @@ const Page = ({
 
     // Return BLOB image after conversion
     return new Blob([uInt8Array], { type: contentType });
-  };
+  }; */
 
   const handleDownload = () => {
     if (qrcodeCanvas.current) {
       const canvas = qrcodeCanvas.current;
       const link = document.createElement("a");
-      const base64Image = canvas.toDataURL();
-      const blob = b64toBlob(base64Image);
+      // const base64Image = canvas.toDataURL();
+      // const blob = b64toBlob(base64Image);
       link.download = `QRCode Kotak ${kode_kotak}.png`;
       // link.href = URL.createObjectURL(blob);
       link.href = canvas.toDataURL();
@@ -59,19 +59,19 @@ const Page = ({
       link.click();
       // console.log("LINK URL QRCODE : ", link.href);
       // router.push(base64Image);
-      postMessage(
-        {
-          type: "download-qrcode-kotak",
-          data: {
-            kode_kotak,
-            base64Image,
-            blob,
-          },
-        },
-        "*"
-      );
+      // postMessage(
+      //   {
+      //     type: "download-qrcode-kotak",
+      //     data: {
+      //       kode_kotak,
+      //       base64Image,
+      //       blob,
+      //     },
+      //   },
+      //   "*"
+      // );
     }
-  }; */
+  };
 
   return (
     <div className="flex flex-col h-screen">
@@ -95,16 +95,16 @@ const Page = ({
             opacity: 1,
           }}
         />
-        {/* <Button variant="default" size="lg" onClick={() => handleDownload()}>
+        <Button variant="default" size="lg" onClick={() => handleDownload()}>
           Download
-        </Button> */}
-        <Link
+        </Button>
+        {/* <Link
           target="_blank"
           href={`/cetak_qrcode/${kode_kotak}`}
           className="text-center text-lg font-bold bg-green-600 p-4 rounded-md text-white hover:bg-green-700"
         >
           Download
-        </Link>
+        </Link> */}
       </div>
     </div>
   );

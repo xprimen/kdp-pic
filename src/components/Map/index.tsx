@@ -19,6 +19,7 @@ const Map = ({ center, markers, setValue }: Props) => {
   const map = React.useRef<MapLeafletType | null>(null);
   const markerRef = React.useRef<Marker | null>(null);
   const [mapReady, setMapReady] = React.useState(false);
+  const [zoom, setZoom] = React.useState(markers ? 13 : 15);
   const latitude = center[0];
   const longitude = center[1];
 
@@ -76,10 +77,11 @@ const Map = ({ center, markers, setValue }: Props) => {
           )
           // .addEventListener("dragend", eventHandlers.dragend)
           .addTo(map.current!);
-        markerLayer.on("dragend", (e) => {
+        markerLayer.on("dragend", (e: L.DragEndEvent) => {
           const latlng = e.target.getLatLng();
           if (setValue) {
             setValue(latlng.lat + "," + latlng.lng);
+            if (map.current?.getZoom()) setZoom(map.current.getZoom());
           }
         });
       }
@@ -94,9 +96,9 @@ const Map = ({ center, markers, setValue }: Props) => {
   React.useEffect(() => {
     map.current = L.map(mapContainerRef.current!).setView(
       [latitude, longitude],
-      markers ? 13 : 15
+      zoom
     );
-    const newLayer = L.tileLayer(
+    L.tileLayer(
       "https://www.google.cn/maps/vt?lyrs=m@189&gl=cn&x={x}&y={y}&z={z}",
       {
         attribution: "Map data &copy; Google",
@@ -109,7 +111,7 @@ const Map = ({ center, markers, setValue }: Props) => {
     return () => {
       map?.current?.remove();
     };
-  }, [CreateMarker, latitude, longitude, markers]);
+  }, [CreateMarker, latitude, longitude, zoom]);
 
   return (
     <div className="flex h-full w-full">
