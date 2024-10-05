@@ -8,7 +8,7 @@ function Kotak() {
     <>
       <TopNavbar title="Kotak" />
       <BottomNavbar role={userdata().role} />
-      <KotakTabs userdata={userdata()} />
+      <KotakTabs />
     </>
   );
 }

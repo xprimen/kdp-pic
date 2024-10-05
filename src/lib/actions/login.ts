@@ -66,6 +66,13 @@ export const loginAction = async (
         message: "Berhasil",
         data: dataSave,
       };
+    })
+    .catch((e) => {
+      return {
+        success: false,
+        message:
+          "Login Gagal. Cek Kembali Username dan Password Anda atau Hubungi Admin.",
+      };
     });
 };
 

@@ -1,24 +1,13 @@
 "use client";
-import { userdata } from "@/components/utilities/Userdata";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "../../ui/tabs";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import React from "react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../ui/tabs";
 import BukaView from "../BukaView";
 import EkspedisiView from "../EkspedisiView";
 import PasangView from "../PasangView";
-import {
-  useParams,
-  usePathname,
-  useRouter,
-  useSearchParams,
-} from "next/navigation";
-import { LoginDataResponse } from "@/types";
 import SetorView from "../SetorView";
 
-type Props = {
-  userdata: LoginDataResponse;
-};
-
-const KotakTabs = ({ userdata }: Props) => {
+const KotakTabs = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const pathname = usePathname();
@@ -34,21 +23,16 @@ const KotakTabs = ({ userdata }: Props) => {
 
   const tabParams = searchParams.get("tab");
   const tab = tabParams ? tabParams : "ekspedisi";
-  const gridCols = () => {
-    return userdata.role === "2" ? "grid-cols-4" : "grid-cols-3";
-  };
   return (
     <Tabs defaultValue={tab}>
-      <TabsList className={`grid w-full ${gridCols()} bg-slate-100 h-14`}>
-        {userdata.role === "2" && (
-          <TabsTrigger
-            onClick={() => createQueryString("tab", "ekspedisi")}
-            value="ekspedisi"
-            className="h-full text-sm"
-          >
-            Terima / Kirim
-          </TabsTrigger>
-        )}
+      <TabsList className={`grid w-full grid-cols-4 bg-slate-100 h-14`}>
+        <TabsTrigger
+          onClick={() => createQueryString("tab", "ekspedisi")}
+          value="ekspedisi"
+          className="h-full text-sm"
+        >
+          Terima / Kirim
+        </TabsTrigger>
         <TabsTrigger
           onClick={() => createQueryString("tab", "pasang")}
           value="pasang"
@@ -71,11 +55,9 @@ const KotakTabs = ({ userdata }: Props) => {
           Setor
         </TabsTrigger>
       </TabsList>
-      {userdata.role === "2" && (
-        <TabsContent value="ekspedisi" asChild>
-          <EkspedisiView />
-        </TabsContent>
-      )}
+      <TabsContent value="ekspedisi" asChild>
+        <EkspedisiView />
+      </TabsContent>
       <TabsContent value="pasang" asChild>
         <PasangView />
       </TabsContent>

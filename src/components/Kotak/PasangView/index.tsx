@@ -7,21 +7,14 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import TableToolbars from "@/components/utilities/TableToolbars";
 import { getKotak } from "@/lib/actions/kotak";
 import { queryClient } from "@/lib/utils";
-import {
-  LoginDataResponse,
-  statusKotakBGColor,
-  statusMessage,
-  TKotak,
-} from "@/types";
+import { statusKotakBGColor, statusMessage, TKotak } from "@/types";
 import { useQuery } from "@tanstack/react-query";
 import { Box, QrCode, ScanQrCodeIcon, UserCircle } from "lucide-react";
-import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
@@ -39,7 +32,6 @@ const PasangView = () => {
       );
       return filterIdle;
     },
-    // refetchOnWindowFocus: true,
   });
 
   return (

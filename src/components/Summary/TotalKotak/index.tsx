@@ -35,8 +35,7 @@ const TotalKotak = () => {
         (dt: TKotakSetor) => dt.id_status_kotak === 3
       );
 
-      const totalKotak =
-        kotakIdle.length + kotakTerpasang.length + kotakBelumSetor.length;
+      const totalKotak = kotakIdle.length + kotakTerpasang.length;
 
       return {
         total: totalKotak,

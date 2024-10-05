@@ -1,5 +1,6 @@
 import {
   TEkspedisiKotak,
+  TKirimEkspedisiKotak,
   TKotak,
   TKotakSetor,
   TUpdateBukaKotak,
@@ -76,6 +77,16 @@ export const savePenerimaanKotak = async ({
   token: string;
 }) => {
   return await axiosInstance(token).post("/terimakotakpw/", values);
+};
+
+export const saveKirimKotak = async ({
+  values,
+  token,
+}: {
+  values: TKirimEkspedisiKotak;
+  token: string;
+}) => {
+  return await axiosInstance(token).post("/kotakkirimpk", values);
 };
 
 export const savePasangKotak = async ({

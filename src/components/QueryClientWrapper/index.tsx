@@ -22,11 +22,11 @@ function QueryClientWrapper({
           {children}
         </div>
       </GetTokenWrapper>
-      {/* <ReactQueryDevtools
+      <ReactQueryDevtools
         initialIsOpen={false}
         position="bottom"
         buttonPosition="relative"
-      /> */}
+      />
     </QueryClientProvider>
   );
 }

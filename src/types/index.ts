@@ -41,6 +41,7 @@ export const statusMessage = [
 ];
 
 export const UserSchema = z.object({
+  id: z.number(),
   username: z.string().min(2, { message: "Minimal 2 huruf" }).max(50),
   nama: z.string().min(2, { message: "Minimal 2 huruf" }),
   role: z.string().min(1),
@@ -176,6 +177,15 @@ export const UpdateEkspedisiKotakSchema = z.object({
 });
 
 export type TUpdateEkspedisiKotak = z.infer<typeof UpdateEkspedisiKotakSchema>;
+
+export const KirimEkspedisiKotakSchema = z.object({
+  kotak: z.array(z.string()).min(1, "Minimal 1 kotak dipilih"),
+  kepada: z.number(),
+  tgl_kirim: z.string().min(1, "Tanggal Dikirim Wajib Diisi"),
+  bukti_kirim: z.string().default(""),
+});
+
+export type TKirimEkspedisiKotak = z.infer<typeof KirimEkspedisiKotakSchema>;
 
 export const UpdatePasangKotakSchema = z.object({
   id: z.number(),

@@ -6,7 +6,7 @@ import { getEkspedisiKotak } from "@/lib/actions/kotak";
 import { queryClient } from "@/lib/utils";
 import { statusKotakBGColor, TEkspedisiKotak } from "@/types";
 import { useQuery } from "@tanstack/react-query";
-import { Calendar, CheckCircle, FileBox, Info } from "lucide-react";
+import { Calendar, CheckCircle, FileBox, Info, Send } from "lucide-react";
 import Link from "next/link";
 
 const EkspedisiView = () => {
@@ -22,7 +22,13 @@ const EkspedisiView = () => {
 
   return (
     <div className="mb-20">
-      <TableToolbars />
+      <TableToolbars
+        add={{
+          link: "/secure/kotak/ekspedisi/kirim",
+          icon: <Send />,
+          label: "Kirim Kotak",
+        }}
+      />
       <div className="flex flex-col gap-2 my-4">
         {isFetching &&
           [...Array(10)].map((_, i) => (
