@@ -1,4 +1,5 @@
 "use client";
+import { LoginDataResponse } from "@/types";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import React from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../ui/tabs";
@@ -7,7 +8,11 @@ import EkspedisiView from "../EkspedisiView";
 import PasangView from "../PasangView";
 import SetorView from "../SetorView";
 
-const KotakTabs = () => {
+type Props = {
+  userdata: LoginDataResponse;
+};
+
+const KotakTabs = ({ userdata }: Props) => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const pathname = usePathname();
@@ -59,10 +64,10 @@ const KotakTabs = () => {
         <EkspedisiView />
       </TabsContent>
       <TabsContent value="pasang" asChild>
-        <PasangView />
+        <PasangView userdata={userdata} />
       </TabsContent>
       <TabsContent value="buka" asChild>
-        <BukaView />
+        <BukaView userdata={userdata} />
       </TabsContent>
       <TabsContent value="setor" asChild>
         <SetorView />

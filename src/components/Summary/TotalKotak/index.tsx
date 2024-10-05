@@ -44,6 +44,7 @@ const TotalKotak = () => {
         belumSetor: kotakBelumSetor.length,
       };
     },
+    refetchOnMount: true,
   });
 
   return (

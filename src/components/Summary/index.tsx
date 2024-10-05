@@ -4,20 +4,14 @@ import { numberToString, queryClient } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import { HandCoins, HeartHandshake, MapPin } from "lucide-react";
 import { useRouter } from "next/navigation";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "../ui/card";
+import { Card, CardDescription, CardHeader, CardTitle } from "../ui/card";
 import { Separator } from "../ui/separator";
 import DashboardChart from "./DashboardChart";
 import KotakScrollHorizontal from "./KotakScrollHorizontal";
 import TotalKotak from "./TotalKotak";
 
 const Summary = () => {
-  const { data: total, isFetching: fetchTotalDonasi } = useQuery({
+  const { data: total } = useQuery({
     queryKey: ["totalDonasi"],
     queryFn: async () => {
       const { accessToken } = (await queryClient.getQueryData(["token"])) as {
@@ -35,6 +29,7 @@ const Summary = () => {
         total_setor: numberToString(Number(dataTotalSetor.total_setor_PW)),
       };
     },
+    refetchOnMount: true,
   });
 
   const router = useRouter();

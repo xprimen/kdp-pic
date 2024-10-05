@@ -9,16 +9,13 @@ import { TGeocodeMarkers, TKotak } from "@/types";
 import { useQuery } from "@tanstack/react-query";
 import { Loader, RotateCw } from "lucide-react";
 import dynamic from "next/dynamic";
-import { useRouter } from "next/navigation";
 
 const Map = dynamic(() => import("@/components/Map"), { ssr: false });
 
 const Maps = () => {
-  const router = useRouter();
   const { location, error } = useCurrentLocation();
   const { data, isFetching } = useQuery({
     queryKey: ["kotak-terpasang"],
-    // enabled:!!accessToken,
     queryFn: async (): Promise<TGeocodeMarkers> => {
       const { accessToken } = (await queryClient.getQueryData(["token"])) as {
         accessToken: string;
@@ -32,7 +29,6 @@ const Maps = () => {
         const { latlang, ...sendData } = d;
         return {
           geocode: [lat, lng],
-          // popup: `Kotak ID : ${d.id_kotak}`,
           data: sendData,
         };
       });

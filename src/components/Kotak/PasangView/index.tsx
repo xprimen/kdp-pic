@@ -12,13 +12,22 @@ import { Skeleton } from "@/components/ui/skeleton";
 import TableToolbars from "@/components/utilities/TableToolbars";
 import { getKotak } from "@/lib/actions/kotak";
 import { queryClient } from "@/lib/utils";
-import { statusKotakBGColor, statusMessage, TKotak } from "@/types";
+import {
+  LoginDataResponse,
+  statusKotakBGColor,
+  statusMessage,
+  TKotak,
+} from "@/types";
 import { useQuery } from "@tanstack/react-query";
 import { Box, QrCode, ScanQrCodeIcon, UserCircle } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
-const PasangView = () => {
+type Props = {
+  userdata: LoginDataResponse;
+};
+
+const PasangView = ({ userdata }: Props) => {
   const router = useRouter();
   const { data, isFetching } = useQuery({
     queryKey: ["kotakIdle"],
@@ -101,15 +110,18 @@ const PasangView = () => {
                   <QrCode size="25" />
                 </Button>
               </CardContent>
-              <CardFooter className="p-0">
-                <Link
-                  href={`/secure/kotak/pasang/${dt.id}`}
-                  className="bg-slate-200 w-full hover:text-white focus:text-white active:text-white px-4 py-4 justify-center rounded-b-md flex items-center space-x-1 hover:bg-green-600 active:bg-green-600 focus:bg-green-600"
-                >
-                  <Box size="14" />
-                  <span>Pasang</span>
-                </Link>
-              </CardFooter>
+              {!dt.PkUser ||
+                (userdata.nama === dt.PkUser.nama && (
+                  <CardFooter className="p-0">
+                    <Link
+                      href={`/secure/kotak/pasang/${dt.id}`}
+                      className="bg-slate-200 w-full hover:text-white focus:text-white active:text-white px-4 py-4 justify-center rounded-b-md flex items-center space-x-1 hover:bg-green-600 active:bg-green-600 focus:bg-green-600"
+                    >
+                      <Box size="14" />
+                      <span>Pasang</span>
+                    </Link>
+                  </CardFooter>
+                ))}
             </Card>
           </div>
         ))}

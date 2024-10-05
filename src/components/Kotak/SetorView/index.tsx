@@ -8,15 +8,19 @@ import { statusKotakBGColor, TKotakSetor } from "@/types";
 import { useQuery } from "@tanstack/react-query";
 import { Box, CreditCard } from "lucide-react";
 import Link from "next/link";
+import { useState } from "react";
 
 const SetorView = () => {
+  const [kotakBelumSetor, setKotakBelumSetor] = useState<TKotakSetor[]>([]);
   const { data, isFetching } = useQuery({
     queryKey: ["historyKotakSetor"],
     queryFn: async (): Promise<TKotakSetor[]> => {
       const { accessToken } = (await queryClient.getQueryData(["token"])) as {
         accessToken: string;
       };
-      return await getKotakSetor(accessToken);
+      const get = await getKotakSetor(accessToken);
+      setKotakBelumSetor(get.filter((item) => item.id_status_kotak === 3));
+      return get;
     },
   });
 
@@ -24,7 +28,11 @@ const SetorView = () => {
     <div className="mb-20">
       <div className="px-4 pt-4 flex">
         <Link
-          href={data && data.length > 0 ? "/secure/kotak/setor" : ""}
+          href={
+            kotakBelumSetor && kotakBelumSetor.length > 0
+              ? "/secure/kotak/setor"
+              : ""
+          }
           className="w-full py-6 uppercase text-white text-lg bg-green-600 flex items-center justify-center rounded-lg shadow-md hover:bg-green-800"
         >
           <CreditCard className="mr-2" />

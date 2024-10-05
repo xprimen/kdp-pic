@@ -12,7 +12,12 @@ import { Skeleton } from "@/components/ui/skeleton";
 import TableToolbars from "@/components/utilities/TableToolbars";
 import { getKotak } from "@/lib/actions/kotak";
 import { queryClient } from "@/lib/utils";
-import { statusKotakBGColor, statusMessage, TKotak } from "@/types";
+import {
+  LoginDataResponse,
+  statusKotakBGColor,
+  statusMessage,
+  TKotak,
+} from "@/types";
 import { useQuery } from "@tanstack/react-query";
 import {
   Box,
@@ -24,7 +29,11 @@ import {
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
-const BukaView = () => {
+type Props = {
+  userdata: LoginDataResponse;
+};
+
+const BukaView = ({ userdata }: Props) => {
   const router = useRouter();
   const { data, isFetching } = useQuery({
     queryKey: ["kotakTerpasang"],
@@ -36,7 +45,6 @@ const BukaView = () => {
       const filterIdle = data.filter((dt: TKotak) => dt.id_status_kotak === 2);
       return filterIdle;
     },
-    // refetchOnWindowFocus: true,
   });
 
   return (
@@ -113,23 +121,28 @@ const BukaView = () => {
                   <QrCode size="25" />
                 </Button>
               </CardContent>
-              <Separator className="bg-green-400" />
-              <CardFooter className="grid grid-cols-2 justify-between p-0">
-                <Link
-                  href={`/secure/kotak/pasang/${dt.id}`}
-                  className="bg-green-500 text-white px-4 py-4 justify-center rounded-bl-md flex items-center space-x-1 hover:bg-orange-600 active:bg-orange-600 focus:bg-orange-600"
-                >
-                  <PencilLine size="14" />
-                  <span>Edit</span>
-                </Link>
-                <Link
-                  href={`/secure/kotak/buka/${dt.id}`}
-                  className="bg-green-500 hover:bg-red-600 active:bg-red-600 focus:bg-red-600 text-white px-4 py-4 justify-center rounded-br-md flex items-center space-x-1"
-                >
-                  <Box size="14" />
-                  <span>Buka</span>
-                </Link>
-              </CardFooter>
+              {!dt.PkUser ||
+                (userdata.nama === dt.PkUser.nama && (
+                  <>
+                    <Separator className="bg-green-400" />
+                    <CardFooter className="grid grid-cols-2 justify-between p-0">
+                      <Link
+                        href={`/secure/kotak/pasang/${dt.id}`}
+                        className="bg-green-500 text-white px-4 py-4 justify-center rounded-bl-md flex items-center space-x-1 hover:bg-orange-600 active:bg-orange-600 focus:bg-orange-600"
+                      >
+                        <PencilLine size="14" />
+                        <span>Edit</span>
+                      </Link>
+                      <Link
+                        href={`/secure/kotak/buka/${dt.id}`}
+                        className="bg-green-500 hover:bg-red-600 active:bg-red-600 focus:bg-red-600 text-white px-4 py-4 justify-center rounded-br-md flex items-center space-x-1"
+                      >
+                        <Box size="14" />
+                        <span>Buka</span>
+                      </Link>
+                    </CardFooter>
+                  </>
+                ))}
             </Card>
           </div>
         ))}

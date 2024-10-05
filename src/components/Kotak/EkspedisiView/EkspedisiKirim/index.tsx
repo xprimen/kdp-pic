@@ -18,24 +18,15 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { toast } from "@/components/ui/use-toast";
-import {
-  getEkspedisiKotak,
-  getKotak,
-  saveKirimKotak,
-  savePenerimaanKotak,
-} from "@/lib/actions/kotak";
+import { getKotak, saveKirimKotak } from "@/lib/actions/kotak";
 import { getUsers } from "@/lib/actions/users";
 import { queryClient } from "@/lib/utils";
 import {
   ACCEPTED_IMAGE_TYPES,
   KirimEkspedisiKotakSchema,
   MAX_FILE_SIZE,
-  TEkspedisiDetail,
-  TEkspedisiKotak,
   TKirimEkspedisiKotak,
   TKotak,
-  TUpdateEkspedisiKotak,
-  UpdateEkspedisiKotakSchema,
 } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery } from "@tanstack/react-query";
@@ -52,7 +43,6 @@ const EkspedisiKirim = () => {
   const [loadingForm, setLoadingForm] = React.useState(false);
   const [imageFile, setImageFile] = React.useState<FileList>();
   const [imagePreview, setImagePreview] = React.useState("");
-  const [data, setData] = React.useState<TKotak>();
 
   const kotaks = useQuery({
     queryKey: ["kotakKirim"],
@@ -61,11 +51,8 @@ const EkspedisiKirim = () => {
         accessToken: string;
       };
       const data = await getKotak(accessToken);
-      const filter = data.filter((item) => item.id_status_kotak !== 4)[0];
-      setData(filter);
       return data;
     },
-    // refetchOnWindowFocus: true,
   });
 
   const usersPK = useQuery({
