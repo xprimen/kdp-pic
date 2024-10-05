@@ -5,6 +5,8 @@ import { QRCodeCanvas, QRCodeSVG } from "qrcode.react";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import median from "median-js-bridge";
+import QRCODEPrint from "@/components/QRCodePrint";
 
 const Page = ({
   params: { kode_kotak },
@@ -46,7 +48,7 @@ const Page = ({
     return new Blob([uInt8Array], { type: contentType });
   }; */
 
-  const handleDownload = () => {
+  /* const handleDownload = () => {
     if (qrcodeCanvas.current) {
       const canvas = qrcodeCanvas.current;
       const link = document.createElement("a");
@@ -71,41 +73,23 @@ const Page = ({
       //   "*"
       // );
     }
+  }; */
+  const handleDownloadQRCode = () => {
+    if (qrcodeCanvas.current) {
+      const canvas = qrcodeCanvas.current;
+      const url = canvas.toDataURL("image/png");
+      median.share.downloadImage({ url });
+    }
+  };
+
+  const getPlatform = async () => {
+    return await median.getPlatform().then((platform) => platform);
   };
 
   return (
     <div className="flex flex-col h-screen">
       <TopNavbar title="QRCode Kotak" backButton />
-      <div className="flex flex-col items-center space-y-8 justify-center h-full">
-        <h2 className="text-xl text-center">
-          Kode Kotak : <span className="font-bold">{kode_kotak}</span>
-        </h2>
-        <QRCodeCanvas
-          ref={qrcodeCanvas}
-          value={kode_kotak}
-          size={size}
-          title={kode_kotak}
-          imageSettings={{
-            src: "/assets/logo.png",
-            x: jarakX,
-            y: jarakY,
-            height,
-            width,
-            excavate: true,
-            opacity: 1,
-          }}
-        />
-        <Button variant="default" size="lg" onClick={() => handleDownload()}>
-          Download
-        </Button>
-        {/* <Link
-          target="_blank"
-          href={`/cetak_qrcode/${kode_kotak}`}
-          className="text-center text-lg font-bold bg-green-600 p-4 rounded-md text-white hover:bg-green-700"
-        >
-          Download
-        </Link> */}
-      </div>
+      <QRCODEPrint qr_text={kode_kotak} />
     </div>
   );
 };
