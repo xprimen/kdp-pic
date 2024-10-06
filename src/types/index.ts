@@ -3,7 +3,8 @@ import { z } from "zod";
 export const loginDataResponseSchema = z.object({
   nama: z.string(),
   role: z.string(),
-  id: z.string(),
+  id: z.number(),
+  userid: z.string(),
   mawil: z.string(),
   submawil: z.string(),
 });
@@ -83,7 +84,6 @@ export const KotakSchema = z.object({
   id: z.number(),
   id_kotak: z.string(),
   id_status_kotak: z.number(),
-  id_pw: z.number(),
   latlang: z.string().optional(),
   tgl_start: z.date().nullable(),
   tgl_stop: z.date().nullable(),
@@ -92,6 +92,8 @@ export const KotakSchema = z.object({
   alamat_kec: z.string(),
   alamat_kel: z.string(),
   alamat_penempatan: z.string(),
+  id_pw: z.number().nullable(),
+  id_pk: z.number().nullable(),
   PwUser: z
     .object({
       nama: z.string().nullable(),

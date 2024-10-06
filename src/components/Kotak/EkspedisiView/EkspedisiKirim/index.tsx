@@ -51,7 +51,8 @@ const EkspedisiKirim = () => {
         accessToken: string;
       };
       const data = await getKotak(accessToken);
-      return data;
+      const filter = data.filter((item) => item.id_pk === null);
+      return filter;
     },
   });
 

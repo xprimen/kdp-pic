@@ -110,18 +110,28 @@ const PasangView = ({ userdata }: Props) => {
                   <QrCode size="25" />
                 </Button>
               </CardContent>
-              {!dt.PkUser ||
-                (userdata.nama === dt.PkUser.nama && (
-                  <CardFooter className="p-0">
-                    <Link
-                      href={`/secure/kotak/pasang/${dt.id}`}
-                      className="bg-slate-200 w-full hover:text-white focus:text-white active:text-white px-4 py-4 justify-center rounded-b-md flex items-center space-x-1 hover:bg-green-600 active:bg-green-600 focus:bg-green-600"
-                    >
-                      <Box size="14" />
-                      <span>Pasang</span>
-                    </Link>
-                  </CardFooter>
-                ))}
+              {userdata.role === "2" && dt.id_pk === null && (
+                <CardFooter className="p-0">
+                  <Link
+                    href={`/secure/kotak/pasang/${dt.id}`}
+                    className="bg-slate-200 w-full hover:text-white focus:text-white active:text-white px-4 py-4 justify-center rounded-b-md flex items-center space-x-1 hover:bg-green-600 active:bg-green-600 focus:bg-green-600"
+                  >
+                    <Box size="14" />
+                    <span>Pasang</span>
+                  </Link>
+                </CardFooter>
+              )}
+              {userdata.role === "3" && dt.id_pk === userdata.id && (
+                <CardFooter className="p-0">
+                  <Link
+                    href={`/secure/kotak/pasang/${dt.id}`}
+                    className="bg-slate-200 w-full hover:text-white focus:text-white active:text-white px-4 py-4 justify-center rounded-b-md flex items-center space-x-1 hover:bg-green-600 active:bg-green-600 focus:bg-green-600"
+                  >
+                    <Box size="14" />
+                    <span>Pasang</span>
+                  </Link>
+                </CardFooter>
+              )}
             </Card>
           </div>
         ))}

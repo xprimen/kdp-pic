@@ -121,28 +121,48 @@ const BukaView = ({ userdata }: Props) => {
                   <QrCode size="25" />
                 </Button>
               </CardContent>
-              {!dt.PkUser ||
-                (userdata.nama === dt.PkUser.nama && (
-                  <>
-                    <Separator className="bg-green-400" />
-                    <CardFooter className="grid grid-cols-2 justify-between p-0">
-                      <Link
-                        href={`/secure/kotak/pasang/${dt.id}`}
-                        className="bg-green-500 text-white px-4 py-4 justify-center rounded-bl-md flex items-center space-x-1 hover:bg-orange-600 active:bg-orange-600 focus:bg-orange-600"
-                      >
-                        <PencilLine size="14" />
-                        <span>Edit</span>
-                      </Link>
-                      <Link
-                        href={`/secure/kotak/buka/${dt.id}`}
-                        className="bg-green-500 hover:bg-red-600 active:bg-red-600 focus:bg-red-600 text-white px-4 py-4 justify-center rounded-br-md flex items-center space-x-1"
-                      >
-                        <Box size="14" />
-                        <span>Buka</span>
-                      </Link>
-                    </CardFooter>
-                  </>
-                ))}
+              {userdata.role === "2" && dt.id_pk === null && (
+                <>
+                  <Separator className="bg-green-400" />
+                  <CardFooter className="grid grid-cols-2 justify-between p-0">
+                    <Link
+                      href={`/secure/kotak/pasang/${dt.id}`}
+                      className="bg-green-500 text-white px-4 py-4 justify-center rounded-bl-md flex items-center space-x-1 hover:bg-orange-600 active:bg-orange-600 focus:bg-orange-600"
+                    >
+                      <PencilLine size="14" />
+                      <span>Edit</span>
+                    </Link>
+                    <Link
+                      href={`/secure/kotak/buka/${dt.id}`}
+                      className="bg-green-500 hover:bg-red-600 active:bg-red-600 focus:bg-red-600 text-white px-4 py-4 justify-center rounded-br-md flex items-center space-x-1"
+                    >
+                      <Box size="14" />
+                      <span>Buka</span>
+                    </Link>
+                  </CardFooter>
+                </>
+              )}
+              {userdata.role === "3" && dt.id_pk === userdata.id && (
+                <>
+                  <Separator className="bg-green-400" />
+                  <CardFooter className="grid grid-cols-2 justify-between p-0">
+                    <Link
+                      href={`/secure/kotak/pasang/${dt.id}`}
+                      className="bg-green-500 text-white px-4 py-4 justify-center rounded-bl-md flex items-center space-x-1 hover:bg-orange-600 active:bg-orange-600 focus:bg-orange-600"
+                    >
+                      <PencilLine size="14" />
+                      <span>Edit</span>
+                    </Link>
+                    <Link
+                      href={`/secure/kotak/buka/${dt.id}`}
+                      className="bg-green-500 hover:bg-red-600 active:bg-red-600 focus:bg-red-600 text-white px-4 py-4 justify-center rounded-br-md flex items-center space-x-1"
+                    >
+                      <Box size="14" />
+                      <span>Buka</span>
+                    </Link>
+                  </CardFooter>
+                </>
+              )}
             </Card>
           </div>
         ))}

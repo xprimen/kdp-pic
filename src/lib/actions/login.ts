@@ -41,7 +41,8 @@ export const loginAction = async (
       const dataSave: LoginDataResponse = {
         role: String(decodedData.role),
         nama: decodedData.nama,
-        id: decodedData.userid,
+        userid: decodedData.userid,
+        id: decodedData.id,
         mawil: decodedData.mawil,
         submawil: decodedData.submawil,
       };
