@@ -2,7 +2,6 @@
 import { QRCodeCanvas } from "qrcode.react";
 import React from "react";
 import { Button } from "../ui/button";
-import median from "median-js-bridge";
 
 const sizeDefault = 378;
 
@@ -51,7 +50,7 @@ const QRCODEPrint = ({
     return new Blob([uInt8Array], { type: contentType });
   }; */
 
-  const handleDownload = () => {
+  /* const handleDownload = () => {
     if (qrcodeCanvas.current) {
       const canvas = qrcodeCanvas.current;
       const link = document.createElement("a");
@@ -60,15 +59,7 @@ const QRCODEPrint = ({
       console.log("LINK URL QRCODE : ", link.href);
       link.click();
     }
-  };
-
-  const handleDownloadMedian = () => {
-    if (qrcodeCanvas.current) {
-      const canvas = qrcodeCanvas.current;
-      const url = canvas.toDataURL("image/png");
-      median.share.downloadImage({ url });
-    }
-  };
+  }; */
 
   return (
     <div className="flex flex-col items-center space-y-8 justify-center h-full">
@@ -94,21 +85,11 @@ const QRCODEPrint = ({
         variant="default"
         size="lg"
         onClick={() => {
-          if (navigator.userAgent.indexOf("median") > -1) {
-            return handleDownloadMedian();
-          }
-          return handleDownload();
+          window.open("/cetak_qrcode/" + kode_kotak);
         }}
       >
         Download
       </Button>
-      {/* <Link
-          target="_blank"
-          href={`/cetak_qrcode/${kode_kotak}`}
-          className="text-center text-lg font-bold bg-green-600 p-4 rounded-md text-white hover:bg-green-700"
-        >
-          Download
-        </Link> */}
     </div>
   );
 };

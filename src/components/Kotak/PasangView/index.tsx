@@ -104,7 +104,7 @@ const PasangView = ({ userdata }: Props) => {
                   size="sm"
                   onClick={(e) => {
                     e.preventDefault();
-                    router.push("/secure/kotak/qrcode/" + dt.id_kotak);
+                    router.push("/cetak_qrcode/" + dt.id_kotak);
                   }}
                 >
                   <QrCode size="25" />

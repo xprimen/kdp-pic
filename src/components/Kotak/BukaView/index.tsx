@@ -115,7 +115,7 @@ const BukaView = ({ userdata }: Props) => {
                   className="text-slate-600"
                   onClick={(e) => {
                     e.preventDefault();
-                    router.push("/secure/kotak/qrcode/" + dt.id_kotak);
+                    router.push("/cetak_qrcode/" + dt.id_kotak);
                   }}
                 >
                   <QrCode size="25" />
