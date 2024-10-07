@@ -66,7 +66,11 @@ export const UserSchema = z.object({
 
 export type TUser = z.infer<typeof UserSchema>;
 
-export const AddUserSchema = UserSchema.omit({ mawil: true, sub_mawil: true })
+export const AddUserSchema = UserSchema.omit({
+  mawil: true,
+  sub_mawil: true,
+  id: true,
+})
   .extend({
     password: z.string().min(2, { message: "Minimal 2 huruf" }).max(50),
     confPassword: z.string().min(2, { message: "Minimal 2 huruf" }).max(50),
