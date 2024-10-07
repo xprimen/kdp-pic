@@ -47,7 +47,7 @@ export const UserSchema = z.object({
   nama: z.string().min(2, { message: "Minimal 2 huruf" }),
   role: z.string().min(1),
   nik: z.string().min(16, { message: "Minimal 16 angka" }).max(16),
-  image: z.string().optional(),
+  ktp: z.string().optional(),
   tlp: z.string().optional(),
   alamat: z.string().optional(),
   mawil: z.object({
@@ -70,17 +70,16 @@ export const AddUserSchema = UserSchema.omit({
   mawil: true,
   sub_mawil: true,
   id: true,
-})
-  .extend({
-    password: z.string().min(2, { message: "Minimal 2 huruf" }).max(50),
-    confPassword: z.string().min(2, { message: "Minimal 2 huruf" }).max(50),
-    id_mawil: z.string().min(1, { message: "Wajib Dipilih" }),
-    id_submawil: z.string().min(1, { message: "Wajib Dipilih" }),
-  })
-  .refine((data) => data.password === data.confPassword, {
-    message: "Konfirmasi Password Berbeda",
-    path: ["confPassword"],
-  });
+}).extend({
+  // password: z.string().min(2, { message: "Minimal 2 huruf" }).max(50),
+  // confPassword: z.string().min(2, { message: "Minimal 2 huruf" }).max(50),
+  id_mawil: z.string().min(1, { message: "Wajib Dipilih" }),
+  id_submawil: z.string().min(1, { message: "Wajib Dipilih" }),
+});
+// .refine((data) => data.password === data.confPassword, {
+//   message: "Konfirmasi Password Berbeda",
+//   path: ["confPassword"],
+// });
 
 export type AddUser = z.infer<typeof AddUserSchema>;
 

@@ -69,9 +69,7 @@ const UserAdd = ({ userdata }: Props) => {
     resolver: zodResolver(AddUserSchema),
     defaultValues: {
       username: "",
-      password: "",
       role: "3",
-      confPassword: "",
       id_mawil: String(userdata.mawil),
       nik: "",
       tlp: "",
@@ -80,7 +78,7 @@ const UserAdd = ({ userdata }: Props) => {
       kota: "",
       kec: "",
       kel: "",
-      image: "",
+      ktp: "",
     },
   });
 
@@ -197,12 +195,12 @@ const UserAdd = ({ userdata }: Props) => {
     const file = files.item(0);
     if (file) {
       if (file.size > MAX_FILE_SIZE) {
-        return form.setError("image", {
+        return form.setError("ktp", {
           message: "Ukuran File Terlalu Besar",
         });
       }
       if (!ACCEPTED_IMAGE_TYPES.includes(files?.[0]?.type)) {
-        return form.setError("image", {
+        return form.setError("ktp", {
           message: "Tipe File Tidak Didukung",
         });
       }
@@ -212,12 +210,14 @@ const UserAdd = ({ userdata }: Props) => {
       setImagePreview(urlImage);
 
       const fileWithBase64 = await toBase64(file);
-      form.setValue("image", file.name, { shouldValidate: true });
+      form.setValue("ktp", fileWithBase64, {
+        shouldValidate: true,
+      });
       setImageFile(files);
     }
   };
 
-  const onChangeKTP = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const onChangeImage = (e: React.ChangeEvent<HTMLInputElement>) => {
     let files = e.target?.files as FileList;
     const file = files.item(0);
     if (file?.size) fileToBase64(e);
@@ -272,16 +272,16 @@ const UserAdd = ({ userdata }: Props) => {
             />
             <FormField
               control={form.control}
-              name="image"
+              name="ktp"
               render={({ field }) => (
                 <FormItem className="space-y-1 py-4 px-4 bg-white">
-                  <FormLabel className="font-semibold">Upload KTP</FormLabel>
+                  <FormLabel className="font-semibold">Foto KTP</FormLabel>
                   <FormControl>
                     <Input
                       {...field}
                       accept={ACCEPTED_IMAGE_TYPES.join(",")}
                       type="file"
-                      onChange={onChangeKTP}
+                      onChange={onChangeImage}
                       value={
                         imageFile && imageFile.item(0)
                           ? imageFile.item(0)?.name
@@ -300,7 +300,7 @@ const UserAdd = ({ userdata }: Props) => {
                         onClick={() => {
                           setImagePreview("");
                           setImageFile(undefined);
-                          form.resetField("image");
+                          form.resetField("ktp");
                         }}
                       >
                         <CircleX size={24} />
@@ -314,36 +314,6 @@ const UserAdd = ({ userdata }: Props) => {
                       />
                     </div>
                   )}
-                </FormItem>
-              )}
-            />
-          </div>
-          <div className="flex">
-            <FormField
-              control={form.control}
-              name="password"
-              render={({ field }) => (
-                <FormItem className="space-y-1 py-4 px-4 bg-white w-full">
-                  <FormLabel className="font-semibold">Password</FormLabel>
-                  <FormControl>
-                    <Input {...field} type="password" />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="confPassword"
-              render={({ field }) => (
-                <FormItem className="space-y-1 py-4 px-4 bg-white w-full">
-                  <FormLabel className="font-semibold">
-                    Konfirmasi Password
-                  </FormLabel>
-                  <FormControl>
-                    <Input {...field} type="password" />
-                  </FormControl>
-                  <FormMessage />
                 </FormItem>
               )}
             />
