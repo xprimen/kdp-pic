@@ -48,7 +48,9 @@ const EkspedisiUpdate = ({ id }: Props) => {
         accessToken: string;
       };
       const data = await getEkspedisiKotak(accessToken);
-      const filter = data.filter((item) => item.id === id)[0];
+      const filter = data.filter(
+        (item) => item.id === id && item.status_terima === 0
+      )[0];
       setData(filter);
       return data;
     },
