@@ -166,6 +166,7 @@ const UserAdd = ({ userdata }: Props) => {
           router.replace("/secure/users");
         },
         onError: () => {
+          setLoadingForm(false);
           toast({
             title: "Error",
             description: "Gagal Menambahkan User",

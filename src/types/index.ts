@@ -130,6 +130,8 @@ export const KotakSetorSchema = z.object({
   setor: z
     .object({
       tgl_setor: z.string(),
+      foto_bukti: z.string(),
+      nama_penyetor: z.string(),
     })
     .optional(),
 });
@@ -277,3 +279,16 @@ export type TGeocodeMarkers = {
   geocode: number[];
   data: Omit<TKotak, "latlang">;
 }[];
+
+export const ChangePasswordSchema = z
+  .object({
+    password: z.string().min(2, { message: "Minimal 2 huruf" }),
+    passwordold: z.string().min(2, { message: "Minimal 2 huruf" }),
+    confPassword: z.string().min(2, { message: "Minimal 2 huruf" }),
+  })
+  .refine((data) => data.password === data.confPassword, {
+    message: "Konfirmasi Password Baru Berbeda",
+    path: ["confPassword"],
+  });
+
+export type TChangePassword = z.infer<typeof ChangePasswordSchema>;

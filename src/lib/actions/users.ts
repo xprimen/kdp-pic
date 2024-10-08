@@ -1,6 +1,7 @@
 // "use server";
 import {
   AddUser,
+  TChangePassword,
   TKecamatan,
   TKelurahan,
   TKota,
@@ -27,7 +28,18 @@ export const saveUser = async ({
   accessToken: string;
 }) => {
   return await axiosInstance(accessToken).post("/users", values);
-  // return true;
+};
+
+export const changePassword = async ({
+  values,
+  uuid,
+  accessToken,
+}: {
+  values: TChangePassword;
+  uuid: string;
+  accessToken: string;
+}) => {
+  return await axiosInstance(accessToken).patch("/users/" + uuid, values);
 };
 
 export const getMawil = async (accessToken: string): Promise<TMawil[]> => {

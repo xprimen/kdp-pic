@@ -301,7 +301,7 @@ const EkspedisiKirim = () => {
               name="bukti_kirim"
               render={({ field }) => (
                 <FormItem className="space-y-1 py-4 px-4 bg-white">
-                  <FormLabel className="font-semibold">Bukti Terima</FormLabel>
+                  <FormLabel className="font-semibold">Bukti Kirim</FormLabel>
                   <FormControl>
                     <Input
                       {...field}

@@ -65,6 +65,7 @@ const SetorMultiKotak = () => {
   });
 
   function onSubmit(values: TUpdateSetorMultiKotak) {
+    setLoadingForm(true);
     const { accessToken: token } = queryClient.getQueryData(["token"]) as {
       accessToken: string;
     };

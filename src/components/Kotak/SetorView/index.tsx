@@ -1,5 +1,11 @@
 "use client";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getKotakSetor } from "@/lib/actions/kotak";
@@ -113,6 +119,16 @@ const SetorView = () => {
                 </div>
               )}
             </CardContent>
+            {dt.setor?.nama_penyetor && (
+              <>
+                <Separator />
+                <CardFooter className="py-2">
+                  <span className="font-sm">
+                    Penyetor : {dt.setor?.nama_penyetor}
+                  </span>
+                </CardFooter>
+              </>
+            )}
           </Card>
         ))}
       </div>
