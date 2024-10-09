@@ -18,7 +18,7 @@ export const LoginFormInputSchema = z.object({
 
 export type LoginFormInput = z.infer<typeof LoginFormInputSchema>;
 
-export const MAX_FILE_SIZE = 1024 * 5 * 1000;
+export const MAX_FILE_SIZE = 1024 * 6 * 1000;
 export const ACCEPTED_IMAGE_TYPES = [
   "image/jpeg",
   "image/jpg",
