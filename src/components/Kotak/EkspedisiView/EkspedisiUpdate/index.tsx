@@ -95,10 +95,12 @@ const EkspedisiUpdate = ({ id }: Props) => {
           queryClient.invalidateQueries({ queryKey: ["ekspedisi"] });
           router.replace("/secure/kotak");
         },
-        onError: () => {
+        onError: (error) => {
+          setLoadingForm(false);
           toast({
             title: "Error",
-            description: "Gagal Menyimpan Data",
+            // description: "Gagal Menyimpan Data",
+            description: JSON.stringify(error, null, 2),
             variant: "destructive",
           });
         },

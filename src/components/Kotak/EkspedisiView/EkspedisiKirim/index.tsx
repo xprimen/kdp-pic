@@ -113,6 +113,7 @@ const EkspedisiKirim = () => {
           router.replace("/secure/kotak");
         },
         onError: () => {
+          setLoadingForm(false);
           toast({
             title: "Error",
             description: "Gagal Mengirim Kotak",
