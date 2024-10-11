@@ -495,7 +495,7 @@ const BukaEdit = ({ id }: Props) => {
                       width={100}
                       height={100}
                       src={imagePreview}
-                      className="w-full"
+                      className="w-full rounded-md"
                       alt="tes"
                     />
                   </div>

@@ -8,6 +8,7 @@ import {
   TMawil,
   TPropinsi,
   TSubmawil,
+  TUpdateUserProfile,
   TUser,
 } from "@/types";
 import axiosInstance from "../axiosInstance";
@@ -28,6 +29,26 @@ export const saveUser = async ({
   accessToken: string;
 }) => {
   return await axiosInstance(accessToken).post("/users", values);
+};
+
+export const getUserProfile = async (accessToken: string, id: number) => {
+  return await axiosInstance(accessToken)
+    .get("/users/" + id)
+    .then((res) => {
+      return res.data;
+    });
+};
+
+export const saveUserProfile = async ({
+  values,
+  id,
+  accessToken,
+}: {
+  values: TUpdateUserProfile;
+  id: number;
+  accessToken: string;
+}) => {
+  return await axiosInstance(accessToken).patch("/editusers/" + id, values);
 };
 
 export const changePassword = async ({

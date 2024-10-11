@@ -6,25 +6,27 @@ import {
   getMawil,
   getPropinsi,
   getSubmawil,
-  saveUser,
+  getUserProfile,
+  saveUserProfile,
 } from "@/lib/actions/users";
 import { queryClient } from "@/lib/utils";
 import {
   ACCEPTED_IMAGE_TYPES,
-  AddUser,
-  AddUserSchema,
   ImageOptionsCompression,
   LoginDataResponse,
-  MAX_FILE_SIZE,
   TKecamatan,
   TKelurahan,
   TKota,
   TMawil,
   TPropinsi,
   TSubmawil,
+  TUpdateUserProfile,
+  TUserProfile,
+  UpdateUserProfileSchema,
 } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import imageCompression from "browser-image-compression";
 import { CircleX, LoaderIcon, Save } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -49,13 +51,12 @@ import {
 } from "../ui/select";
 import { Textarea } from "../ui/textarea";
 import { toast } from "../ui/use-toast";
-import imageCompression from "browser-image-compression";
 
 type Props = {
   userdata: LoginDataResponse;
 };
 
-const UserAdd = ({ userdata }: Props) => {
+const UserProfile = ({ userdata }: Props) => {
   const router = useRouter();
   const [loadingForm, setLoadingForm] = React.useState(false);
   const [imageFile, setImageFile] = React.useState<FileList>();
@@ -69,22 +70,26 @@ const UserAdd = ({ userdata }: Props) => {
   const [kecamatans, setKecamatans] = React.useState<TKecamatan[]>([]);
   const [kelurahans, setKelurahans] = React.useState<TKelurahan[]>([]);
 
-  const form = useForm<AddUser>({
-    resolver: zodResolver(AddUserSchema),
-    defaultValues: {
-      username: "",
-      role: "3",
-      id_mawil: String(userdata.mawil),
-      nik: "",
-      tlp: "",
-      alamat: "",
-      propinsi: "",
-      kota: "",
-      kec: "",
-      kel: "",
-      ktp: "",
-    },
+  const form = useForm<TUpdateUserProfile>({
+    resolver: zodResolver(UpdateUserProfileSchema),
   });
+
+  const { data, isFetching } = useQuery({
+    queryKey: ["userProfile"],
+    queryFn: async () => {
+      const { accessToken } = (await queryClient.getQueryData(["token"])) as {
+        accessToken: string;
+      };
+      const userProfile = (await getUserProfile(
+        accessToken,
+        userdata.id
+      )) as TUserProfile;
+      return userProfile;
+    },
+    refetchOnMount: true,
+  });
+
+  console.log(data);
 
   const tryGetMawil = React.useCallback(async () => {
     const { accessToken } = (await queryClient.getQueryData(["token"])) as {
@@ -136,13 +141,18 @@ const UserAdd = ({ userdata }: Props) => {
     tryGetMawil();
     tryGetSubMawil();
     tryGetPropinsi();
-  }, [tryGetMawil, tryGetPropinsi, tryGetSubMawil]);
+    if (data) {
+      tryGetKota(data?.propinsi);
+      tryGetKecamatan(data?.kota);
+      tryGetKelurahan(data?.kec);
+    }
+  }, [data, tryGetMawil, tryGetPropinsi, tryGetSubMawil]);
 
   const mutation = useMutation({
-    mutationFn: saveUser,
+    mutationFn: saveUserProfile,
   });
 
-  async function onSubmit(values: AddUser) {
+  async function onSubmit(values: TUpdateUserProfile) {
     setLoadingForm(true);
 
     const { accessToken } = queryClient.getQueryData(["token"]) as {
@@ -158,28 +168,76 @@ const UserAdd = ({ userdata }: Props) => {
         </span>
       ),
     });
+
+    let sendValues: TUpdateUserProfile;
+    if (data?.url === values.ktp) {
+      const { ktp, ...sendWithoutKtp } = values;
+      sendValues = sendWithoutKtp;
+    } else {
+      sendValues = { ...values };
+    }
+
     mutation.mutate(
-      { values, accessToken },
+      { values: sendValues, id: userdata.id, accessToken },
       {
         onSuccess: () => {
           toast({
             title: "Berhasil",
-            description: `Berhasil Menambahkan User PIC ${values.nama}`,
+            description: `Berhasil Mengubah Profil`,
           });
-          queryClient.invalidateQueries({ queryKey: ["users"] });
-          router.replace("/secure/users");
+          router.replace("/secure/akun");
         },
         onError: () => {
           setLoadingForm(false);
           toast({
             title: "Error",
-            description: "Gagal Menambahkan User",
+            description: "Gagal Mengubah Profil",
             variant: "destructive",
           });
         },
       }
     );
   }
+
+  const setAllValues = React.useCallback(
+    (values: TUserProfile) => {
+      form.setValue("username", values.username);
+      form.setValue("ktp", values.url);
+      form.setValue("role", String(values.roleId));
+      form.setValue("nik", values.nik);
+      form.setValue("nama", values.nama);
+      form.setValue("alamat", values.alamat);
+      form.setValue("tlp", values.tlp);
+      if (mawils) {
+        form.setValue("id_mawil", values.id_mawil, {
+          shouldValidate: true,
+        });
+      }
+      form.setValue("id_submawil", values.id_submawil);
+      form.setValue("propinsi", values.propinsi, { shouldValidate: true });
+    },
+    [form, mawils]
+  );
+
+  React.useEffect(() => {
+    if (data) {
+      setAllValues(data);
+    }
+  }, [data, setAllValues]);
+
+  React.useEffect(() => {
+    if (data) {
+      if (propinsis && kotas && kecamatans && kelurahans) {
+        form.setValue("kota", data.kota, { shouldValidate: true });
+        // }
+        // if (kecamatans) {
+        form.setValue("kec", data.kec, { shouldValidate: true });
+        // }
+        // if (kelurahans) {
+        form.setValue("kel", data.kel, { shouldValidate: true });
+      }
+    }
+  }, [data, form, kecamatans, kelurahans, kotas, propinsis]);
 
   const fileToBase64 = async (e: React.ChangeEvent<HTMLInputElement>) => {
     let files = e.target?.files as FileList;
@@ -216,6 +274,14 @@ const UserAdd = ({ userdata }: Props) => {
     if (file?.size) fileToBase64(e);
   };
 
+  if (isFetching) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <LoaderIcon className="h-10 w-10 animate-spin" />
+      </div>
+    );
+  }
+
   return (
     <>
       <Form {...form}>
@@ -223,24 +289,19 @@ const UserAdd = ({ userdata }: Props) => {
           onSubmit={form.handleSubmit(onSubmit)}
           className="space-y-1 flex flex-col"
         >
-          <FormField
-            control={form.control}
-            name="username"
-            render={({ field }) => (
-              <FormItem className="space-y-1 py-4 px-4 bg-white ">
-                <FormLabel className="font-semibold">Username</FormLabel>
-                <FormControl>
-                  <Input {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          <div className="space-y-1 py-4 px-4 bg-white">
+            <label className="font-semibold">Username</label>
+            <div>{data?.username}</div>
+          </div>
+          <div className="space-y-1 py-4 px-4 bg-white">
+            <label className="font-semibold">Level User</label>
+            <div>{data?.role.role}</div>
+          </div>
           <FormField
             control={form.control}
             name="nama"
             render={({ field }) => (
-              <FormItem className="space-y-1 py-4 px-4 bg-white ">
+              <FormItem className="space-y-1 py-4 px-4 bg-white">
                 <FormLabel className="font-semibold">Nama</FormLabel>
                 <FormControl>
                   <Input {...field} />
@@ -283,6 +344,28 @@ const UserAdd = ({ userdata }: Props) => {
                     />
                   </FormControl>
                   <FormMessage />
+                  {form.getValues("ktp") && !imagePreview && (
+                    <div className="flex relative">
+                      {/* <Button
+                        type="button"
+                        className="btn-sm absolute text-white hover:text-black"
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => {
+                          form.resetField("ktp");
+                        }}
+                      >
+                        <CircleX size={24} />
+                      </Button> */}
+                      <Image
+                        width={1024}
+                        height={1024}
+                        src={form.getValues("ktp") || ""}
+                        className="w-full rounded-md"
+                        alt="tes"
+                      />
+                    </div>
+                  )}
                   {imagePreview && (
                     <div className="flex relative">
                       <Button
@@ -299,8 +382,8 @@ const UserAdd = ({ userdata }: Props) => {
                         <CircleX size={24} />
                       </Button>
                       <Image
-                        width={100}
-                        height={100}
+                        width={1024}
+                        height={1024}
                         src={imagePreview}
                         className="w-full rounded-md"
                         alt="tes"
@@ -320,10 +403,23 @@ const UserAdd = ({ userdata }: Props) => {
             control={form.control}
             name="tlp"
             render={({ field }) => (
-              <FormItem className="space-y-1 py-4 px-4 bg-white ">
+              <FormItem className="space-y-1 py-4 px-4 bg-white">
                 <FormLabel className="font-semibold">Telepon</FormLabel>
                 <FormControl>
                   <Input {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="alamat"
+            render={({ field }) => (
+              <FormItem className="space-y-1 py-4 px-4 bg-white">
+                <FormLabel className="font-semibold">Alamat</FormLabel>
+                <FormControl>
+                  <Textarea {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -341,7 +437,7 @@ const UserAdd = ({ userdata }: Props) => {
                       disabled
                       value={String(form.getValues("id_mawil"))}
                       onValueChange={(value) =>
-                        form.setValue("id_mawil", value, {
+                        form.setValue("id_mawil", Number(value), {
                           shouldValidate: true,
                         })
                       }
@@ -365,14 +461,14 @@ const UserAdd = ({ userdata }: Props) => {
             <FormField
               control={form.control}
               name="id_submawil"
-              render={({ field }) => (
+              render={() => (
                 <FormItem className="space-y-1 py-4 px-4 bg-white w-full">
                   <FormLabel className="font-semibold">Submawil</FormLabel>
                   <FormControl>
                     <Select
                       value={String(form.getValues("id_submawil"))}
                       onValueChange={(value) =>
-                        form.setValue("id_submawil", value, {
+                        form.setValue("id_submawil", Number(value), {
                           shouldValidate: true,
                         })
                       }
@@ -537,19 +633,6 @@ const UserAdd = ({ userdata }: Props) => {
               )}
             />
           </div>
-          <FormField
-            control={form.control}
-            name="alamat"
-            render={({ field }) => (
-              <FormItem className="space-y-1 py-4 px-4 bg-white ">
-                <FormLabel className="font-semibold">Alamat</FormLabel>
-                <FormControl>
-                  <Textarea {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
           <Button
             type="submit"
             className="mx-4 gap-2 text-md"
@@ -573,4 +656,4 @@ const UserAdd = ({ userdata }: Props) => {
   );
 };
 
-export default UserAdd;
+export default UserProfile;

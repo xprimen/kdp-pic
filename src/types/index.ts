@@ -53,7 +53,7 @@ export const UserSchema = z.object({
   nama: z.string().min(2, { message: "Minimal 2 huruf" }),
   role: z.string().min(1),
   nik: z.string().min(16, { message: "Minimal 16 angka" }).max(16),
-  ktp: z.string().optional(),
+  ktp: z.string().optional().nullable(),
   tlp: z.string().optional(),
   alamat: z.string().optional(),
   mawil: z.object({
@@ -71,6 +71,61 @@ export const UserSchema = z.object({
 });
 
 export type TUser = z.infer<typeof UserSchema>;
+
+const ObjectSubNameSchema = z.object({
+  name: z.string().min(1, { message: "Wajib diisi" }),
+});
+
+export const UserProfileSchema = UserSchema.pick({
+  username: true,
+  nama: true,
+  nik: true,
+  tlp: true,
+  propinsi: true,
+  kota: true,
+  kec: true,
+  kel: true,
+  alamat: true,
+}).extend({
+  url: z.string().optional(),
+  id_mawil: z.number(),
+  id_submawil: z.number(),
+  role: z.object({
+    role: z.string(),
+  }),
+  roleId: z.number(),
+  Province: ObjectSubNameSchema,
+  RegDistrict: ObjectSubNameSchema,
+  RegVillage: ObjectSubNameSchema,
+  reg_regency: ObjectSubNameSchema,
+  mawil: z.object({
+    nama_mawil: z.string(),
+  }),
+  submawil: z.object({
+    nama_submawil: z.string(),
+  }),
+});
+
+export type TUserProfile = z.infer<typeof UserProfileSchema>;
+
+export const UpdateUserProfileSchema = UserSchema.pick({
+  username: true,
+  ktp: true,
+  role: true,
+  nik: true,
+  nama: true,
+  alamat: true,
+  tlp: true,
+  kel: true,
+  kec: true,
+  kota: true,
+  propinsi: true,
+}).extend({
+  id_mawil: z.number(),
+  id_submawil: z.number(),
+});
+
+export type TUpdateUserProfile = z.infer<typeof UpdateUserProfileSchema>;
 
 export const AddUserSchema = UserSchema.omit({
   mawil: true,

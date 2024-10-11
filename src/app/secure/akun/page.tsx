@@ -4,10 +4,15 @@ import TopNavbar from "@/components/TopNavbar";
 import { Label } from "@/components/ui/label";
 import UserInfo from "@/components/UserInfo";
 import { userdata } from "@/lib/utils-server";
-import { ChevronRight, KeyRoundIcon } from "lucide-react";
+import { ChevronRight, KeyRoundIcon, User } from "lucide-react";
 import Link from "next/link";
 
 const links = [
+  {
+    title: "Data Profil",
+    href: "/secure/akun/user-profile",
+    icon: <User />,
+  },
   {
     title: "Ganti Password",
     href: "/secure/akun/ganti-password",
@@ -26,6 +31,7 @@ const Akun = () => {
           <Link
             key={link.title}
             href={link.href}
+            prefetch={true}
             className="p-4 border-b hover:bg-slate-200 flex items-center gap-4"
           >
             {link.icon}

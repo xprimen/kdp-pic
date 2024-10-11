@@ -14,6 +14,11 @@ const nextConfig = {
         // pathname: "/images/stock/**",
       },
       {
+        protocol: "http",
+        hostname: "apifk.rurosi.my.id",
+        pathname: "/images/**",
+      },
+      {
         protocol: "https",
         hostname: "unpkg.com",
         pathname: "/leaflet@1.7.1/dist/images/**",
