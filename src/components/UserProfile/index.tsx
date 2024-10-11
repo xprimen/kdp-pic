@@ -89,8 +89,6 @@ const UserProfile = ({ userdata }: Props) => {
     refetchOnMount: true,
   });
 
-  console.log(data);
-
   const tryGetMawil = React.useCallback(async () => {
     const { accessToken } = (await queryClient.getQueryData(["token"])) as {
       accessToken: string;
