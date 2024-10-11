@@ -13,6 +13,7 @@ import {
   ACCEPTED_IMAGE_TYPES,
   AddUser,
   AddUserSchema,
+  ImageOptionsCompression,
   LoginDataResponse,
   MAX_FILE_SIZE,
   TKecamatan,
@@ -48,6 +49,7 @@ import {
 } from "../ui/select";
 import { Textarea } from "../ui/textarea";
 import { toast } from "../ui/use-toast";
+import imageCompression from "browser-image-compression";
 
 type Props = {
   userdata: LoginDataResponse;
@@ -57,6 +59,8 @@ const UserAdd = ({ userdata }: Props) => {
   const router = useRouter();
   const [loadingForm, setLoadingForm] = React.useState(false);
   const [imageFile, setImageFile] = React.useState<FileList>();
+  const [imageCompressProgress, setImageCompressProgress] =
+    React.useState(false);
   const [imagePreview, setImagePreview] = React.useState("");
   const [mawils, setMawils] = React.useState<TMawil[]>([]);
   const [subMawils, setSubMawils] = React.useState<TSubmawil[]>([]);
@@ -177,29 +181,15 @@ const UserAdd = ({ userdata }: Props) => {
     );
   }
 
-  const toBase64 = (file: any): Promise<string> =>
-    new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = () => {
-        if (reader.result === null) {
-          reject(new Error("Failed to read file"));
-        } else {
-          resolve(reader.result as string);
-        }
-      };
-      reader.onerror = (error) => reject(error);
-    });
-
   const fileToBase64 = async (e: React.ChangeEvent<HTMLInputElement>) => {
     let files = e.target?.files as FileList;
     const file = files.item(0);
     if (file) {
-      if (file.size > MAX_FILE_SIZE) {
-        return form.setError("ktp", {
-          message: "Ukuran File Terlalu Besar",
-        });
-      }
+      // if (file.size > MAX_FILE_SIZE) {
+      //   return form.setError("ktp", {
+      //     message: "Ukuran File Terlalu Besar",
+      //   });
+      // }
       if (!ACCEPTED_IMAGE_TYPES.includes(files?.[0]?.type)) {
         return form.setError("ktp", {
           message: "Tipe File Tidak Didukung",
@@ -207,11 +197,13 @@ const UserAdd = ({ userdata }: Props) => {
       }
 
       // create URL Image
-      const urlImage = URL.createObjectURL(file);
+      setImageCompressProgress(true);
+      const newfile = await imageCompression(file, ImageOptionsCompression);
+      setImageCompressProgress(false);
+      const urlImage = await imageCompression.getDataUrlFromFile(newfile);
       setImagePreview(urlImage);
 
-      const fileWithBase64 = await toBase64(file);
-      form.setValue("ktp", fileWithBase64, {
+      form.setValue("ktp", urlImage, {
         shouldValidate: true,
       });
       setImageFile(files);
@@ -313,6 +305,11 @@ const UserAdd = ({ userdata }: Props) => {
                         className="w-full"
                         alt="tes"
                       />
+                    </div>
+                  )}
+                  {imageCompressProgress && (
+                    <div className="flex items-center justify-center min-h-10 w-full h-full bg-gray-100 rounded-md">
+                      <LoaderIcon className="h-8 w-8 text-gray-500 animate-spin" />
                     </div>
                   )}
                 </FormItem>

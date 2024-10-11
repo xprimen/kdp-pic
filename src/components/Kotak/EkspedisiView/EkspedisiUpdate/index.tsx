@@ -15,6 +15,7 @@ import { getEkspedisiKotak, savePenerimaanKotak } from "@/lib/actions/kotak";
 import { queryClient } from "@/lib/utils";
 import {
   ACCEPTED_IMAGE_TYPES,
+  ImageOptionsCompression,
   MAX_FILE_SIZE,
   TEkspedisiDetail,
   TEkspedisiKotak,
@@ -30,6 +31,7 @@ import React from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { useForm } from "react-hook-form";
+import imageCompression from "browser-image-compression";
 
 type Props = {
   id: number;
@@ -38,6 +40,8 @@ const EkspedisiUpdate = ({ id }: Props) => {
   const router = useRouter();
   const [loadingForm, setLoadingForm] = React.useState(false);
   const [imageFile, setImageFile] = React.useState<FileList>();
+  const [imageCompressProgress, setImageCompressProgress] =
+    React.useState(false);
   const [imagePreview, setImagePreview] = React.useState("");
   const [data, setData] = React.useState<TEkspedisiKotak>();
 
@@ -112,29 +116,15 @@ const EkspedisiUpdate = ({ id }: Props) => {
     if (data?.id_penerima) form.setValue("id_penerima", data.id_penerima);
   }, [data?.id_penerima, form]);
 
-  const toBase64 = (file: any): Promise<string> =>
-    new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = () => {
-        if (reader.result === null) {
-          reject(new Error("Failed to read file"));
-        } else {
-          resolve(reader.result as string);
-        }
-      };
-      reader.onerror = (error) => reject(error);
-    });
-
   const fileToBase64 = async (e: React.ChangeEvent<HTMLInputElement>) => {
     let files = e.target?.files as FileList;
     const file = files.item(0);
     if (file) {
-      if (file.size > MAX_FILE_SIZE) {
-        return form.setError("bukti_terima", {
-          message: "Ukuran File Terlalu Besar",
-        });
-      }
+      // if (file.size > MAX_FILE_SIZE) {
+      //   return form.setError("ktp", {
+      //     message: "Ukuran File Terlalu Besar",
+      //   });
+      // }
       if (!ACCEPTED_IMAGE_TYPES.includes(files?.[0]?.type)) {
         return form.setError("bukti_terima", {
           message: "Tipe File Tidak Didukung",
@@ -142,11 +132,15 @@ const EkspedisiUpdate = ({ id }: Props) => {
       }
 
       // create URL Image
-      const urlImage = URL.createObjectURL(file);
+      setImageCompressProgress(true);
+      const newfile = await imageCompression(file, ImageOptionsCompression);
+      setImageCompressProgress(false);
+      const urlImage = await imageCompression.getDataUrlFromFile(newfile);
       setImagePreview(urlImage);
 
-      const fileWithBase64 = await toBase64(file);
-      form.setValue("bukti_terima", fileWithBase64, { shouldValidate: true });
+      form.setValue("bukti_terima", urlImage, {
+        shouldValidate: true,
+      });
       setImageFile(files);
     }
   };
@@ -302,6 +296,11 @@ const EkspedisiUpdate = ({ id }: Props) => {
                         className="w-full"
                         alt="tes"
                       />
+                    </div>
+                  )}
+                  {imageCompressProgress && (
+                    <div className="flex items-center justify-center min-h-10 w-full h-full bg-gray-100 rounded-md">
+                      <LoaderIcon className="h-8 w-8 text-gray-500 animate-spin" />
                     </div>
                   )}
                 </FormItem>

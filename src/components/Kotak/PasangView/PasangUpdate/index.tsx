@@ -38,6 +38,7 @@ import useCurrentLocation from "@/lib/useCurrentLocation";
 import { queryClient } from "@/lib/utils";
 import {
   ACCEPTED_IMAGE_TYPES,
+  ImageOptionsCompression,
   MAX_FILE_SIZE,
   TKecamatan,
   TKelurahan,
@@ -55,6 +56,7 @@ import React from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { useForm } from "react-hook-form";
+import imageCompression from "browser-image-compression";
 
 type Props = {
   id: number; //id kotak Number
@@ -64,6 +66,8 @@ const PasangUpdate = ({ id }: Props) => {
   const [loadingForm, setLoadingForm] = React.useState(false);
   const [imageFile, setImageFile] = React.useState<FileList>();
   const [imagePreview, setImagePreview] = React.useState("");
+  const [imageCompressProgress, setImageCompressProgress] =
+    React.useState(false);
   const [propinsis, setPropinsis] = React.useState<TPropinsi[]>([]);
   const [kotas, setKotas] = React.useState<TKota[]>([]);
   const [kecamatans, setKecamatans] = React.useState<TKecamatan[]>([]);
@@ -181,29 +185,15 @@ const PasangUpdate = ({ id }: Props) => {
     );
   }
 
-  const toBase64 = (file: any): Promise<string> =>
-    new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = () => {
-        if (reader.result === null) {
-          reject(new Error("Failed to read file"));
-        } else {
-          resolve(reader.result as string);
-        }
-      };
-      reader.onerror = (error) => reject(error);
-    });
-
   const fileToBase64 = async (e: React.ChangeEvent<HTMLInputElement>) => {
     let files = e.target?.files as FileList;
     const file = files.item(0);
     if (file) {
-      if (file.size > MAX_FILE_SIZE) {
-        return form.setError("foto_penempatan", {
-          message: "Ukuran File Terlalu Besar",
-        });
-      }
+      // if (file.size > MAX_FILE_SIZE) {
+      //   return form.setError("ktp", {
+      //     message: "Ukuran File Terlalu Besar",
+      //   });
+      // }
       if (!ACCEPTED_IMAGE_TYPES.includes(files?.[0]?.type)) {
         return form.setError("foto_penempatan", {
           message: "Tipe File Tidak Didukung",
@@ -211,11 +201,13 @@ const PasangUpdate = ({ id }: Props) => {
       }
 
       // create URL Image
-      const urlImage = URL.createObjectURL(file);
+      setImageCompressProgress(true);
+      const newfile = await imageCompression(file, ImageOptionsCompression);
+      setImageCompressProgress(false);
+      const urlImage = await imageCompression.getDataUrlFromFile(newfile);
       setImagePreview(urlImage);
 
-      const fileWithBase64 = await toBase64(file);
-      form.setValue("foto_penempatan", fileWithBase64, {
+      form.setValue("foto_penempatan", urlImage, {
         shouldValidate: true,
       });
       setImageFile(files);
@@ -496,6 +488,11 @@ const PasangUpdate = ({ id }: Props) => {
                       className="w-full"
                       alt="tes"
                     />
+                  </div>
+                )}
+                {imageCompressProgress && (
+                  <div className="flex items-center justify-center min-h-10 w-full h-full bg-gray-100 rounded-md">
+                    <LoaderIcon className="h-8 w-8 text-gray-500 animate-spin" />
                   </div>
                 )}
               </FormItem>

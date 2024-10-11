@@ -26,6 +26,12 @@ export const ACCEPTED_IMAGE_TYPES = [
   "image/webp",
 ];
 
+export const ImageOptionsCompression = {
+  maxSizeMB: 1,
+  maxWidthOrHeight: 1920,
+  useWebWorker: true,
+};
+
 export const statusKotakBGColor = [
   "bg-grey-400",
   "bg-white",
