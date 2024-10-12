@@ -9,7 +9,6 @@ type Props = {
 function AdminLayout({ children }: Props) {
   const refreshToken = getRefreshToken() || "";
 
-  // Access individual cookies
   return (
     <QueryClientWrapper refreshToken={refreshToken}>
       {children}

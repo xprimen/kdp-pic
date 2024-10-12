@@ -27,9 +27,7 @@ export const loginAction = async (
     .then((res: AxiosResponse) => {
       const accessToken = res.data.accessToken;
       const refreshToken = res.data.refreshToken;
-      const decodedData = decodeToken<
-        Omit<LoginDataResponse, "userid"> & { userid: string }
-      >(accessToken);
+      const decodedData = decodeToken<LoginDataResponse>(accessToken);
 
       if (decodedData.role === "1001") {
         return {

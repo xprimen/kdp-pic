@@ -2,6 +2,7 @@
 import { logoutAction } from "@/lib/actions/login";
 import { useRouter } from "next/navigation";
 import { Button } from "../ui/button";
+import { queryClient } from "@/lib/utils";
 
 const AkunLogout = () => {
   const router = useRouter();
@@ -9,6 +10,7 @@ const AkunLogout = () => {
     <Button
       variant="outline"
       onClick={(e) => {
+        queryClient.removeQueries();
         logoutAction();
         // router.push("/");
       }}

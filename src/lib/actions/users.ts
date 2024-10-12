@@ -10,6 +10,7 @@ import {
   TSubmawil,
   TUpdateUserProfile,
   TUser,
+  TUserProfile,
 } from "@/types";
 import axiosInstance from "../axiosInstance";
 
@@ -31,7 +32,10 @@ export const saveUser = async ({
   return await axiosInstance(accessToken).post("/users", values);
 };
 
-export const getUserProfile = async (accessToken: string, id: number) => {
+export const getUserProfile = async (
+  accessToken: string,
+  id: number
+): Promise<TUserProfile> => {
   return await axiosInstance(accessToken)
     .get("/users/" + id)
     .then((res) => {

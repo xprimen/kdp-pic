@@ -1,5 +1,8 @@
 "use client";
+import { getUserProfile } from "@/lib/actions/users";
+import { queryClient } from "@/lib/utils";
 import { LoginDataResponse } from "@/types";
+import { useQuery } from "@tanstack/react-query";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import React from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../ui/tabs";
@@ -26,10 +29,26 @@ const KotakTabs = ({ userdata }: Props) => {
     [pathname, router, searchParams]
   );
 
+  const { data: userProfile } = useQuery({
+    queryKey: ["userProfile"],
+    queryFn: async () => {
+      const { accessToken } = (await queryClient.getQueryData(["token"])) as {
+        accessToken: string;
+      };
+
+      return getUserProfile(accessToken, userdata.id);
+    },
+  });
+
   const tabParams = searchParams.get("tab");
   const tab = tabParams ? tabParams : "ekspedisi";
+
+  if (userProfile && userProfile.url === null) {
+    return <></>;
+  }
+
   return (
-    <Tabs defaultValue={tab}>
+    <Tabs defaultValue={tab} className="relative flex flex-col">
       <TabsList className={`grid w-full grid-cols-4 bg-slate-100 h-14`}>
         <TabsTrigger
           onClick={() => createQueryString("tab", "ekspedisi")}

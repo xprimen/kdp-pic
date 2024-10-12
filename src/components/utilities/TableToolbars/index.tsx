@@ -45,7 +45,7 @@ const TableToolbars = ({ add, filter, className }: Props) => {
   add = add ? ({ ...buttonDefaultCfg.add, ...add } as Props["add"]) : undefined;
   filter = { ...buttonDefaultCfg.filter, ...filter } as Props["filter"];
   return (
-    <ScrollArea className={`py-4 px-2 ${className} bg-white`}>
+    <ScrollArea className={`py-4 px-2 ${className} bg-white relative`}>
       {add && (
         <Button
           variant={add?.variant}

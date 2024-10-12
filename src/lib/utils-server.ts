@@ -10,3 +10,7 @@ export const getRefreshToken = () => {
   const refreshToken = cookies().get("refreshToken")?.value;
   return refreshToken;
 };
+
+export const getAccessToken = () => {
+  return cookies().get("token")?.value;
+};
