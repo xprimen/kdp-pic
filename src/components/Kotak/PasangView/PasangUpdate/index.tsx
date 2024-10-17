@@ -39,7 +39,6 @@ import { queryClient } from "@/lib/utils";
 import {
   ACCEPTED_IMAGE_TYPES,
   ImageOptionsCompression,
-  MAX_FILE_SIZE,
   TKecamatan,
   TKelurahan,
   TKota,
@@ -49,6 +48,7 @@ import {
 } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery } from "@tanstack/react-query";
+import imageCompression from "browser-image-compression";
 import { CircleX, LoaderIcon, MapPinIcon, Save } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -56,7 +56,6 @@ import React from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { useForm } from "react-hook-form";
-import imageCompression from "browser-image-compression";
 
 type Props = {
   id: number; //id kotak Number

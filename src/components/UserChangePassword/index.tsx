@@ -64,6 +64,7 @@ const UserChangePassword = ({ userdata }: Props) => {
           toast({
             title: "Berhasil",
             description: `Berhasil Mengubah Password`,
+            duration: 5000,
           });
           router.replace("/secure/akun");
         },

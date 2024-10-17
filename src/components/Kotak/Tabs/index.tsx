@@ -43,7 +43,10 @@ const KotakTabs = ({ userdata }: Props) => {
   const tabParams = searchParams.get("tab");
   const tab = tabParams ? tabParams : "ekspedisi";
 
-  if (userProfile && userProfile.url === null) {
+  if (
+    userProfile &&
+    Object.values(userProfile).some((value) => value === null)
+  ) {
     return <></>;
   }
 

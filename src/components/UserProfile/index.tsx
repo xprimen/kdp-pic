@@ -17,9 +17,7 @@ import {
   TKecamatan,
   TKelurahan,
   TKota,
-  TMawil,
   TPropinsi,
-  TSubmawil,
   TUpdateUserProfile,
   TUserProfile,
   UpdateUserProfileSchema,
@@ -63,8 +61,8 @@ const UserProfile = ({ userdata }: Props) => {
   const [imageCompressProgress, setImageCompressProgress] =
     React.useState(false);
   const [imagePreview, setImagePreview] = React.useState("");
-  const [mawils, setMawils] = React.useState<TMawil[]>([]);
-  const [subMawils, setSubMawils] = React.useState<TSubmawil[]>([]);
+  // const [mawils, setMawils] = React.useState<TMawil[]>([]);
+  // const [subMawils, setSubMawils] = React.useState<TSubmawil[]>([]);
   const [propinsis, setPropinsis] = React.useState<TPropinsi[]>([]);
   const [kotas, setKotas] = React.useState<TKota[]>([]);
   const [kecamatans, setKecamatans] = React.useState<TKecamatan[]>([]);
@@ -89,23 +87,103 @@ const UserProfile = ({ userdata }: Props) => {
     refetchOnMount: true,
   });
 
-  const tryGetMawil = React.useCallback(async () => {
-    const { accessToken } = (await queryClient.getQueryData(["token"])) as {
-      accessToken: string;
-    };
-    const newMawil = await getMawil(accessToken);
-    setMawils(newMawil);
-  }, []);
+  const { data: newMawils, isFetching: fetchMawil } = useQuery({
+    queryKey: ["mawils"],
+    queryFn: async () => {
+      const { accessToken } = (await queryClient.getQueryData(["token"])) as {
+        accessToken: string;
+      };
+      const newData = await getMawil(accessToken);
+      return newData;
+    },
+    refetchOnMount: true,
+  });
 
-  const tryGetSubMawil = React.useCallback(async () => {
-    const { accessToken } = (await queryClient.getQueryData(["token"])) as {
-      accessToken: string;
-    };
-    const newSubMawil = await getSubmawil(accessToken, Number(userdata.mawil));
-    setSubMawils(newSubMawil);
-  }, [userdata.mawil]);
+  const { data: newSubMawils, isFetching: fetchSubMawil } = useQuery({
+    queryKey: ["submawils", form.getValues("id_mawil")],
+    queryFn: async () => {
+      const { accessToken } = (await queryClient.getQueryData(["token"])) as {
+        accessToken: string;
+      };
+      const newData = await getSubmawil(
+        accessToken,
+        form.getValues("id_mawil")
+      );
+      return newData;
+    },
+    refetchOnMount: true,
+    enabled: form.getValues("id_mawil") !== undefined,
+  });
 
-  const tryGetPropinsi = React.useCallback(async () => {
+  const { data: newPropinsis, isFetching: fetchPropinsi } = useQuery({
+    queryKey: ["provinsis"],
+    queryFn: async () => {
+      const { accessToken } = (await queryClient.getQueryData(["token"])) as {
+        accessToken: string;
+      };
+      const newData = await getPropinsi(accessToken);
+      return newData;
+    },
+    refetchOnMount: true,
+  });
+
+  const { data: newKotas, isFetching: fetchKota } = useQuery({
+    queryKey: ["kotas", form.getValues("propinsi")],
+    queryFn: async () => {
+      const { accessToken } = (await queryClient.getQueryData(["token"])) as {
+        accessToken: string;
+      };
+      const newData = await getKota(accessToken, form.getValues("propinsi"));
+      return newData;
+    },
+    refetchOnMount: true,
+    enabled: form.getValues("propinsi") !== undefined,
+  });
+
+  const { data: newKecamatans, isFetching: fetchKecamatan } = useQuery({
+    queryKey: ["kecamatans", form.getValues("kota")],
+    queryFn: async () => {
+      const { accessToken } = (await queryClient.getQueryData(["token"])) as {
+        accessToken: string;
+      };
+      const newData = await getKecamatan(accessToken, form.getValues("kota"));
+      return newData;
+    },
+    refetchOnMount: true,
+    enabled: form.getValues("kota") !== undefined,
+  });
+
+  const { data: newKelurahans, isFetching: fetchKelurahan } = useQuery({
+    queryKey: ["kelurahans", form.getValues("kec")],
+    queryFn: async () => {
+      const { accessToken } = (await queryClient.getQueryData(["token"])) as {
+        accessToken: string;
+      };
+      const newData = await getKelurahan(accessToken, form.getValues("kec"));
+      return newData;
+    },
+    refetchOnMount: true,
+    enabled: form.getValues("kec") !== undefined,
+  });
+
+  // const tryGetMawil = React.useCallback(async () => {
+  //   const { accessToken } = (await queryClient.getQueryData(["token"])) as {
+  //     accessToken: string;
+  //   };
+  //   const newMawil = await getMawil(accessToken);
+  //   console.log("MAWILS :", newMawil);
+  //   setMawils(newMawil);
+  // }, []);
+
+  // const tryGetSubMawil = React.useCallback(async (id_mawil: number) => {
+  //   const { accessToken } = (await queryClient.getQueryData(["token"])) as {
+  //     accessToken: string;
+  //   };
+  //   const newSubMawil = await getSubmawil(accessToken, id_mawil);
+  //   setSubMawils(newSubMawil);
+  // }, []);
+
+  /* const tryGetPropinsi = React.useCallback(async () => {
     const { accessToken } = (await queryClient.getQueryData(["token"])) as {
       accessToken: string;
     };
@@ -133,18 +211,18 @@ const UserProfile = ({ userdata }: Props) => {
     };
     const newKelurahan = await getKelurahan(accessToken, id_kecamatan);
     setKelurahans(newKelurahan);
-  };
+  }; */
 
-  React.useEffect(() => {
-    tryGetMawil();
-    tryGetSubMawil();
-    tryGetPropinsi();
-    if (data) {
-      tryGetKota(data?.propinsi);
-      tryGetKecamatan(data?.kota);
-      tryGetKelurahan(data?.kec);
-    }
-  }, [data, tryGetMawil, tryGetPropinsi, tryGetSubMawil]);
+  // React.useEffect(() => {
+  // tryGetMawil();
+  // tryGetSubMawil();
+  // tryGetPropinsi();
+  // if (data) {
+  //   tryGetKota(data?.propinsi);
+  //   tryGetKecamatan(data?.kota);
+  //   tryGetKelurahan(data?.kec);
+  // }
+  // }, [tryGetMawil, tryGetPropinsi]);
 
   const mutation = useMutation({
     mutationFn: saveUserProfile,
@@ -183,7 +261,8 @@ const UserProfile = ({ userdata }: Props) => {
             title: "Berhasil",
             description: `Berhasil Mengubah Profil`,
           });
-          router.replace("/secure/akun");
+          queryClient.invalidateQueries({ queryKey: ["userProfile"] });
+          setLoadingForm(false);
         },
         onError: () => {
           setLoadingForm(false);
@@ -206,15 +285,42 @@ const UserProfile = ({ userdata }: Props) => {
       form.setValue("nama", values.nama);
       form.setValue("alamat", values.alamat);
       form.setValue("tlp", values.tlp);
-      if (mawils) {
+      if (values.id_mawil) {
         form.setValue("id_mawil", values.id_mawil, {
           shouldValidate: true,
         });
       }
-      form.setValue("id_submawil", values.id_submawil);
-      form.setValue("propinsi", values.propinsi, { shouldValidate: true });
+      if (values.id_submawil && newMawils && newSubMawils) {
+        form.setValue("id_submawil", values.id_submawil);
+      }
+      if (values.propinsi) {
+        form.setValue("propinsi", values.propinsi, { shouldValidate: true });
+      }
+      if (values.kota && newPropinsis && newKotas) {
+        form.setValue("kota", values.kota, { shouldValidate: true });
+      }
+      if (values.kec && newPropinsis && newKotas && newKecamatans) {
+        form.setValue("kec", values.kec, { shouldValidate: true });
+      }
+      if (
+        values.kel &&
+        newPropinsis &&
+        newKotas &&
+        newKecamatans &&
+        newKelurahans
+      ) {
+        form.setValue("kel", values.kel, { shouldValidate: true });
+      }
     },
-    [form, mawils]
+    [
+      form,
+      newKecamatans,
+      newKelurahans,
+      newKotas,
+      newMawils,
+      newPropinsis,
+      newSubMawils,
+    ]
   );
 
   React.useEffect(() => {
@@ -223,7 +329,7 @@ const UserProfile = ({ userdata }: Props) => {
     }
   }, [data, setAllValues]);
 
-  React.useEffect(() => {
+  /* React.useEffect(() => {
     if (data) {
       if (propinsis && kotas && kecamatans && kelurahans) {
         form.setValue("kota", data.kota, { shouldValidate: true });
@@ -235,7 +341,7 @@ const UserProfile = ({ userdata }: Props) => {
         form.setValue("kel", data.kel, { shouldValidate: true });
       }
     }
-  }, [data, form, kecamatans, kelurahans, kotas, propinsis]);
+  }, [data, form, kecamatans, kelurahans, kotas, propinsis]); */
 
   const fileToBase64 = async (e: React.ChangeEvent<HTMLInputElement>) => {
     let files = e.target?.files as FileList;
@@ -272,13 +378,13 @@ const UserProfile = ({ userdata }: Props) => {
     if (file?.size) fileToBase64(e);
   };
 
-  if (isFetching) {
+  /* if (isFetching) {
     return (
       <div className="flex items-center justify-center h-screen">
         <LoaderIcon className="h-10 w-10 animate-spin" />
       </div>
     );
-  }
+  } */
 
   return (
     <>
@@ -300,7 +406,9 @@ const UserProfile = ({ userdata }: Props) => {
             name="nama"
             render={({ field }) => (
               <FormItem className="space-y-1 py-4 px-4 bg-white">
-                <FormLabel className="font-semibold">Nama</FormLabel>
+                <FormLabel className="font-semibold">
+                  Nama Lengkap Sesuai KTP
+                </FormLabel>
                 <FormControl>
                   <Input {...field} />
                 </FormControl>
@@ -432,19 +540,20 @@ const UserProfile = ({ userdata }: Props) => {
                   <FormLabel className="font-semibold">Mawil</FormLabel>
                   <FormControl>
                     <Select
-                      disabled
+                      disabled={fetchMawil}
                       value={String(form.getValues("id_mawil"))}
-                      onValueChange={(value) =>
+                      onValueChange={(value) => {
                         form.setValue("id_mawil", Number(value), {
                           shouldValidate: true,
-                        })
-                      }
+                        });
+                        // tryGetSubMawil(Number(value));
+                      }}
                     >
                       <SelectTrigger className="w-full">
                         <SelectValue placeholder="Pilih" />
                       </SelectTrigger>
                       <SelectContent>
-                        {mawils.map((mawil) => (
+                        {newMawils?.map((mawil) => (
                           <SelectItem key={mawil.id} value={String(mawil.id)}>
                             {mawil.nama_mawil}
                           </SelectItem>
@@ -464,6 +573,7 @@ const UserProfile = ({ userdata }: Props) => {
                   <FormLabel className="font-semibold">Submawil</FormLabel>
                   <FormControl>
                     <Select
+                      disabled={fetchSubMawil}
                       value={String(form.getValues("id_submawil"))}
                       onValueChange={(value) =>
                         form.setValue("id_submawil", Number(value), {
@@ -475,7 +585,7 @@ const UserProfile = ({ userdata }: Props) => {
                         <SelectValue placeholder="Pilih" />
                       </SelectTrigger>
                       <SelectContent>
-                        {subMawils.map((submawil) => (
+                        {newSubMawils?.map((submawil) => (
                           <SelectItem
                             key={submawil.id}
                             value={String(submawil.id)}
@@ -500,19 +610,19 @@ const UserProfile = ({ userdata }: Props) => {
                   <FormLabel className="font-semibold">Propinsi</FormLabel>
                   <FormControl>
                     <Select
+                      disabled={fetchPropinsi}
                       value={String(form.getValues("propinsi"))}
                       onValueChange={(value) => {
                         form.setValue("propinsi", value, {
                           shouldValidate: true,
                         });
-                        tryGetKota(value);
                       }}
                     >
                       <SelectTrigger className="w-full">
                         <SelectValue placeholder="Pilih" />
                       </SelectTrigger>
                       <SelectContent>
-                        {propinsis.map((propinsi) => (
+                        {newPropinsis?.map((propinsi) => (
                           <SelectItem
                             key={propinsi.id}
                             value={String(propinsi.id)}
@@ -535,19 +645,19 @@ const UserProfile = ({ userdata }: Props) => {
                   <FormLabel className="font-semibold">Kota</FormLabel>
                   <FormControl>
                     <Select
+                      disabled={fetchKota}
                       value={String(form.getValues("kota"))}
                       onValueChange={(value) => {
                         form.setValue("kota", value, {
                           shouldValidate: true,
                         });
-                        tryGetKecamatan(value);
                       }}
                     >
                       <SelectTrigger className="w-full">
                         <SelectValue placeholder="Pilih" />
                       </SelectTrigger>
                       <SelectContent>
-                        {kotas.map((kota) => (
+                        {newKotas?.map((kota) => (
                           <SelectItem key={kota.id} value={String(kota.id)}>
                             {kota.name}
                           </SelectItem>
@@ -569,19 +679,19 @@ const UserProfile = ({ userdata }: Props) => {
                   <FormLabel className="font-semibold">Kecamatan</FormLabel>
                   <FormControl>
                     <Select
+                      disabled={fetchKecamatan}
                       value={String(form.getValues("kec"))}
                       onValueChange={(value) => {
                         form.setValue("kec", value, {
                           shouldValidate: true,
                         });
-                        tryGetKelurahan(value);
                       }}
                     >
                       <SelectTrigger className="w-full">
                         <SelectValue placeholder="Pilih" />
                       </SelectTrigger>
                       <SelectContent>
-                        {kecamatans.map((kecamatan) => (
+                        {newKecamatans?.map((kecamatan) => (
                           <SelectItem
                             key={kecamatan.id}
                             value={String(kecamatan.id)}
@@ -604,6 +714,7 @@ const UserProfile = ({ userdata }: Props) => {
                   <FormLabel className="font-semibold">Kelurahan</FormLabel>
                   <FormControl>
                     <Select
+                      disabled={fetchKelurahan}
                       value={String(form.getValues("kel"))}
                       onValueChange={(value) =>
                         form.setValue("kel", value, {
@@ -615,7 +726,7 @@ const UserProfile = ({ userdata }: Props) => {
                         <SelectValue placeholder="Pilih" />
                       </SelectTrigger>
                       <SelectContent>
-                        {kelurahans.map((kelurahan) => (
+                        {newKelurahans?.map((kelurahan) => (
                           <SelectItem
                             key={kelurahan.id}
                             value={String(kelurahan.id)}
