@@ -50,7 +50,6 @@ const GetTokenWrapper = ({
 
   const showInfo = useCallback(
     (userdataProfile: TUserProfile | undefined) => {
-      console.log("userdataProfile :", userdataProfile);
       if (
         userdataProfile &&
         Object.values(userdataProfile).some((value) => value === null) &&

@@ -14,10 +14,6 @@ import {
   ACCEPTED_IMAGE_TYPES,
   ImageOptionsCompression,
   LoginDataResponse,
-  TKecamatan,
-  TKelurahan,
-  TKota,
-  TPropinsi,
   TUpdateUserProfile,
   TUserProfile,
   UpdateUserProfileSchema,
@@ -27,7 +23,6 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import imageCompression from "browser-image-compression";
 import { CircleX, LoaderIcon, Save } from "lucide-react";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
 import React from "react";
 import { useForm } from "react-hook-form";
 import { Button } from "../ui/button";
@@ -55,24 +50,13 @@ type Props = {
 };
 
 const UserProfile = ({ userdata }: Props) => {
-  const router = useRouter();
   const [loadingForm, setLoadingForm] = React.useState(false);
   const [imageFile, setImageFile] = React.useState<FileList>();
   const [imageCompressProgress, setImageCompressProgress] =
     React.useState(false);
   const [imagePreview, setImagePreview] = React.useState("");
-  // const [mawils, setMawils] = React.useState<TMawil[]>([]);
-  // const [subMawils, setSubMawils] = React.useState<TSubmawil[]>([]);
-  const [propinsis, setPropinsis] = React.useState<TPropinsi[]>([]);
-  const [kotas, setKotas] = React.useState<TKota[]>([]);
-  const [kecamatans, setKecamatans] = React.useState<TKecamatan[]>([]);
-  const [kelurahans, setKelurahans] = React.useState<TKelurahan[]>([]);
 
-  const form = useForm<TUpdateUserProfile>({
-    resolver: zodResolver(UpdateUserProfileSchema),
-  });
-
-  const { data, isFetching } = useQuery({
+  const { data } = useQuery({
     queryKey: ["userProfile"],
     queryFn: async () => {
       const { accessToken } = (await queryClient.getQueryData(["token"])) as {
@@ -85,6 +69,25 @@ const UserProfile = ({ userdata }: Props) => {
       return userProfile;
     },
     refetchOnMount: true,
+  });
+
+  const form = useForm<TUpdateUserProfile>({
+    resolver: zodResolver(UpdateUserProfileSchema),
+    defaultValues: {
+      username: data?.username,
+      ktp: data?.url,
+      role: data?.role.role === "PW" ? "2" : "3",
+      nik: data?.nik,
+      nama: data?.nama,
+      alamat: data?.alamat,
+      tlp: data?.tlp,
+      kel: data?.kel,
+      kec: data?.kec,
+      kota: data?.kota,
+      propinsi: data?.propinsi,
+      id_mawil: data?.id_mawil,
+      id_submawil: data?.id_submawil,
+    },
   });
 
   const { data: newMawils, isFetching: fetchMawil } = useQuery({
@@ -166,64 +169,6 @@ const UserProfile = ({ userdata }: Props) => {
     enabled: form.getValues("kec") !== undefined,
   });
 
-  // const tryGetMawil = React.useCallback(async () => {
-  //   const { accessToken } = (await queryClient.getQueryData(["token"])) as {
-  //     accessToken: string;
-  //   };
-  //   const newMawil = await getMawil(accessToken);
-  //   console.log("MAWILS :", newMawil);
-  //   setMawils(newMawil);
-  // }, []);
-
-  // const tryGetSubMawil = React.useCallback(async (id_mawil: number) => {
-  //   const { accessToken } = (await queryClient.getQueryData(["token"])) as {
-  //     accessToken: string;
-  //   };
-  //   const newSubMawil = await getSubmawil(accessToken, id_mawil);
-  //   setSubMawils(newSubMawil);
-  // }, []);
-
-  /* const tryGetPropinsi = React.useCallback(async () => {
-    const { accessToken } = (await queryClient.getQueryData(["token"])) as {
-      accessToken: string;
-    };
-    const newPropinsi = await getPropinsi(accessToken);
-    setPropinsis(newPropinsi);
-  }, []);
-
-  const tryGetKota = async (id_propinsi: string) => {
-    const { accessToken } = (await queryClient.getQueryData(["token"])) as {
-      accessToken: string;
-    };
-    const newKota = await getKota(accessToken, id_propinsi);
-    setKotas(newKota);
-  };
-  const tryGetKecamatan = async (id_kota: string) => {
-    const { accessToken } = (await queryClient.getQueryData(["token"])) as {
-      accessToken: string;
-    };
-    const newKecamatan = await getKecamatan(accessToken, id_kota);
-    setKecamatans(newKecamatan);
-  };
-  const tryGetKelurahan = async (id_kecamatan: string) => {
-    const { accessToken } = (await queryClient.getQueryData(["token"])) as {
-      accessToken: string;
-    };
-    const newKelurahan = await getKelurahan(accessToken, id_kecamatan);
-    setKelurahans(newKelurahan);
-  }; */
-
-  // React.useEffect(() => {
-  // tryGetMawil();
-  // tryGetSubMawil();
-  // tryGetPropinsi();
-  // if (data) {
-  //   tryGetKota(data?.propinsi);
-  //   tryGetKecamatan(data?.kota);
-  //   tryGetKelurahan(data?.kec);
-  // }
-  // }, [tryGetMawil, tryGetPropinsi]);
-
   const mutation = useMutation({
     mutationFn: saveUserProfile,
   });
@@ -276,73 +221,6 @@ const UserProfile = ({ userdata }: Props) => {
     );
   }
 
-  const setAllValues = React.useCallback(
-    (values: TUserProfile) => {
-      form.setValue("username", values.username);
-      form.setValue("ktp", values.url);
-      form.setValue("role", String(values.roleId));
-      form.setValue("nik", values.nik);
-      form.setValue("nama", values.nama);
-      form.setValue("alamat", values.alamat);
-      form.setValue("tlp", values.tlp);
-      if (values.id_mawil) {
-        form.setValue("id_mawil", values.id_mawil, {
-          shouldValidate: true,
-        });
-      }
-      if (values.id_submawil && newMawils && newSubMawils) {
-        form.setValue("id_submawil", values.id_submawil);
-      }
-      if (values.propinsi) {
-        form.setValue("propinsi", values.propinsi, { shouldValidate: true });
-      }
-      if (values.kota && newPropinsis && newKotas) {
-        form.setValue("kota", values.kota, { shouldValidate: true });
-      }
-      if (values.kec && newPropinsis && newKotas && newKecamatans) {
-        form.setValue("kec", values.kec, { shouldValidate: true });
-      }
-      if (
-        values.kel &&
-        newPropinsis &&
-        newKotas &&
-        newKecamatans &&
-        newKelurahans
-      ) {
-        form.setValue("kel", values.kel, { shouldValidate: true });
-      }
-    },
-    [
-      form,
-      newKecamatans,
-      newKelurahans,
-      newKotas,
-      newMawils,
-      newPropinsis,
-      newSubMawils,
-    ]
-  );
-
-  React.useEffect(() => {
-    if (data) {
-      setAllValues(data);
-    }
-  }, [data, setAllValues]);
-
-  /* React.useEffect(() => {
-    if (data) {
-      if (propinsis && kotas && kecamatans && kelurahans) {
-        form.setValue("kota", data.kota, { shouldValidate: true });
-        // }
-        // if (kecamatans) {
-        form.setValue("kec", data.kec, { shouldValidate: true });
-        // }
-        // if (kelurahans) {
-        form.setValue("kel", data.kel, { shouldValidate: true });
-      }
-    }
-  }, [data, form, kecamatans, kelurahans, kotas, propinsis]); */
-
   const fileToBase64 = async (e: React.ChangeEvent<HTMLInputElement>) => {
     let files = e.target?.files as FileList;
     const file = files.item(0);
@@ -377,14 +255,6 @@ const UserProfile = ({ userdata }: Props) => {
     const file = files.item(0);
     if (file?.size) fileToBase64(e);
   };
-
-  /* if (isFetching) {
-    return (
-      <div className="flex items-center justify-center h-screen">
-        <LoaderIcon className="h-10 w-10 animate-spin" />
-      </div>
-    );
-  } */
 
   return (
     <>
@@ -452,17 +322,6 @@ const UserProfile = ({ userdata }: Props) => {
                   <FormMessage />
                   {form.getValues("ktp") && !imagePreview && (
                     <div className="flex relative">
-                      {/* <Button
-                        type="button"
-                        className="btn-sm absolute text-white hover:text-black"
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => {
-                          form.resetField("ktp");
-                        }}
-                      >
-                        <CircleX size={24} />
-                      </Button> */}
                       <Image
                         width={1024}
                         height={1024}
@@ -535,7 +394,7 @@ const UserProfile = ({ userdata }: Props) => {
             <FormField
               control={form.control}
               name="id_mawil"
-              render={({ field }) => (
+              render={() => (
                 <FormItem className="space-y-1 py-4 px-4 bg-white w-full">
                   <FormLabel className="font-semibold">Mawil</FormLabel>
                   <FormControl>
@@ -546,7 +405,9 @@ const UserProfile = ({ userdata }: Props) => {
                         form.setValue("id_mawil", Number(value), {
                           shouldValidate: true,
                         });
-                        // tryGetSubMawil(Number(value));
+                        form.setValue("id_submawil", 0, {
+                          shouldValidate: true,
+                        });
                       }}
                     >
                       <SelectTrigger className="w-full">
@@ -605,7 +466,7 @@ const UserProfile = ({ userdata }: Props) => {
             <FormField
               control={form.control}
               name="propinsi"
-              render={({ field }) => (
+              render={() => (
                 <FormItem className="space-y-1 py-4 px-4 bg-white w-full">
                   <FormLabel className="font-semibold">Propinsi</FormLabel>
                   <FormControl>
@@ -614,6 +475,15 @@ const UserProfile = ({ userdata }: Props) => {
                       value={String(form.getValues("propinsi"))}
                       onValueChange={(value) => {
                         form.setValue("propinsi", value, {
+                          shouldValidate: true,
+                        });
+                        form.setValue("kota", "", {
+                          shouldValidate: true,
+                        });
+                        form.setValue("kec", "", {
+                          shouldValidate: true,
+                        });
+                        form.setValue("kel", "", {
                           shouldValidate: true,
                         });
                       }}
@@ -640,7 +510,7 @@ const UserProfile = ({ userdata }: Props) => {
             <FormField
               control={form.control}
               name="kota"
-              render={({ field }) => (
+              render={() => (
                 <FormItem className="space-y-1 py-4 px-4 bg-white w-full">
                   <FormLabel className="font-semibold">Kota</FormLabel>
                   <FormControl>
@@ -649,6 +519,12 @@ const UserProfile = ({ userdata }: Props) => {
                       value={String(form.getValues("kota"))}
                       onValueChange={(value) => {
                         form.setValue("kota", value, {
+                          shouldValidate: true,
+                        });
+                        form.setValue("kec", "", {
+                          shouldValidate: true,
+                        });
+                        form.setValue("kel", "", {
                           shouldValidate: true,
                         });
                       }}
@@ -674,7 +550,7 @@ const UserProfile = ({ userdata }: Props) => {
             <FormField
               control={form.control}
               name="kec"
-              render={({ field }) => (
+              render={() => (
                 <FormItem className="space-y-1 py-4 px-4 bg-white w-full">
                   <FormLabel className="font-semibold">Kecamatan</FormLabel>
                   <FormControl>
@@ -683,6 +559,9 @@ const UserProfile = ({ userdata }: Props) => {
                       value={String(form.getValues("kec"))}
                       onValueChange={(value) => {
                         form.setValue("kec", value, {
+                          shouldValidate: true,
+                        });
+                        form.setValue("kel", "", {
                           shouldValidate: true,
                         });
                       }}
@@ -709,7 +588,7 @@ const UserProfile = ({ userdata }: Props) => {
             <FormField
               control={form.control}
               name="kel"
-              render={({ field }) => (
+              render={() => (
                 <FormItem className="space-y-1 py-4 px-4 bg-white w-full">
                   <FormLabel className="font-semibold">Kelurahan</FormLabel>
                   <FormControl>
