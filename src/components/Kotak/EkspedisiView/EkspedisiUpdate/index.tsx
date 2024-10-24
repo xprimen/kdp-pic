@@ -16,7 +16,6 @@ import { queryClient } from "@/lib/utils";
 import {
   ACCEPTED_IMAGE_TYPES,
   ImageOptionsCompression,
-  MAX_FILE_SIZE,
   TEkspedisiDetail,
   TEkspedisiKotak,
   TUpdateEkspedisiKotak,
@@ -24,6 +23,7 @@ import {
 } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery } from "@tanstack/react-query";
+import imageCompression from "browser-image-compression";
 import { CircleX, LoaderIcon, Save } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -31,7 +31,6 @@ import React from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { useForm } from "react-hook-form";
-import imageCompression from "browser-image-compression";
 
 type Props = {
   id: number;
@@ -52,9 +51,14 @@ const EkspedisiUpdate = ({ id }: Props) => {
         accessToken: string;
       };
       const data = await getEkspedisiKotak(accessToken);
-      const filter = data.filter(
-        (item) => item.id === id && item.status_terima === 0
-      )[0];
+      let filter = data.filter((item) => item.id === id)[0];
+      const filterDetail = filter.detail_kirim_kotaks.filter(
+        (item) => item.status_terima === 0
+      );
+      filter = {
+        ...filter,
+        detail_kirim_kotaks: filterDetail,
+      };
       setData(filter);
       return data;
     },

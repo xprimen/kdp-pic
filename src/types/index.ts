@@ -217,6 +217,7 @@ export const EkspedisiDetailSchema = z.object({
   kotak: z.object({
     kode_kotak: z.string(),
   }),
+  status_terima: z.number(),
 });
 
 export type TEkspedisiDetail = z.infer<typeof EkspedisiDetailSchema>;
