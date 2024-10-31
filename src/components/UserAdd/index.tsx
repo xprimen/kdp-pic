@@ -1,5 +1,16 @@
 "use client";
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import {
   getKecamatan,
   getKelurahan,
   getKota,
@@ -15,7 +26,6 @@ import {
   AddUserSchema,
   ImageOptionsCompression,
   LoginDataResponse,
-  MAX_FILE_SIZE,
   TKecamatan,
   TKelurahan,
   TKota,
@@ -25,11 +35,12 @@ import {
 } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
+import imageCompression from "browser-image-compression";
 import { CircleX, LoaderIcon, Save } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React from "react";
-import { useForm } from "react-hook-form";
+import { SubmitErrorHandler, useForm } from "react-hook-form";
 import { Button } from "../ui/button";
 import {
   Form,
@@ -49,7 +60,6 @@ import {
 } from "../ui/select";
 import { Textarea } from "../ui/textarea";
 import { toast } from "../ui/use-toast";
-import imageCompression from "browser-image-compression";
 
 type Props = {
   userdata: LoginDataResponse;
@@ -68,6 +78,7 @@ const UserAdd = ({ userdata }: Props) => {
   const [kotas, setKotas] = React.useState<TKota[]>([]);
   const [kecamatans, setKecamatans] = React.useState<TKecamatan[]>([]);
   const [kelurahans, setKelurahans] = React.useState<TKelurahan[]>([]);
+  const [openDialog, setOpenDialog] = React.useState(false);
 
   const form = useForm<AddUser>({
     resolver: zodResolver(AddUserSchema),
@@ -141,6 +152,18 @@ const UserAdd = ({ userdata }: Props) => {
   const mutation = useMutation({
     mutationFn: saveUser,
   });
+
+  const onInvalid: SubmitErrorHandler<AddUser> = (errors) => {
+    const firstError = Object.keys(errors)[0];
+
+    toast({
+      title: "Error",
+      description: "Pada Input " + firstError,
+      variant: "destructive",
+    });
+
+    setOpenDialog(false);
+  };
 
   async function onSubmit(values: AddUser) {
     setLoadingForm(true);
@@ -219,8 +242,8 @@ const UserAdd = ({ userdata }: Props) => {
   return (
     <>
       <Form {...form}>
-        <form
-          onSubmit={form.handleSubmit(onSubmit)}
+        <div
+          // onSubmit={form.handleSubmit(onSubmit)}
           className="space-y-1 flex flex-col"
         >
           <FormField
@@ -550,24 +573,52 @@ const UserAdd = ({ userdata }: Props) => {
               </FormItem>
             )}
           />
-          <Button
-            type="submit"
-            className="mx-4 gap-2 text-md"
-            disabled={loadingForm}
-          >
-            {loadingForm ? (
-              <span className="flex items-center">
-                <LoaderIcon className="mr-2 h-4 w-4 animate-spin" />
-                Loading
-              </span>
-            ) : (
-              <span className="flex items-center">
-                <Save className="mr-2 h-4 w-4" />
-                Simpan
-              </span>
-            )}
-          </Button>
-        </form>
+          <AlertDialog open={openDialog} onOpenChange={setOpenDialog}>
+            <AlertDialogTrigger asChild>
+              <Button
+                type="button"
+                className="mx-4 gap-2 text-md"
+                disabled={loadingForm}
+              >
+                {loadingForm ? (
+                  <span className="flex items-center">
+                    <LoaderIcon className="mr-2 h-4 w-4 animate-spin" />
+                    Loading
+                  </span>
+                ) : (
+                  <span className="flex items-center">
+                    <Save className="mr-2 h-4 w-4" />
+                    Simpan
+                  </span>
+                )}
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>
+                  Apakah Data Yang Dimasukkan Sudah Benar?
+                </AlertDialogTitle>
+                <AlertDialogDescription>
+                  Tekan &quot;OK&quot; untuk melanjutkan, tekan
+                  &quot;Cancel&quot; untuk membatalkan.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter className="flex flex-row items-center justify-end gap-2">
+                <AlertDialogCancel asChild>
+                  <Button variant="outline" className="mt-0">
+                    Cancel
+                  </Button>
+                </AlertDialogCancel>
+                <AlertDialogAction
+                  className="px-8"
+                  onClick={form.handleSubmit(onSubmit, onInvalid)}
+                >
+                  OK
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        </div>
       </Form>
     </>
   );

@@ -1,13 +1,24 @@
 "use client";
 import Map from "@/components/Map";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import {
-  FormLabel,
+  Form,
+  FormControl,
   FormField,
   FormItem,
-  FormControl,
+  FormLabel,
   FormMessage,
-  Form,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import {
@@ -19,41 +30,41 @@ import {
 } from "@/components/ui/select";
 import {
   Sheet,
-  SheetTrigger,
   SheetContent,
   SheetHeader,
   SheetTitle,
+  SheetTrigger,
 } from "@/components/ui/sheet";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/components/ui/use-toast";
-import { getKotak, getKotakSetor, savePasangKotak } from "@/lib/actions/kotak";
+import { getKotak, savePasangKotak } from "@/lib/actions/kotak";
 import {
-  getPropinsi,
-  getKota,
   getKecamatan,
   getKelurahan,
+  getKota,
+  getPropinsi,
 } from "@/lib/actions/users";
 import useCurrentLocation from "@/lib/useCurrentLocation";
 import { queryClient } from "@/lib/utils";
 import {
-  TPropinsi,
-  TKota,
+  ACCEPTED_IMAGE_TYPES,
+  MAX_FILE_SIZE,
   TKecamatan,
   TKelurahan,
+  TKota,
+  TPropinsi,
   TUpdatePasangKotak,
   UpdatePasangKotakSchema,
-  MAX_FILE_SIZE,
-  ACCEPTED_IMAGE_TYPES,
 } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useQuery, useMutation } from "@tanstack/react-query";
-import { LoaderIcon, MapPinIcon, CircleX, Save } from "lucide-react";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { CircleX, LoaderIcon, MapPinIcon, Save } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React from "react";
 import DatePicker from "react-datepicker";
-import { useForm } from "react-hook-form";
+import { SubmitErrorHandler, useForm } from "react-hook-form";
 
 type Props = {
   id: number; //id kotak Number
@@ -69,6 +80,7 @@ const BukaEdit = ({ id }: Props) => {
   const [kecamatans, setKecamatans] = React.useState<TKecamatan[]>([]);
   const [kelurahans, setKelurahans] = React.useState<TKelurahan[]>([]);
   const { location, error } = useCurrentLocation();
+  const [openDialog, setOpenDialog] = React.useState(false);
 
   const { data: kotak } = useQuery({
     queryKey: ["kotak", id],
@@ -98,8 +110,6 @@ const BukaEdit = ({ id }: Props) => {
     },
     shouldFocusError: false,
   });
-
-  console.log("form values :", form.getValues());
 
   const tryGetPropinsi = React.useCallback(async () => {
     const { accessToken } = (await queryClient.getQueryData(["token"])) as {
@@ -146,6 +156,18 @@ const BukaEdit = ({ id }: Props) => {
   const mutation = useMutation({
     mutationFn: savePasangKotak,
   });
+
+  const onInvalid: SubmitErrorHandler<TUpdatePasangKotak> = (errors) => {
+    const firstError = Object.keys(errors)[0];
+
+    toast({
+      title: "Error",
+      description: "Pada Input " + firstError,
+      variant: "destructive",
+    });
+
+    setOpenDialog(false);
+  };
 
   function onSubmit(values: TUpdatePasangKotak) {
     setLoadingForm(true);
@@ -237,9 +259,9 @@ const BukaEdit = ({ id }: Props) => {
   return (
     <>
       <Form {...form}>
-        <form
+        <div
           className="space-y-1 flex flex-col"
-          onSubmit={form.handleSubmit(onSubmit)}
+          // onSubmit={form.handleSubmit(onSubmit)}
         >
           <div className="flex gap-2 px-4 bg-white py-4 items-center">
             <FormLabel className="font-semibold">Kode Kotak :</FormLabel>
@@ -536,24 +558,52 @@ const BukaEdit = ({ id }: Props) => {
               );
             }}
           />
-          <Button
-            type="submit"
-            className="mx-4 gap-2 text-md"
-            disabled={loadingForm}
-          >
-            {loadingForm ? (
-              <span className="flex items-center">
-                <LoaderIcon className="mr-2 h-4 w-4 animate-spin" />
-                Loading
-              </span>
-            ) : (
-              <span className="flex items-center">
-                <Save className="mr-2 h-4 w-4" />
-                Simpan
-              </span>
-            )}
-          </Button>
-        </form>
+          <AlertDialog open={openDialog} onOpenChange={setOpenDialog}>
+            <AlertDialogTrigger asChild>
+              <Button
+                type="button"
+                className="mx-4 gap-2 text-md"
+                disabled={loadingForm}
+              >
+                {loadingForm ? (
+                  <span className="flex items-center">
+                    <LoaderIcon className="mr-2 h-4 w-4 animate-spin" />
+                    Loading
+                  </span>
+                ) : (
+                  <span className="flex items-center">
+                    <Save className="mr-2 h-4 w-4" />
+                    Simpan
+                  </span>
+                )}
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>
+                  Apakah Data Yang Dimasukkan Sudah Benar?
+                </AlertDialogTitle>
+                <AlertDialogDescription>
+                  Tekan &quot;OK&quot; untuk melanjutkan, tekan
+                  &quot;Cancel&quot; untuk membatalkan.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter className="flex flex-row items-center justify-end gap-2">
+                <AlertDialogCancel asChild>
+                  <Button variant="outline" className="mt-0">
+                    Cancel
+                  </Button>
+                </AlertDialogCancel>
+                <AlertDialogAction
+                  className="px-8"
+                  onClick={form.handleSubmit(onSubmit, onInvalid)}
+                >
+                  OK
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        </div>
       </Form>
     </>
   );

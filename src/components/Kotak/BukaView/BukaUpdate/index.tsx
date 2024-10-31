@@ -27,7 +27,18 @@ import { useRouter } from "next/navigation";
 import React from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { useForm } from "react-hook-form";
+import { SubmitErrorHandler, useForm } from "react-hook-form";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 type Props = {
   id: number; //id kotak Number
@@ -38,6 +49,7 @@ const BukaUpdate = ({ id }: Props) => {
   const [imageFile, setImageFile] = React.useState<FileList>();
   const [imagePreview, setImagePreview] = React.useState("");
   const [pendapatanDisplay, setPendapatanDisplay] = React.useState("");
+  const [openDialog, setOpenDialog] = React.useState(false);
 
   const { data: kotak, isFetching } = useQuery({
     queryKey: ["kotak", id],
@@ -67,6 +79,18 @@ const BukaUpdate = ({ id }: Props) => {
   const mutation = useMutation({
     mutationFn: saveBukaKotak,
   });
+
+  const onInvalid: SubmitErrorHandler<TUpdateBukaKotak> = (errors) => {
+    const firstError = Object.keys(errors)[0];
+
+    toast({
+      title: "Error",
+      description: "Pada Input " + firstError,
+      variant: "destructive",
+    });
+
+    setOpenDialog(false);
+  };
 
   function onSubmit(values: TUpdateBukaKotak) {
     setLoadingForm(true);
@@ -158,9 +182,9 @@ const BukaUpdate = ({ id }: Props) => {
   return (
     <>
       <Form {...form}>
-        <form
+        <div
           className="space-y-1 flex flex-col"
-          onSubmit={form.handleSubmit(onSubmit)}
+          // onSubmit={form.handleSubmit(onSubmit)}
         >
           <div className="flex gap-2 px-4 bg-white py-4 items-center">
             <FormLabel className="font-semibold">Kode Kotak :</FormLabel>
@@ -306,24 +330,52 @@ const BukaUpdate = ({ id }: Props) => {
               );
             }}
           />
-          <Button
-            type="submit"
-            className="mx-4 gap-2 text-md"
-            disabled={loadingForm}
-          >
-            {loadingForm ? (
-              <span className="flex items-center">
-                <LoaderIcon className="mr-2 h-4 w-4 animate-spin" />
-                Loading
-              </span>
-            ) : (
-              <span className="flex items-center">
-                <Save className="mr-2 h-4 w-4" />
-                Simpan
-              </span>
-            )}
-          </Button>
-        </form>
+          <AlertDialog open={openDialog} onOpenChange={setOpenDialog}>
+            <AlertDialogTrigger asChild>
+              <Button
+                type="button"
+                className="mx-4 gap-2 text-md"
+                disabled={loadingForm}
+              >
+                {loadingForm ? (
+                  <span className="flex items-center">
+                    <LoaderIcon className="mr-2 h-4 w-4 animate-spin" />
+                    Loading
+                  </span>
+                ) : (
+                  <span className="flex items-center">
+                    <Save className="mr-2 h-4 w-4" />
+                    Simpan
+                  </span>
+                )}
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>
+                  Apakah Data Yang Dimasukkan Sudah Benar?
+                </AlertDialogTitle>
+                <AlertDialogDescription>
+                  Tekan &quot;OK&quot; untuk melanjutkan, tekan
+                  &quot;Cancel&quot; untuk membatalkan.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter className="flex flex-row items-center justify-end gap-2">
+                <AlertDialogCancel asChild>
+                  <Button variant="outline" className="mt-0">
+                    Cancel
+                  </Button>
+                </AlertDialogCancel>
+                <AlertDialogAction
+                  className="px-8"
+                  onClick={form.handleSubmit(onSubmit, onInvalid)}
+                >
+                  OK
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        </div>
       </Form>
     </>
   );

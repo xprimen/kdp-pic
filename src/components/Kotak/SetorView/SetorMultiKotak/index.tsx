@@ -1,4 +1,15 @@
 "use client";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -16,21 +27,20 @@ import { numberToString, queryClient, terbilang } from "@/lib/utils";
 import {
   ACCEPTED_IMAGE_TYPES,
   ImageOptionsCompression,
-  MAX_FILE_SIZE,
   TKotakSetor,
   TUpdateSetorMultiKotak,
   UpdateSetorMultiKotakSchema,
 } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery } from "@tanstack/react-query";
+import imageCompression from "browser-image-compression";
 import { CircleX, LoaderIcon, Save } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { useForm } from "react-hook-form";
-import imageCompression from "browser-image-compression";
+import { SubmitErrorHandler, useForm } from "react-hook-form";
 
 const SetorMultiKotak = () => {
   const router = useRouter();
@@ -40,6 +50,7 @@ const SetorMultiKotak = () => {
     React.useState(false);
   const [imagePreview, setImagePreview] = React.useState("");
   const [jumlahSetoran, setJumlahSetoran] = React.useState<number>(0);
+  const [openDialog, setOpenDialog] = React.useState(false);
 
   const { data, isFetching } = useQuery({
     queryKey: ["kotakBelumSetor"],
@@ -67,6 +78,18 @@ const SetorMultiKotak = () => {
   const mutation = useMutation({
     mutationFn: saveSetorKotak,
   });
+
+  const onInvalid: SubmitErrorHandler<TUpdateSetorMultiKotak> = (errors) => {
+    const firstError = Object.keys(errors)[0];
+
+    toast({
+      title: "Error",
+      description: "Pada Input " + firstError,
+      variant: "destructive",
+    });
+
+    setOpenDialog(false);
+  };
 
   function onSubmit(values: TUpdateSetorMultiKotak) {
     setLoadingForm(true);
@@ -146,9 +169,9 @@ const SetorMultiKotak = () => {
   return (
     <>
       <Form {...form}>
-        <form
+        <div
           className="space-y-1 flex flex-col"
-          onSubmit={form.handleSubmit(onSubmit)}
+          // onSubmit={form.handleSubmit(onSubmit)}
         >
           <div className="flex flex-col">
             <div className="flex items-center p-4 bg-green-500 font-bold">
@@ -317,24 +340,52 @@ const SetorMultiKotak = () => {
               );
             }}
           />
-          <Button
-            type="submit"
-            className="mx-4 gap-2 text-md"
-            disabled={loadingForm}
-          >
-            {loadingForm ? (
-              <span className="flex items-center">
-                <LoaderIcon className="mr-2 h-4 w-4 animate-spin" />
-                Loading
-              </span>
-            ) : (
-              <span className="flex items-center">
-                <Save className="mr-2 h-4 w-4" />
-                Simpan
-              </span>
-            )}
-          </Button>
-        </form>
+          <AlertDialog open={openDialog} onOpenChange={setOpenDialog}>
+            <AlertDialogTrigger asChild>
+              <Button
+                type="button"
+                className="mx-4 gap-2 text-md"
+                disabled={loadingForm}
+              >
+                {loadingForm ? (
+                  <span className="flex items-center">
+                    <LoaderIcon className="mr-2 h-4 w-4 animate-spin" />
+                    Loading
+                  </span>
+                ) : (
+                  <span className="flex items-center">
+                    <Save className="mr-2 h-4 w-4" />
+                    Simpan
+                  </span>
+                )}
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>
+                  Apakah Data Yang Dimasukkan Sudah Benar?
+                </AlertDialogTitle>
+                <AlertDialogDescription>
+                  Tekan &quot;OK&quot; untuk melanjutkan, tekan
+                  &quot;Cancel&quot; untuk membatalkan.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter className="flex flex-row items-center justify-end gap-2">
+                <AlertDialogCancel asChild>
+                  <Button variant="outline" className="mt-0">
+                    Cancel
+                  </Button>
+                </AlertDialogCancel>
+                <AlertDialogAction
+                  className="px-8"
+                  onClick={form.handleSubmit(onSubmit, onInvalid)}
+                >
+                  OK
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        </div>
       </Form>
     </>
   );

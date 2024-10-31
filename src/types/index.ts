@@ -344,9 +344,9 @@ export type TGeocodeMarkers = {
 
 export const ChangePasswordSchema = z
   .object({
-    password: z.string().min(2, { message: "Minimal 2 huruf" }),
-    passwordold: z.string().min(2, { message: "Minimal 2 huruf" }),
-    confPassword: z.string().min(2, { message: "Minimal 2 huruf" }),
+    password: z.string().min(2, { message: "Wajib Diisi" }),
+    passwordold: z.string().min(2, { message: "Wajib Diisi" }),
+    confPassword: z.string().min(2, { message: "Wajib Diisi" }),
   })
   .refine((data) => data.password === data.confPassword, {
     message: "Konfirmasi Password Baru Berbeda",

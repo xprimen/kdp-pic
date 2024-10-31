@@ -1,5 +1,16 @@
 "use client";
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import {
   getKecamatan,
   getKelurahan,
   getKota,
@@ -24,7 +35,7 @@ import imageCompression from "browser-image-compression";
 import { CircleX, LoaderIcon, Save } from "lucide-react";
 import Image from "next/image";
 import React from "react";
-import { useForm } from "react-hook-form";
+import { FieldErrors, SubmitErrorHandler, useForm } from "react-hook-form";
 import { Button } from "../ui/button";
 import {
   Form,
@@ -55,6 +66,7 @@ const UserProfile = ({ userdata }: Props) => {
   const [imageCompressProgress, setImageCompressProgress] =
     React.useState(false);
   const [imagePreview, setImagePreview] = React.useState("");
+  const [openDialog, setOpenDialog] = React.useState(false);
 
   const { data } = useQuery({
     queryKey: ["userProfile"],
@@ -173,8 +185,21 @@ const UserProfile = ({ userdata }: Props) => {
     mutationFn: saveUserProfile,
   });
 
+  const onInvalid: SubmitErrorHandler<TUpdateUserProfile> = (errors) => {
+    const firstError = Object.keys(errors)[0];
+
+    toast({
+      title: "Error",
+      description: "Pada Input " + firstError,
+      variant: "destructive",
+    });
+
+    setOpenDialog(false);
+  };
+
   async function onSubmit(values: TUpdateUserProfile) {
     setLoadingForm(true);
+    setOpenDialog(false);
 
     const { accessToken } = queryClient.getQueryData(["token"]) as {
       accessToken: string;
@@ -259,8 +284,8 @@ const UserProfile = ({ userdata }: Props) => {
   return (
     <>
       <Form {...form}>
-        <form
-          onSubmit={form.handleSubmit(onSubmit)}
+        <div
+          // onSubmit={form.handleSubmit(onSubmit)}
           className="space-y-1 flex flex-col"
         >
           <div className="space-y-1 py-4 px-4 bg-white">
@@ -621,24 +646,52 @@ const UserProfile = ({ userdata }: Props) => {
               )}
             />
           </div>
-          <Button
-            type="submit"
-            className="mx-4 gap-2 text-md"
-            disabled={loadingForm}
-          >
-            {loadingForm ? (
-              <span className="flex items-center">
-                <LoaderIcon className="mr-2 h-4 w-4 animate-spin" />
-                Loading
-              </span>
-            ) : (
-              <span className="flex items-center">
-                <Save className="mr-2 h-4 w-4" />
-                Simpan
-              </span>
-            )}
-          </Button>
-        </form>
+          <AlertDialog open={openDialog} onOpenChange={setOpenDialog}>
+            <AlertDialogTrigger asChild>
+              <Button
+                type="button"
+                className="mx-4 gap-2 text-md"
+                disabled={loadingForm}
+              >
+                {loadingForm ? (
+                  <span className="flex items-center">
+                    <LoaderIcon className="mr-2 h-4 w-4 animate-spin" />
+                    Loading
+                  </span>
+                ) : (
+                  <span className="flex items-center">
+                    <Save className="mr-2 h-4 w-4" />
+                    Simpan
+                  </span>
+                )}
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>
+                  Apakah Data Yang Dimasukkan Sudah Benar?
+                </AlertDialogTitle>
+                <AlertDialogDescription>
+                  Tekan &quot;OK&quot; untuk melanjutkan, tekan
+                  &quot;Cancel&quot; untuk membatalkan.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter className="flex flex-row items-center justify-end gap-2">
+                <AlertDialogCancel asChild>
+                  <Button variant="outline" className="mt-0">
+                    Cancel
+                  </Button>
+                </AlertDialogCancel>
+                <AlertDialogAction
+                  className="px-8"
+                  onClick={form.handleSubmit(onSubmit, onInvalid)}
+                >
+                  OK
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        </div>
       </Form>
     </>
   );
