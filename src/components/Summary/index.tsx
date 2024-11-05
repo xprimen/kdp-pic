@@ -18,16 +18,33 @@ const Summary = () => {
         accessToken: string;
       };
       const dataTotalDonasi = (await getTotalDonasi(accessToken)) as {
-        total_setor: string;
+        total_pendapatan: string;
+        month_year: string;
       };
       const dataTotalSetor = (await getTotalSetor(accessToken)) as {
-        total_setor_PW: string;
+        total_pendapatan: string;
+        month_year: string;
       };
 
-      return {
-        total_donasi: numberToString(Number(dataTotalDonasi.total_setor)),
-        total_setor: numberToString(Number(dataTotalSetor.total_setor_PW)),
+      const ret = {
+        total_donasi: {
+          month_year: dataTotalDonasi?.month_year,
+          nilai: numberToString(Number(dataTotalDonasi.total_pendapatan)),
+        },
+        total_setor: {
+          month_year: dataTotalSetor
+            ? dataTotalSetor.month_year
+            : Intl.DateTimeFormat("id-ID", {
+                year: "numeric",
+                month: "short",
+              }).format(new Date()),
+          nilai: dataTotalSetor
+            ? numberToString(Number(dataTotalSetor.total_pendapatan))
+            : 0,
+        },
       };
+
+      return ret;
     },
     refetchOnMount: true,
   });
@@ -50,18 +67,26 @@ const Summary = () => {
           <HandCoins className="absolute text-white/30 right-0 top-1/2 w-20 h-20 -translate-x-1/2 -translate-y-1/2" />
           <CardHeader className="py-2">
             <CardDescription className="text-white uppercase">
-              Total Donasi
+              Total Donasi Bulan :{" "}
+              <span className="font-bold">
+                {total?.total_donasi.month_year}
+              </span>
             </CardDescription>
-            <CardTitle className="text-4xl">Rp {total?.total_donasi}</CardTitle>
+            <CardTitle className="text-4xl">
+              Rp {total?.total_donasi.nilai}
+            </CardTitle>
           </CardHeader>
         </Card>
         <Card className="bg-[#f9802d] text-white relative py-4">
           <HeartHandshake className="absolute text-white/30 right-0 top-1/2 w-20 h-20 -translate-x-1/2 -translate-y-1/2" />
           <CardHeader className="py-2">
             <CardDescription className="text-white uppercase">
-              Total Disetor
+              Total Disetor Bulan :{" "}
+              <span className="font-bold">{total?.total_setor.month_year}</span>
             </CardDescription>
-            <CardTitle className="text-4xl">Rp {total?.total_setor}</CardTitle>
+            <CardTitle className="text-4xl">
+              Rp {total?.total_setor.nilai || 0}
+            </CardTitle>
           </CardHeader>
         </Card>
         <TotalKotak />

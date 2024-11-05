@@ -135,7 +135,8 @@ export const saveSetorKotak = async ({
 // /allkotaksetor  //keseluruhan
 export const getTotalDonasi = async (token: string) => {
   return await axiosInstance(token)
-    .get("/dashboardunboxingsetor ")
+    // .get("/dashboardunboxingsetor")
+    .get("/donasibulanini")
     .then((res) => {
       const data = res.data;
       return data;
@@ -144,7 +145,7 @@ export const getTotalDonasi = async (token: string) => {
 
 export const getTotalSetor = async (token: string) => {
   return await axiosInstance(token)
-    .get("/dashboardkotaksetorPW ")
+    .get("/dashboardkotaksetorPW")
     .then((res) => {
       const data = res.data;
       return data;

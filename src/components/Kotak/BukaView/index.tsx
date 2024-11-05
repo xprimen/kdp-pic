@@ -122,14 +122,10 @@ const BukaView = ({ userdata }: Props) => {
                     <QrCode size="25" />
                   </Button>
                 </div>
-                {/* <Separator />
+                <Separator />
                 <div className="py-2">
-                  <p>
-                    <span className="font-bold">Alamat :</span>{" "}
-                    {dt.alamat_penempatan} asdasd asd asdasd asdas dasd asd asd
-                    asd asd asd Kelurahan, Kecamatan, Kab/Kota, Provinsi
-                  </p>
-                </div> */}
+                  <p>Alamat : {dt.alamat_penempatan}</p>
+                </div>
               </CardContent>
               {userdata.role === "2" && dt.id_pk === null && (
                 <>
