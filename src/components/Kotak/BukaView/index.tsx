@@ -104,22 +104,32 @@ const BukaView = ({ userdata }: Props) => {
                 </CardTitle>
               </CardHeader>
               <Separator className="bg-green-400" />
-              <CardContent className="text-sm flex justify-between py-4">
-                <div className="flex items-center space-x-2">
-                  <UserCircle size="20" />
-                  <span>{dt.PkUser?.nama || dt.PwUser?.nama}</span>
+              <CardContent className="text-sm py-4">
+                <div className="flex justify-between py-2">
+                  <div className="flex items-center space-x-2">
+                    <UserCircle size="20" />
+                    <span>{dt.PkUser?.nama || dt.PwUser?.nama}</span>
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="text-slate-600"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      router.push("/cetak_qrcode/" + dt.id_kotak);
+                    }}
+                  >
+                    <QrCode size="25" />
+                  </Button>
                 </div>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="text-slate-600"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    router.push("/cetak_qrcode/" + dt.id_kotak);
-                  }}
-                >
-                  <QrCode size="25" />
-                </Button>
+                {/* <Separator />
+                <div className="py-2">
+                  <p>
+                    <span className="font-bold">Alamat :</span>{" "}
+                    {dt.alamat_penempatan} asdasd asd asdasd asdas dasd asd asd
+                    asd asd asd Kelurahan, Kecamatan, Kab/Kota, Provinsi
+                  </p>
+                </div> */}
               </CardContent>
               {userdata.role === "2" && dt.id_pk === null && (
                 <>

@@ -293,7 +293,7 @@ export type TUpdateSetorSingleKotak = z.infer<
 
 export const UpdateSetorMultiKotakSchema = z.object({
   tgl_setor: z.string().min(1, "Tanggal Dibuka Wajib Diisi"),
-  kotak: z.array(z.string()).min(1, "Minimal 1 kotak dipilih"),
+  kotak: z.array(z.number()).min(1, "Minimal 1 kotak dipilih"),
   jumlah_setor: z.string(),
   foto_bukti: z.string(),
 });

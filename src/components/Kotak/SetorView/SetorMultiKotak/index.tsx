@@ -205,20 +205,17 @@ const SetorMultiKotak = () => {
                                   .getValues("jumlah_setor")
                                   ?.replaceAll(",", "")
                               ) || 0;
-                            const kotaksVal: string[] =
+                            const kotaksVal: number[] =
                               form.getValues("kotak") || [];
                             if (e.target.checked === true) {
-                              kotaksVal.push(String(item.id_trkotak));
+                              kotaksVal.push(item.id);
                               form.setValue("kotak", kotaksVal);
                               form.setError("kotak", {
                                 message: "",
                               });
                               jumlah_setor += item.pendapatan_kotak;
                             } else {
-                              kotaksVal.splice(
-                                kotaksVal.indexOf(String(item.id_trkotak)),
-                                1
-                              );
+                              kotaksVal.splice(kotaksVal.indexOf(item.id), 1);
                               form.setValue("kotak", kotaksVal);
                               jumlah_setor =
                                 jumlah_setor - item.pendapatan_kotak;

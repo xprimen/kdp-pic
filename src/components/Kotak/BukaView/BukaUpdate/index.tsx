@@ -116,9 +116,9 @@ const BukaUpdate = ({ id }: Props) => {
             description: "Kotak Berhasil Dibuka",
           });
           queryClient.invalidateQueries({
-            queryKey: ["kotakIdle", "kotakTerpasang"],
+            queryKey: ["kotakIdle", "kotakTerpasang", "historyKotakSetor"],
           });
-          router.replace("/secure/kotak?tab=buka");
+          router.replace("/secure/kotak?tab=setor");
         },
         onError: () => {
           setLoadingForm(false);
