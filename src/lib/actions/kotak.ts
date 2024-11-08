@@ -132,6 +132,16 @@ export const saveSetorKotak = async ({
   return await axiosInstance(token).patch("/setor", values);
 };
 
+export const deleteKotakBuka = async ({
+  values,
+  token,
+}: {
+  values: number;
+  token: string;
+}) => {
+  return await axiosInstance(token).delete("/unboxing/" + values);
+};
+
 // /allkotaksetor  //keseluruhan
 export const getTotalDonasi = async (token: string) => {
   return await axiosInstance(token)
