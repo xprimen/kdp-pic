@@ -12,62 +12,6 @@ export const logoutAction = () => {
   redirect("/", RedirectType.replace);
 };
 
-export const loginActionExpo = async (
-  values: LoginFormInput,
-  callback: string
-): // Promise<void>
-Promise<{
-  success: boolean;
-  message: string;
-  data?: { accessToken: string; refreshToken: string };
-}> => {
-  return await axios
-    .post(process.env.BASE_API + "/login", values, {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
-    .then((res: AxiosResponse) => {
-      const accessToken = res.data.accessToken;
-      const refreshToken = res.data.refreshToken;
-      const decodedData = decodeToken<LoginDataResponse>(accessToken);
-
-      // const redirectTo = new URLSearchParams(callback);
-
-      if (decodedData.role === "1001") {
-        // redirectTo.append("success", "false");
-        // redirectTo.append("message", "Login Gagal, User Tidak Memiliki Akses");
-        // redirect(redirectTo.toString(), RedirectType.push);
-        return {
-          success: false,
-          message: "Login Gagal, User Tidak Memiliki Akses",
-        };
-      }
-
-      // redirectTo.append("success", "true");
-      // redirectTo.append("accessToken", accessToken);
-      // redirectTo.append("refreshToken", refreshToken);
-      // redirect(redirectTo.toString(), RedirectType.push);
-
-      return {
-        success: true,
-        message: "Berhasil",
-        data: { accessToken, refreshToken },
-      };
-    })
-    .catch((e) => {
-      // const redirectTo = new URLSearchParams(callback);
-      // redirectTo.append("success", "false");
-      // redirectTo.append("message", "Login Gagal, User Tidak Memiliki Akses");
-      // redirect(redirectTo.toString(), RedirectType.push);
-      return {
-        success: false,
-        message:
-          "Login Gagal. Cek Kembali Username dan Password Anda atau Hubungi Admin.",
-      };
-    });
-};
-
 export const loginAction = async (
   values: LoginFormInput
 ): Promise<{
