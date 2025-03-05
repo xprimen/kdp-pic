@@ -1,3 +1,4 @@
+import React from "react";
 import {
   Card,
   CardContent,
@@ -84,7 +85,7 @@ const TotalKotak = () => {
             ) : (
               <span>{data?.belumSetor}</span>
             )}
-            <span>Belum Setor</span>
+            <span>Pending</span>
           </div>
         </div>
       </CardContent>

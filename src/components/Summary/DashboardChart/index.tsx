@@ -1,10 +1,15 @@
-import { getKotakSudahDisetor } from "@/lib/actions/kotak";
+import { Button } from "@/components/ui/button";
+import {
+  getGrafiksetoranGlobal,
+  getGrafiksetoranPW,
+} from "@/lib/actions/kotak";
 import { numberToString, queryClient } from "@/lib/utils";
-import { TKotakSetor } from "@/types";
+import { TChartKotak } from "@/types";
 import { useQuery } from "@tanstack/react-query";
-import { Loader } from "lucide-react";
+import { ChevronLeft, ChevronRight, Loader } from "lucide-react";
+import React from "react";
 import { Bar, BarChart, CartesianGrid, XAxis } from "recharts";
-import { Card, CardContent, CardHeader, CardTitle } from "../../ui/card";
+import { Card, CardContent } from "../../ui/card";
 import {
   ChartConfig,
   ChartContainer,
@@ -15,12 +20,12 @@ import {
 } from "../../ui/chart";
 
 const chartConfig = {
-  donasi: {
-    label: "Donasi",
+  donasiGlobal: {
+    label: "Setoran Global",
     color: "#16a34a",
   },
-  disetor: {
-    label: "Disetor",
+  donasiPW: {
+    label: "Setoran Anda",
     color: "#f9802d",
   },
 } satisfies ChartConfig;
@@ -41,37 +46,50 @@ const months = [
 ];
 
 const DashboardChart = () => {
+  const [year, setYear] = React.useState(
+    new Intl.DateTimeFormat("id-ID", { year: "numeric" }).format(new Date())
+  ); //Tahun Grafik
+
   const { data, isFetching } = useQuery({
-    queryKey: ["historyKotakSetor"],
+    queryKey: ["historyKotakSetor", year],
     queryFn: async (): Promise<any> => {
       const { accessToken } = (await queryClient.getQueryData(["token"])) as {
         accessToken: string;
       };
-      const data = (await getKotakSudahDisetor(accessToken)) as TKotakSetor[];
-      const groups = data.reduce((group, d: TKotakSetor) => {
-        const tglSetor = d.setor?.tgl_setor;
-        const month = tglSetor ? tglSetor.split("-")[1] : "";
 
-        if (!group[month]) {
-          group[month] = 0;
-        }
-        // group[month].push(d);
-        group[month] = d.pendapatan_kotak + group[month];
-        return group;
-      }, {} as Record<string, number>);
+      const data_pw = (await getGrafiksetoranPW(
+        accessToken,
+        Number(year)
+      )) as TChartKotak[];
 
-      const groupArrays = Object.keys(groups).map((month) => {
-        return {
-          month: Number(month) - 1,
-          disetor: groups[month],
-        };
-      });
+      const data_global = (await getGrafiksetoranGlobal(
+        accessToken,
+        Number(year)
+      )) as TChartKotak[];
+
+      const data_global_edit = data_global.filter((d) =>
+        d.month_year.includes(String(year))
+      );
 
       const res = months.map((month, key: number) => {
-        const disetor = groupArrays.find((d) => d.month === key)?.disetor || 0;
+        const dataPW = data_pw.find((d, index) => {
+          if (Number(year) === 2024) {
+            return index === key - 10;
+          } else {
+            return index === key;
+          }
+        });
+        const dataGLobal = data_global_edit.find((d, index) => {
+          if (Number(year) === 2024) {
+            return index === key - 10;
+          } else {
+            return index === key;
+          }
+        });
         return {
           month,
-          disetor,
+          donasiPW: dataPW?.total_pendapatan || 0,
+          donasiGlobal: dataGLobal?.total_pendapatan || 0,
         };
       });
 
@@ -79,12 +97,47 @@ const DashboardChart = () => {
     },
   });
 
+  const arrowButton = (arrow: "left" | "right") => (
+    <Button
+      disabled={
+        Number(year) <= 2024
+          ? arrow === "left"
+            ? true
+            : false
+          : arrow === "left"
+          ? false
+          : true
+      }
+      onClick={() => {
+        const newYear = Number(year) + (arrow === "left" ? -1 : 1);
+        setYear(String(newYear));
+      }}
+      variant="outline"
+      size="icon"
+      className="w-8 h-8 border-0 bg-transparent rounded-full"
+    >
+      {arrow === "left" ? (
+        <ChevronLeft size={20} className="text-foreground" />
+      ) : (
+        <ChevronRight size={20} className="text-foreground" />
+      )}
+    </Button>
+  );
+
   return (
     <Card className="mx-4 pt-4">
-      <CardHeader>
-        <CardTitle>Donasi Disetor Tahun {new Date().getFullYear()}</CardTitle>
-      </CardHeader>
       <CardContent>
+        <div className="flex flex-row justify-between items-center pb-4">
+          <h4>Grafik Setoran Tahun {year}</h4>
+          {isFetching ? (
+            <Loader className="text-slate-500 animate-spin" />
+          ) : (
+            <div className="flex flex-row items-center gap-x-2">
+              {arrowButton("left")}
+              {arrowButton("right")}
+            </div>
+          )}
+        </div>
         {isFetching ? (
           <div className="min-h-[200px] w-full flex justify-center items-center">
             <Loader className="text-slate-500 animate-spin" />
@@ -113,7 +166,16 @@ const DashboardChart = () => {
               />
               <ChartLegend content={<ChartLegendContent />} />
               {/* <Bar dataKey="donasi" fill="var(--color-donasi)" radius={4} /> */}
-              <Bar dataKey="disetor" fill="var(--color-disetor)" radius={4} />
+              <Bar
+                dataKey="donasiPW"
+                fill={chartConfig.donasiPW.color}
+                radius={4}
+              />
+              <Bar
+                dataKey="donasiGlobal"
+                fill={chartConfig.donasiGlobal.color}
+                radius={4}
+              />
             </BarChart>
           </ChartContainer>
         )}

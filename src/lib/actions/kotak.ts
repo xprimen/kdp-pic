@@ -1,4 +1,5 @@
 import {
+  TChartKotak,
   TEkspedisiKotak,
   TKirimEkspedisiKotak,
   TKotak,
@@ -169,5 +170,29 @@ export const getKotakSudahDisetor = async (
     .get("/allkotaksetorpw")
     .then((res) => {
       return res.data as TKotakSetor[];
+    });
+};
+
+export const getGrafiksetoranPW = async (
+  token: string,
+  year: number = 2024
+): Promise<TChartKotak[]> => {
+  return await axiosInstance(token)
+    .get("/grafiksetoran/" + year)
+    .then((res) => {
+      // console.log("PW :", res.data);
+      return res.data as TChartKotak[];
+    });
+};
+
+export const getGrafiksetoranGlobal = async (
+  token: string,
+  year: number = 2024
+): Promise<TChartKotak[]> => {
+  return await axiosInstance(token)
+    .get("/donasiperbulan/")
+    .then((res) => {
+      // console.log("Global :", res.data);
+      return res.data as TChartKotak[];
     });
 };

@@ -354,3 +354,10 @@ export const ChangePasswordSchema = z
   });
 
 export type TChangePassword = z.infer<typeof ChangePasswordSchema>;
+
+export const ChartKotakSchema = z.object({
+  month_year: z.string(),
+  total_pendapatan: z.string(),
+});
+
+export type TChartKotak = z.infer<typeof ChartKotakSchema>;
