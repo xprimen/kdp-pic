@@ -1,5 +1,9 @@
 "use client";
-import { getTotalDonasi, getTotalSetor } from "@/lib/actions/kotak";
+import {
+  getHanyaSetoranPW,
+  getTotalDonasi,
+  getTotalSetor,
+} from "@/lib/actions/kotak";
 import { numberToString, queryClient } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import { HandCoins, HeartHandshake, MapPin } from "lucide-react";
@@ -9,8 +13,13 @@ import { Separator } from "../ui/separator";
 import DashboardChart from "./DashboardChart";
 import KotakScrollHorizontal from "./KotakScrollHorizontal";
 import TotalKotak from "./TotalKotak";
+import { LoginDataResponse } from "@/types";
 
-const Summary = () => {
+type Props = {
+  userdata: LoginDataResponse;
+};
+
+const Summary = ({ userdata }: Props) => {
   const { data: total } = useQuery({
     queryKey: ["totalDonasi"],
     queryFn: async () => {
@@ -26,7 +35,16 @@ const Summary = () => {
         month_year: string;
       };
 
-      const ret = {
+      const dataTotalSetorPW = (await getHanyaSetoranPW(accessToken)) as {
+        total_pendapatan: string;
+        month_year: string;
+      };
+
+      return {
+        total_setor_pw: {
+          month_year: dataTotalSetorPW?.month_year,
+          nilai: numberToString(Number(dataTotalSetorPW.total_pendapatan)),
+        },
         total_donasi: {
           month_year: dataTotalDonasi?.month_year,
           nilai: numberToString(Number(dataTotalDonasi.total_pendapatan)),
@@ -43,8 +61,6 @@ const Summary = () => {
             : 0,
         },
       };
-
-      return ret;
     },
     refetchOnMount: true,
   });
@@ -77,6 +93,22 @@ const Summary = () => {
             </CardTitle>
           </CardHeader>
         </Card>
+        {userdata.role === "2" && (
+          <Card className="bg-blue-400 text-white relative py-4">
+            <HeartHandshake className="absolute text-white/30 right-0 top-1/2 w-20 h-20 -translate-x-1/2 -translate-y-1/2" />
+            <CardHeader className="py-2">
+              <CardDescription className="text-white uppercase">
+                Total Disetor PW Bulan :{" "}
+                <span className="font-bold">
+                  {total?.total_setor_pw.month_year}
+                </span>
+              </CardDescription>
+              <CardTitle className="text-4xl">
+                Rp {total?.total_setor_pw.nilai || 0}
+              </CardTitle>
+            </CardHeader>
+          </Card>
+        )}
         <Card className="bg-[#f9802d] text-white relative py-4">
           <HeartHandshake className="absolute text-white/30 right-0 top-1/2 w-20 h-20 -translate-x-1/2 -translate-y-1/2" />
           <CardHeader className="py-2">

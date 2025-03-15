@@ -8,7 +8,7 @@ function Dashboard() {
     <div className="pb-20">
       <BottomNavbar role={userdata().role} />
       <UserGreeting userdata={userdata()} />
-      <Summary />
+      <Summary userdata={userdata()} />
     </div>
   );
 }

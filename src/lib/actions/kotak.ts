@@ -196,3 +196,18 @@ export const getGrafiksetoranGlobal = async (
       return res.data as TChartKotak[];
     });
 };
+
+export const getHanyaSetoranPW = async (token: string): Promise<any> => {
+  return await axiosInstance(token)
+    .get("/dashboardkotaksetorPWAll/")
+    .then((res) => {
+      // console.log(res.data[0].history_kotaks.total_pendapatan);
+      // return res.data[0];
+      return {
+        total_pendapatan: res.data[0]["history_kotaks.total_pendapatan"]
+          ? res.data[0]["history_kotaks.total_pendapatan"]
+          : res.data[0].total_pendapatan,
+        month_year: res.data[0].month_year,
+      };
+    });
+};
