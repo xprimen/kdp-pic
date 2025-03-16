@@ -42,8 +42,15 @@ const Summary = ({ userdata }: Props) => {
 
       return {
         total_setor_pw: {
-          month_year: dataTotalSetorPW?.month_year,
-          nilai: numberToString(Number(dataTotalSetorPW.total_pendapatan)),
+          month_year: dataTotalSetorPW
+            ? dataTotalSetorPW?.month_year
+            : new Intl.DateTimeFormat("id-ID", {
+                year: "numeric",
+                month: "short",
+              }).format(new Date()),
+          nilai: dataTotalSetorPW
+            ? numberToString(Number(dataTotalSetorPW.total_pendapatan))
+            : 0,
         },
         total_donasi: {
           month_year: dataTotalDonasi?.month_year,

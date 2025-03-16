@@ -201,13 +201,21 @@ export const getHanyaSetoranPW = async (token: string): Promise<any> => {
   return await axiosInstance(token)
     .get("/dashboardkotaksetorPWAll/")
     .then((res) => {
-      // console.log(res.data[0].history_kotaks.total_pendapatan);
-      // return res.data[0];
+      if (res.data.length > 0) {
+        return {
+          total_pendapatan: res.data[0]["history_kotaks.total_pendapatan"]
+            ? res.data[0]["history_kotaks.total_pendapatan"]
+            : res.data[0].total_pendapatan,
+          month_year: res.data[0].month_year,
+        };
+      }
+
       return {
-        total_pendapatan: res.data[0]["history_kotaks.total_pendapatan"]
-          ? res.data[0]["history_kotaks.total_pendapatan"]
-          : res.data[0].total_pendapatan,
-        month_year: res.data[0].month_year,
+        total_pendapatan: 0,
+        month_year: new Intl.DateTimeFormat("id-ID", {
+          year: "numeric",
+          month: "short",
+        }).format(new Date()),
       };
     });
 };
