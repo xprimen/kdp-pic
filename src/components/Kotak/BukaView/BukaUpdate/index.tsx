@@ -368,6 +368,7 @@ const BukaUpdate = ({ id }: Props) => {
                 </AlertDialogCancel>
                 <AlertDialogAction
                   className="px-8"
+                  disabled={loadingForm}
                   onClick={form.handleSubmit(onSubmit, onInvalid)}
                 >
                   OK
